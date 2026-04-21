@@ -1,0 +1,55 @@
+---
+# khaiyran-pi37
+title: Seed data — initial products and tags from catalog
+status: todo
+type: task
+priority: normal
+tags:
+    - supabase
+    - data
+created_at: 2026-04-21T13:50:57Z
+updated_at: 2026-04-21T13:52:27Z
+parent: khaiyran-s0o0
+blocked_by:
+    - khaiyran-mwn8
+    - khaiyran-jm8s
+---
+
+# Seed data — initial products and tags from catalog
+
+## Description
+
+Create a seed script that populates the database with the ~37 products from the existing catalog (in `~/dev/safi/catalog.html`), their categories, and brand tags. This gives the dashboard and public site real data to work with from day one.
+
+Seeds should be idempotent — safe to run multiple times without duplicating data.
+
+## Related Code
+
+- `supabase/seed.sql` — seed data file
+- `~/dev/safi/catalog.html` — source of product names, sizes, unit types, units per carton, and NGN prices
+- `supabase/CLAUDE.md` — schema reference
+
+## Acceptance Criteria
+
+- [ ] Running `supabase db reset` applies migrations + seed data cleanly
+- [ ] All 6 categories from the catalog exist as tags with type `category`: Carbonated Drinks, Juice, Malt Drinks, Energy Drinks, Water, Dairy
+- [ ] Brand tags exist for each distinct brand (Coca-Cola, Pepsi, 7UP, Fanta, Sprite, Maltina, etc.)
+- [ ] All ~37 products from the catalog are seeded with correct name, size, unit_type, units_per_carton, price_ngn
+- [ ] Each product is linked to appropriate category and brand tags via product_tags
+- [ ] All seeded products have `published = false` (draft) — no image yet, so they cannot be published
+- [ ] sort_order values are set in a sensible default order within each tag
+- [ ] Seed is idempotent — running it twice does not duplicate data (use ON CONFLICT or similar)
+- [ ] `npm run typecheck` passes with 0 errors
+- [ ] `npm run lint` passes with 0 errors and 0 warnings
+
+## Tests
+
+- `supabase/tests/seed.test.sql` — `all categories exist` — asserts 6 tags with type=category exist
+- `supabase/tests/seed.test.sql` — `all products exist` — asserts count of products matches expected (~37)
+- `supabase/tests/seed.test.sql` — `products are linked to tags` — asserts every product has at least one category tag and one brand tag
+- `supabase/tests/seed.test.sql` — `all products are draft` — asserts no product has published=true
+- `supabase/tests/seed.test.sql` — `seed is idempotent` — runs seed twice, asserts product count has not doubled
+
+## Blocked
+
+(Only if catalog.html products/prices need verification from Abu before seeding)
