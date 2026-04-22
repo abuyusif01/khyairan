@@ -1,14 +1,14 @@
 ---
 # khaiyran-pi37
 title: Seed data — initial products and tags from catalog
-status: in-progress
+status: completed
 type: task
 priority: normal
 tags:
     - supabase
     - data
 created_at: 2026-04-21T13:50:57Z
-updated_at: 2026-04-22T01:00:37Z
+updated_at: 2026-04-22T01:05:17Z
 parent: khaiyran-s0o0
 blocked_by:
     - khaiyran-mwn8
@@ -68,3 +68,19 @@ Seeds should be idempotent — safe to run multiple times without duplicating da
   - [x] All 5 tests name a file, description, and concrete assertion
   - [x] All acceptance criteria are objectively verifiable
   - Note: USD→NGN rate (1650) must be documented in a comment in seed.sql
+
+## Agent Post-Completion Review
+
+- Agent: Claude Sonnet 4.6
+- Date: 2026-04-22
+- Verdict: PASS
+- Findings: none — all 37 products, 6 category tags, 28 brand tags, full product_tag coverage, idempotency guards all correct
+- All findings fixed: N/A
+
+## Summary of Changes
+
+- Created `supabase/tests/seed.test.sql` — 5 pgTAP tests (categories, product count, tag links, draft status, idempotency)
+- Created `supabase/seed.sql` — inserts 6 category tags, 28 brand tags, 37 products, and product_tags linking each product to its category and brand
+- Prices converted from USD at 1 USD = 1,650 NGN; rate documented in seed.sql comment — Abu should verify before publishing
+- All products seeded as published=false (no image yet)
+- Seed is idempotent via ON CONFLICT (slug) DO NOTHING for tags, WHERE NOT EXISTS for products, ON CONFLICT (product_id, tag_id) DO NOTHING for product_tags
