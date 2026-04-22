@@ -1,14 +1,14 @@
 ---
 # khaiyran-mwn8
 title: RLS policies — public read + role-based dashboard access
-status: todo
+status: in-progress
 type: task
 priority: high
 tags:
     - supabase
     - auth
 created_at: 2026-04-21T13:50:24Z
-updated_at: 2026-04-21T13:52:27Z
+updated_at: 2026-04-22T00:35:55Z
 parent: khaiyran-s0o0
 blocked_by:
     - khaiyran-fel4
@@ -52,3 +52,16 @@ Enable Row Level Security on all tables and create policies that enforce the per
 - `supabase/tests/00002_rls_policies.test.sql` — `owner can delete products` — authenticates as owner, asserts DELETE succeeds
 - `supabase/tests/00002_rls_policies.test.sql` — `owner can manage profiles` — authenticates as owner, asserts INSERT/UPDATE/DELETE on profiles succeed
 - `supabase/tests/00002_rls_policies.test.sql` — `manager cannot manage profiles` — authenticates as manager, asserts INSERT/UPDATE/DELETE on profiles are denied
+
+## Agent Pre-Start Checkpoint
+
+- Agent: claude-sonnet-4-6 (night shift)
+- Date: 2026-04-22
+- Verdict: APPROVED
+- Checkpoints:
+  - [x] Migration file (00002_rls_policies.sql) to be created — expected
+  - [x] khaiyran-fel4 (schema) is completed — tables exist to apply RLS to
+  - [x] All 8 tests named with specific assertions
+  - [x] auth.uid() and anon/authenticated roles not in Docker container — will mock them in test setup
+  - [x] Storage policy criteria noted (00003 migration handles bucket — deferred to khaiyran-jm8s)
+  - [x] TDD plan: tests fail without RLS (anon can read drafts, can insert, etc.); pass after migration
