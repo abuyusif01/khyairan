@@ -1,14 +1,14 @@
 ---
 # khaiyran-ui3c
 title: Project scaffolding — monorepo, Supabase, Vite
-status: in-progress
+status: completed
 type: task
 priority: high
 tags:
     - supabase
     - setup
 created_at: 2026-04-21T13:49:53Z
-updated_at: 2026-04-22T00:16:33Z
+updated_at: 2026-04-22T00:27:47Z
 parent: khaiyran-s0o0
 ---
 
@@ -59,3 +59,19 @@ Initialise the monorepo structure, Supabase project, and Vite apps for both pack
   - [x] Tests section names exact files, test descriptions, and specific assertions
   - [x] `supabase start` criterion flagged: requires Docker + supabase CLI; supabase CLI not in Flox env — criterion will be noted as requiring human setup but config.toml will be created
   - [x] TDD plan: stub main.ts first (initApp noop), tests fail at assertion; then full implementation
+
+## Agent Post-Completion Review
+
+- Agent: claude-sonnet-4-6 (night shift)
+- Date: 2026-04-22
+- Verdict: PASS
+- Findings:
+  1. Minor — test uses 50ms setTimeout (fragile under slow CI, acceptable at scaffold stage)
+  2. Minor — @supabase/supabase-js listed as dependency but not yet imported (intentional placeholder)
+  3. Minor — supabase/migrations/ not created here (correctly deferred to khaiyran-fel4)
+  4. Informational — supabase start + Flox supabase CLI require human setup
+- All findings fixed: N/A (none blocking)
+
+## Summary of Changes
+
+Created full monorepo scaffold: root npm workspaces, TypeScript + ESLint config, Vite apps for web and dashboard packages with Alpine.js, jsdom-based Vitest tests, and supabase/config.toml. All quality gates pass (typecheck 0 errors, lint 0 warnings, build exits 0, tests green).
