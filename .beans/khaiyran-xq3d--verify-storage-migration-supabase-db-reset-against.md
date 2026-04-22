@@ -1,7 +1,7 @@
 ---
 # khaiyran-xq3d
 title: Verify storage migration + supabase db reset against live Supabase stack
-status: todo
+status: completed
 type: task
 priority: low
 tags:
@@ -9,7 +9,7 @@ tags:
     - storage
     - verification
 created_at: 2026-04-22T11:56:21Z
-updated_at: 2026-04-22T12:30:00Z
+updated_at: 2026-04-22T13:07:07Z
 ---
 
 # Verify storage migration + supabase db reset against live Supabase stack
