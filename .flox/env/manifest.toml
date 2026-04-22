@@ -18,73 +18,9 @@ version = 1
 beans.pkg-path = "beans"
 mdbook.pkg-path = "mdbook"
 nodejs.pkg-path = "nodejs"
-postgresql_15.pkg-path = "postgresql_15"
-pgtap15.pkg-path = "postgresql15Packages.pgtap"
 deno.pkg-path = "deno"
 supabase-cli.pkg-path = "supabase-cli"
-
-
-## Environment Variables ---------------------------------------------
-##  ... available for use in the activated environment
-##      as well as [hook], [profile] scripts and [services] below.
-## -------------------------------------------------------------------
-[vars]
-PGPORT = "5432"
-PGUSER = "postgres"
-PGHOST = "/tmp"
-PGDATABASE = "postgres"
-
-
-## Activation Hook ---------------------------------------------------
-##  ... run by _bash_ shell when you run 'flox activate'.
-## -------------------------------------------------------------------
-[hook]
-on-activate = '''
-  export PGDATA="$FLOX_ENV_CACHE/pgdata"
-
-  # Build a plugin dir with the structure NIX_PGSQL_PLUGIN_DIR expects so that
-  # the Nix-patched postgres binary can find pgtap's .so and extension files:
-  #   $PLUGIN_DIR/pgtap.so
-  #   $PLUGIN_DIR/extension/pgtap.control
-  #   $PLUGIN_DIR/extension/pgtap--*.sql
-  PLUGIN_DIR="$FLOX_ENV_CACHE/pg-plugins"
-  mkdir -p "$PLUGIN_DIR/extension"
-  for _so in "$FLOX_ENV"/lib/postgresql/*.so; do
-    [ -e "$_so" ] && ln -sf "$_so" "$PLUGIN_DIR/" 2>/dev/null || true
-  done
-  for _f in "$FLOX_ENV"/share/postgresql/extension/*; do
-    [ -e "$_f" ] && ln -sf "$_f" "$PLUGIN_DIR/extension/" 2>/dev/null || true
-  done
-  export NIX_PGSQL_PLUGIN_DIR="$PLUGIN_DIR"
-
-  if [ ! -d "$PGDATA" ]; then
-    initdb --no-locale -E UTF8 -U postgres "$PGDATA"
-    cat >> "$PGDATA/postgresql.conf" <<'PGEOF'
-port = 5432
-unix_socket_directories = '/tmp'
-PGEOF
-    echo "PostgreSQL data directory initialised at $PGDATA"
-  fi
-'''
-
-
-## Profile script ----------------------------------------------------
-## ... sourced by _your shell_ when you run 'flox activate'.
-## -------------------------------------------------------------------
-[profile]
-common = '''
-  export PGDATA="$FLOX_ENV_CACHE/pgdata"
-  export NIX_PGSQL_PLUGIN_DIR="$FLOX_ENV_CACHE/pg-plugins"
-'''
-
-
-## Services ---------------------------------------------------------
-##  $ flox services start             <- Starts all services
-##  $ flox services status            <- Status of running services
-##  $ flox activate --start-services  <- Activates & starts all
-## ------------------------------------------------------------------
-[services]
-postgres.command = "postgres -D $FLOX_ENV_CACHE/pgdata -k /tmp -p 5432"
+shadowenv.pkg-path = "shadowenv"
 
 
 ## Include ----------------------------------------------------------
@@ -94,21 +30,6 @@ postgres.command = "postgres -D $FLOX_ENV_CACHE/pgdata -k /tmp -p 5432"
 # environments = [
 #     { dir = "../common" }
 # ]
-
-
-## Build and publish your own packages ------------------------------
-##  $ flox build
-##  $ flox publish
-## ------------------------------------------------------------------
-[build]
-# [build.myproject]
-# description = "The coolest project ever"
-# version = "0.0.1"
-# command = """
-#   mkdir -p $out/bin
-#   cargo build --release
-#   cp target/release/myproject $out/bin/myproject
-# """
 
 
 ## Other Environment Options -----------------------------------------
