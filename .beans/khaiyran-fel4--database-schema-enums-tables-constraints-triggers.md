@@ -1,14 +1,14 @@
 ---
 # khaiyran-fel4
 title: Database schema — enums, tables, constraints, triggers
-status: in-progress
+status: completed
 type: task
 priority: high
 tags:
     - supabase
     - schema
 created_at: 2026-04-21T13:50:09Z
-updated_at: 2026-04-22T00:28:01Z
+updated_at: 2026-04-22T00:35:43Z
 parent: khaiyran-s0o0
 blocked_by:
     - khaiyran-ui3c
@@ -49,3 +49,15 @@ Create the initial Supabase migration with all tables, enums, constraints, and t
 - `supabase/tests/00001_initial_schema.test.sql` — `product_tags cascade deletes` — inserts product+tag+join row, deletes product, asserts join row is gone
 - `supabase/tests/00001_initial_schema.test.sql` — `updated_at trigger fires` — inserts a product, updates it, asserts updated_at changed
 - `supabase/tests/00001_initial_schema.test.sql` — `tags slug is unique` — inserts two tags with same slug, asserts unique violation
+
+## Agent Post-Completion Review
+
+- Agent: claude-sonnet-4-6 (night shift)
+- Date: 2026-04-22
+- Verdict: PASS
+- Findings: none (updated_at trigger tested on products only per spec — tags/profiles covered by identical code pattern)
+- All findings fixed: N/A
+
+## Summary of Changes
+
+Migration 00001_initial_schema.sql: unit_type/user_role enums, products/tags/product_tags/profiles tables with correct types/constraints. CHECK constraint prevents publishing without image. Cascade deletes on product_tags. updated_at trigger using clock_timestamp() fires on UPDATE for all three tables. 26 pgTAP tests all pass.
