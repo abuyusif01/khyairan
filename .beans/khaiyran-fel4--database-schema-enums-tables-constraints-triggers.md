@@ -1,14 +1,14 @@
 ---
 # khaiyran-fel4
 title: Database schema — enums, tables, constraints, triggers
-status: todo
+status: in-progress
 type: task
 priority: high
 tags:
     - supabase
     - schema
 created_at: 2026-04-21T13:50:09Z
-updated_at: 2026-04-21T13:52:27Z
+updated_at: 2026-04-22T00:28:01Z
 parent: khaiyran-s0o0
 blocked_by:
     - khaiyran-ui3c
