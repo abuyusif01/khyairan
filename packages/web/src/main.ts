@@ -1,3 +1,5 @@
+import Alpine from 'alpinejs'
+
 export function initApp(): void {
-  // stub — implementation pending
+  Alpine.start()
 }
