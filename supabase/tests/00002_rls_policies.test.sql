@@ -81,14 +81,14 @@ SELECT lives_ok(
 RESET ROLE;
 SET LOCAL request.jwt.claims = '';
 
--- 5. manager cannot delete products
+-- 5. manager cannot delete products (RLS silently filters DELETE — 0 rows affected)
 SET LOCAL request.jwt.claims = '{"sub":"bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb"}';
 SET LOCAL ROLE authenticated;
-SELECT throws_ok(
-  $$DELETE FROM products WHERE name = 'DraftProd'$$,
-  '42501',
-  null,
-  'manager cannot delete products'
+DELETE FROM products WHERE name = 'DraftProd';
+SELECT is(
+  (SELECT count(*)::int FROM products WHERE name = 'DraftProd'),
+  1,
+  'manager cannot delete products — row still exists after blocked DELETE'
 );
 RESET ROLE;
 SET LOCAL request.jwt.claims = '';
