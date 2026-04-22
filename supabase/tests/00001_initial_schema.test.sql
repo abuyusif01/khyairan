@@ -1,6 +1,6 @@
 BEGIN;
 
-SELECT plan(29);
+SELECT plan(26);
 
 -- ── Tables exist ─────────────────────────────────────────────────────────────
 SELECT has_table('public', 'products',     'products table exists');
@@ -13,18 +13,18 @@ SELECT has_type('public', 'unit_type', 'unit_type enum exists');
 SELECT has_type('public', 'user_role', 'user_role enum exists');
 
 SELECT is(
-  (SELECT array_agg(e.enumlabel ORDER BY e.enumsortorder)
+  (SELECT array_agg(e.enumlabel::text ORDER BY e.enumsortorder)
    FROM pg_enum e JOIN pg_type t ON t.oid = e.enumtypid
    WHERE t.typname = 'unit_type'),
-  ARRAY['bottle','can','pack','cup','pouch'],
+  ARRAY['bottle','can','pack','cup','pouch']::text[],
   'unit_type has correct values'
 );
 
 SELECT is(
-  (SELECT array_agg(e.enumlabel ORDER BY e.enumsortorder)
+  (SELECT array_agg(e.enumlabel::text ORDER BY e.enumsortorder)
    FROM pg_enum e JOIN pg_type t ON t.oid = e.enumtypid
    WHERE t.typname = 'user_role'),
-  ARRAY['owner','manager'],
+  ARRAY['owner','manager']::text[],
   'user_role has correct values'
 );
 
