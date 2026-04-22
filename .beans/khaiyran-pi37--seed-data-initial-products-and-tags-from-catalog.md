@@ -1,14 +1,14 @@
 ---
 # khaiyran-pi37
 title: Seed data — initial products and tags from catalog
-status: todo
+status: in-progress
 type: task
 priority: normal
 tags:
     - supabase
     - data
 created_at: 2026-04-21T13:50:57Z
-updated_at: 2026-04-21T13:52:27Z
+updated_at: 2026-04-22T01:00:37Z
 parent: khaiyran-s0o0
 blocked_by:
     - khaiyran-mwn8
@@ -53,3 +53,18 @@ Seeds should be idempotent — safe to run multiple times without duplicating da
 ## Blocked
 
 (Only if catalog.html products/prices need verification from Abu before seeding)
+
+## Agent Pre-Start Checkpoint
+
+- Agent: Claude Sonnet 4.6
+- Date: 2026-04-22
+- Verdict: APPROVED
+- Checkpoints:
+  - [x] supabase/CLAUDE.md exists and schema matches seed requirements
+  - [x] catalog.html exists and all 37 products are parseable across 6 categories
+  - [x] unit_type enum values (bottle, can, pack, cup, pouch) cover all catalog units
+  - [x] price_ngn is numeric — USD×1650 conversion values with decimals are safe
+  - [x] published=false + no image_path is valid per CHECK constraint
+  - [x] All 5 tests name a file, description, and concrete assertion
+  - [x] All acceptance criteria are objectively verifiable
+  - Note: USD→NGN rate (1650) must be documented in a comment in seed.sql
