@@ -1,7 +1,1 @@
-import type Alpine from 'alpinejs'
-
-declare global {
-  interface Window {
-    Alpine: typeof Alpine
-  }
-}
+/// <reference types="vite/client" />

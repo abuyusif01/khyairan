@@ -12,8 +12,7 @@ Single-page mobile-first website for retail and bulk customers. Browse products,
 
 ## Stack
 
-- Vite + TypeScript
-- Alpine.js for interactivity (filtering, state)
+- Vite + TypeScript (vanilla — no UI framework)
 - Supabase JS client for data fetching
 
 ---
@@ -30,15 +29,12 @@ Single-page mobile-first website for retail and bulk customers. Browse products,
 
 ## Layout (top to bottom, single scroll)
 
-1. **Header** — logo, business name, WhatsApp button. Sticky.
-2. **Filter bar** — sticky below header. Two modes toggled by a "Categories / Brands" switch:
-   - **Categories mode** (default): "All" chip (selected by default) + one chip per published category. Tap to filter.
-   - **Brands mode**: "All" chip + one chip per published brand.
-   - Only one chip active at a time. "All" shows everything.
-   - Chips scroll horizontally if they overflow.
-3. **Product grid** — 2 columns on mobile. Card: image, name, size, units per carton, price (NGN). Filtered by active chip.
+1. **Header** — text logo, business name, WhatsApp button. Sticky.
+2. **Filter bar** — sticky below header. Category chips: "All" (default) + one chip per published category. Tap to smooth-scroll to that section. Active chip highlights. Chips scroll horizontally if they overflow.
+3. **Product grid** — products grouped by category (each category is a labelled section). 2-column card grid on mobile. Card: lazy-loaded image, name, size, unit type, units per carton, price (NGN), WhatsApp order link.
 4. **About strip** — shop name, address, what we do. 3-4 lines.
 5. **Footer** — phone, address, WhatsApp link.
+6. **Floating WhatsApp button** — fixed bottom-right, always visible, opens generic order message.
 
 ---
 
@@ -47,16 +43,16 @@ Single-page mobile-first website for retail and bulk customers. Browse products,
 - Fetches only `published = true` products and tags from Supabase
 - Single price displayed: NGN per carton
 - No USD on public site — export pricing handled separately
-- Products filtered client-side via Alpine.js (dataset is small enough, ~50-100 products)
+- Products grouped by category, rendered client-side via vanilla TypeScript (dataset is small, ~37-100 products)
 - Products ordered by `product_tags.sort_order` within the active tag filter
 
 ---
 
 ## Brand
 
-- Navy + gold colour scheme (matches existing catalog)
-- Clean typography
-- No clutter
+- White + green (WhatsApp green as the single CTA colour)
+- Clean typography, no clutter
+- Product images provide colour — site is a neutral backdrop
 
 ---
 
