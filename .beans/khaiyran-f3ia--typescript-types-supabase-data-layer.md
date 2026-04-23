@@ -1,14 +1,14 @@
 ---
 # khaiyran-f3ia
 title: TypeScript types + Supabase data layer
-status: in-progress
+status: completed
 type: task
 priority: normal
 tags:
     - web
     - supabase
 created_at: 2026-04-23T00:12:10Z
-updated_at: 2026-04-23T11:51:30Z
+updated_at: 2026-04-23T11:53:11Z
 parent: khaiyran-c4dp
 blocked_by:
     - khaiyran-hwik
@@ -65,3 +65,21 @@ Define TypeScript interfaces matching the database schema (products, tags, produ
   - [x] All acceptance criteria are objectively testable
   - [x] Tests section present and specific: 4 tests in supabase.test.ts with exact assertions
   - [x] khaiyran-hwik (blocker) is now completed — free to proceed
+
+## Agent Post-Completion Review
+
+- Agent: claude-sonnet-4-6 (night shift)
+- Date: 2026-04-23
+- Verdict: PASS
+- Findings: none
+- All findings fixed: YES
+
+Quality gates:
+- `npm run typecheck` — 0 errors ✓
+- `npm run lint` — 0 warnings ✓
+- `npm run build` — exits 0 ✓
+- All 4 supabase tests pass ✓
+
+## Summary of Changes
+
+Created `src/types.ts` with Product (unit_type as union), Tag, ProductTag, and ProductGroup interfaces matching the migration schema. Created `src/lib/supabase.ts` with Supabase client initialized from env vars, `fetchPublishedProducts()` (selects only public columns, filters published=true), `fetchPublishedCategoryTags()` (published=true AND type='category', ordered by sort_order), and `groupProductsByCategory()` (categories sorted by sort_order, products within each category sorted by product_tags.sort_order, orphan products excluded).
