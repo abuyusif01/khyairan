@@ -3,13 +3,51 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Khyairan Soft Drinks</title>
+    <title>Khyairan Soft Drinks — Kano, Nigeria</title>
+    <link rel="stylesheet" href="/src/style.css" />
   </head>
   <body>
-    <div id="app"></div>
-    <script type="module">
-      import { initApp } from '/src/main.ts'
-      initApp()
-    </script>
+    <header>
+      <span class="header-logo">KHYAIRAN SOFT DRINKS</span>
+      <a
+        class="btn-whatsapp"
+        href="https://wa.me/2348036917058?text=Hi%2C%20I%27d%20like%20to%20place%20an%20order"
+        target="_blank"
+        rel="noopener noreferrer"
+      >WhatsApp</a>
+    </header>
+
+    <div id="filter-bar"></div>
+    <div id="product-grid"></div>
+
+    <section class="about-strip">
+      <h2>Khyairan Soft Drinks</h2>
+      <p>Dawanau, Dawakin Tofa Road, Kano, Nigeria</p>
+      <p>Wholesale and retail soft drinks distributor serving Kano and northern Nigeria.</p>
+    </section>
+
+    <footer>
+      <p>
+        <a href="tel:+2348036917058">+234 803 691 7058</a>
+        &nbsp;·&nbsp;
+        <a
+          href="https://wa.me/2348036917058"
+          target="_blank"
+          rel="noopener noreferrer"
+        >WhatsApp</a>
+        &nbsp;·&nbsp;
+        Dawanau, Dawakin Tofa Road, Kano, Nigeria
+      </p>
+    </footer>
+
+    <a
+      class="fab-whatsapp"
+      href="https://wa.me/2348036917058?text=Hi%2C%20I%27d%20like%20to%20place%20an%20order"
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label="Order on WhatsApp"
+    >&#128172;</a>
+
+    <script type="module" src="/src/main.ts"></script>
   </body>
 </html>

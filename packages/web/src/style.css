@@ -1,0 +1,298 @@
+:root {
+  /* Base */
+  --color-bg:              #ffffff;
+  --color-text:            #1a1a1a;
+  --color-text-muted:      #666666;
+  --color-surface:         #f5f5f5;
+  --color-border:          #e5e5e5;
+
+  /* Brand */
+  --color-brand:           #1a1a1a;
+
+  /* CTA */
+  --color-cta:             #25D366;
+  --color-cta-hover:       #1fb855;
+  --color-cta-text:        #ffffff;
+
+  /* Filter chips */
+  --color-chip:            #f0f0f0;
+  --color-chip-text:       #333333;
+  --color-chip-active:     #1a1a1a;
+  --color-chip-active-text:#ffffff;
+
+  /* Category headings */
+  --color-section-heading: #1a1a1a;
+  --color-section-rule:    #e5e5e5;
+
+  /* Spacing scale */
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 32px;
+
+  /* Typography */
+  --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-size-sm:   0.75rem;
+  --font-size-base: 0.875rem;
+  --font-size-lg:   1rem;
+  --font-size-xl:   1.25rem;
+}
+
+/* Reset */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-family);
+  font-size: var(--font-size-base);
+  color: var(--color-text);
+  background: var(--color-bg);
+  max-width: 100vw;
+  overflow-x: hidden;
+}
+
+/* Header */
+header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-md);
+  background: var(--color-brand);
+  color: var(--color-cta-text);
+}
+
+.header-logo {
+  font-size: var(--font-size-lg);
+  font-weight: 700;
+  letter-spacing: 0.05em;
+}
+
+.btn-whatsapp {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: var(--space-xs) var(--space-sm);
+  background: var(--color-cta);
+  color: var(--color-cta-text);
+  text-decoration: none;
+  border-radius: 4px;
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+}
+
+.btn-whatsapp:hover {
+  background: var(--color-cta-hover);
+}
+
+/* Filter bar — horizontal-scroll chip bar */
+#filter-bar {
+  position: sticky;
+  top: 52px; /* header height */
+  z-index: 90;
+  background: var(--color-bg);
+  border-bottom: 1px solid var(--color-border);
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  white-space: nowrap;
+  padding: var(--space-sm) var(--space-md);
+}
+
+#filter-bar::-webkit-scrollbar {
+  display: none;
+}
+
+.chip {
+  display: inline-block;
+  padding: var(--space-xs) var(--space-md);
+  margin-right: var(--space-xs);
+  background: var(--color-chip);
+  color: var(--color-chip-text);
+  border-radius: 999px;
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  cursor: pointer;
+  border: none;
+  white-space: nowrap;
+}
+
+.chip.active,
+.chip[aria-selected="true"] {
+  background: var(--color-chip-active);
+  color: var(--color-chip-active-text);
+}
+
+/* Product grid */
+#product-grid {
+  padding: var(--space-md);
+}
+
+.category-section {
+  margin-bottom: var(--space-xl);
+}
+
+.category-heading {
+  font-size: var(--font-size-xl);
+  font-weight: 700;
+  color: var(--color-section-heading);
+  padding-bottom: var(--space-sm);
+  margin-bottom: var(--space-md);
+  border-bottom: 2px solid var(--color-section-rule);
+}
+
+/* 2-column product card grid */
+.product-cards {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-sm);
+}
+
+/* Product card */
+.product-card {
+  display: flex;
+  flex-direction: column;
+  background: var(--color-surface);
+  border-radius: 8px;
+  overflow: hidden;
+  cursor: pointer;
+  text-decoration: none;
+  color: inherit;
+}
+
+.product-card:active {
+  opacity: 0.85;
+}
+
+.product-card__image {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  background: var(--color-border);
+}
+
+.product-card__body {
+  padding: var(--space-sm);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  flex: 1;
+}
+
+.product-card__name {
+  font-size: var(--font-size-base);
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.product-card__meta {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+}
+
+.product-card__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: auto;
+  padding-top: var(--space-xs);
+}
+
+.product-card__price {
+  font-size: var(--font-size-lg);
+  font-weight: 700;
+}
+
+.product-card__wa {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  background: var(--color-cta);
+  border-radius: 50%;
+  color: var(--color-cta-text);
+  font-size: var(--font-size-base);
+  text-decoration: none;
+}
+
+/* About strip */
+.about-strip {
+  padding: var(--space-lg) var(--space-md);
+  background: var(--color-surface);
+  border-top: 1px solid var(--color-border);
+}
+
+.about-strip h2 {
+  font-size: var(--font-size-xl);
+  font-weight: 700;
+  margin-bottom: var(--space-sm);
+}
+
+.about-strip p {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-base);
+  line-height: 1.5;
+  margin-bottom: var(--space-xs);
+}
+
+/* Footer */
+footer {
+  padding: var(--space-md);
+  background: var(--color-brand);
+  color: var(--color-cta-text);
+  font-size: var(--font-size-sm);
+  text-align: center;
+}
+
+footer a {
+  color: var(--color-cta);
+  text-decoration: none;
+}
+
+footer a:hover {
+  text-decoration: underline;
+}
+
+/* Floating WhatsApp button */
+.fab-whatsapp {
+  position: fixed;
+  bottom: var(--space-lg);
+  right: var(--space-lg);
+  z-index: 200;
+  width: 52px;
+  height: 52px;
+  background: var(--color-cta);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  text-decoration: none;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+}
+
+.fab-whatsapp:hover {
+  background: var(--color-cta-hover);
+}
+
+/* Responsive — no overflow at 320px */
+@media (max-width: 320px) {
+  .product-cards {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  header {
+    padding: var(--space-sm);
+  }
+
+  .header-logo {
+    font-size: var(--font-size-base);
+  }
+}
