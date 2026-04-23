@@ -1,6 +1,12 @@
-import { describe, it, expect, beforeEach } from 'vitest'
+import { describe, it, expect, beforeEach, vi } from 'vitest'
 import type { ProductGroup } from '../types'
 import { renderProductGrid } from './productGrid'
+
+vi.mock('./bottomSheet', () => ({
+  showBottomSheet: vi.fn(),
+}))
+
+import { showBottomSheet } from './bottomSheet'
 
 const sampleGroups: ProductGroup[] = [
   {
@@ -57,12 +63,21 @@ describe('renderProductGrid', () => {
     expect(container.querySelector('#category-juices')).toBeTruthy()
   })
 
-  it('product card links to WhatsApp with product details', () => {
+  it('product card is a div not a link', () => {
     renderProductGrid(sampleGroups, container, 'https://test.supabase.co/storage')
-    const card = container.querySelector('a.product-card') as HTMLAnchorElement
-    expect(card).toBeTruthy()
-    expect(card.href).toContain('wa.me/2348036917058')
-    expect(card.href).toContain('Coca-Cola')
-    expect(card.target).toBe('_blank')
+    expect(container.querySelector('div.product-card')).toBeTruthy()
+    expect(container.querySelector('a.product-card')).toBeNull()
+  })
+
+  it('card click invokes showBottomSheet with product', () => {
+    vi.mocked(showBottomSheet).mockClear()
+    renderProductGrid(sampleGroups, container, 'https://test.supabase.co/storage')
+    const card = container.querySelector('div.product-card') as HTMLElement
+    card.click()
+    expect(showBottomSheet).toHaveBeenCalledTimes(1)
+    expect(showBottomSheet).toHaveBeenCalledWith(
+      expect.objectContaining({ name: 'Coca-Cola' }),
+      'https://test.supabase.co/storage'
+    )
   })
 })
