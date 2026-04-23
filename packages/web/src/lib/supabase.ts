@@ -28,6 +28,15 @@ export async function fetchPublishedCategoryTags(): Promise<Tag[]> {
   return (data ?? []) as Tag[]
 }
 
+export async function fetchProductTags(): Promise<ProductTag[]> {
+  const { data, error } = await supabase
+    .from('product_tags')
+    .select('product_id, tag_id, sort_order')
+
+  if (error) throw error
+  return (data ?? []) as ProductTag[]
+}
+
 export function groupProductsByCategory(
   products: Product[],
   tags: Tag[],
