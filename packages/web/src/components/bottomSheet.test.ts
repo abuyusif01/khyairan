@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest'
 import type { Product } from '../types'
-import { showBottomSheet, hideBottomSheet } from './bottomSheet'
+import { showBottomSheet } from './bottomSheet'
 
 const product: Product = {
   id: 'p1',

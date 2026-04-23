@@ -1,5 +1,5 @@
 import type { ProductGroup } from '../types'
-import { buildWhatsAppUrl } from './whatsapp'
+import { showBottomSheet } from './bottomSheet'
 
 function formatPrice(priceNgn: number): string {
   return '₦' + priceNgn.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ',')
@@ -26,11 +26,9 @@ export function renderProductGrid(
     grid.className = 'product-cards'
 
     for (const product of group.products) {
-      const card = document.createElement('a')
+      const card = document.createElement('div')
       card.className = 'product-card'
-      card.href = buildWhatsAppUrl(product)
-      card.target = '_blank'
-      card.rel = 'noopener noreferrer'
+      card.addEventListener('click', () => showBottomSheet(product, imageBaseUrl))
 
       const img = document.createElement('img')
       img.className = 'product-card__image'
