@@ -5,5 +5,4 @@ dist/
 *.local
 .shadowenv.d/
 supabase/.temp/
-.claude/
 .playwright-cli/
