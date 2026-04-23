@@ -1,4 +1,5 @@
 import type { ProductGroup } from '../types'
+import { buildWhatsAppUrl } from './whatsapp'
 
 function formatPrice(priceNgn: number): string {
   return '₦' + priceNgn.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ',')
@@ -58,7 +59,16 @@ export function renderProductGrid(
       price.className = 'product-card__price'
       price.textContent = formatPrice(product.price_ngn)
 
+      const waLink = document.createElement('a')
+      waLink.className = 'product-card__wa'
+      waLink.href = buildWhatsAppUrl(product)
+      waLink.target = '_blank'
+      waLink.rel = 'noopener noreferrer'
+      waLink.setAttribute('aria-label', `Order ${product.name} on WhatsApp`)
+      waLink.textContent = '💬'
+
       footer.appendChild(price)
+      footer.appendChild(waLink)
       body.appendChild(name)
       body.appendChild(meta)
       body.appendChild(cartons)
