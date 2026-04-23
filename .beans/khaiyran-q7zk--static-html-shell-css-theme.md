@@ -1,14 +1,14 @@
 ---
 # khaiyran-q7zk
 title: Static HTML shell + CSS theme
-status: in-progress
+status: completed
 type: task
 priority: normal
 tags:
     - web
     - css
 created_at: 2026-04-23T00:12:08Z
-updated_at: 2026-04-23T11:47:19Z
+updated_at: 2026-04-23T11:51:11Z
 parent: khaiyran-c4dp
 blocked_by:
     - khaiyran-hwik
@@ -68,3 +68,21 @@ Build the static HTML structure in `index.html` (header, about strip, footer) an
   - [x] All acceptance criteria are objectively testable (DOM queries, file checks, build pass)
   - [x] Tests section present and specific: 4 tests in shell.test.ts with exact assertions
   - [x] Colour system and layout defined in parent milestone khaiyran-c4dp body
+
+## Agent Post-Completion Review
+
+- Agent: claude-sonnet-4-6 (night shift)
+- Date: 2026-04-23
+- Verdict: PASS (after one fix)
+- Findings: raw rgba(0,0,0,0.25) in .fab-whatsapp box-shadow — moved to --shadow-fab custom property in :root
+- All findings fixed: YES
+
+Quality gates:
+- `npm run typecheck` — 0 errors ✓
+- `npm run lint` — 0 warnings ✓
+- `npm run build` — exits 0 ✓
+- All 4 shell tests pass ✓
+
+## Summary of Changes
+
+Built the full static HTML shell in `index.html`: sticky header with KHYAIRAN SOFT DRINKS text logo and WhatsApp CTA, empty mount points for #filter-bar and #product-grid, about strip, footer with phone/WhatsApp/address, and fixed floating WhatsApp button. Created `src/style.css` with complete CSS custom property system in :root (colours, spacing, typography, shadow) and all layout CSS: sticky header, horizontal-scroll chip bar, 2-column product grid, product card, about strip, footer, and FAB. Updated `main.ts` to import style.css.
