@@ -1,13 +1,13 @@
 ---
 # khaiyran-9zx7
 title: WhatsApp integration
-status: in-progress
+status: completed
 type: task
 priority: normal
 tags:
     - web
 created_at: 2026-04-23T00:12:18Z
-updated_at: 2026-04-23T11:56:00Z
+updated_at: 2026-04-23T11:58:42Z
 parent: khaiyran-c4dp
 blocked_by:
     - khaiyran-q7zk
@@ -64,3 +64,21 @@ Add all WhatsApp touchpoints to the public site. Three elements: (1) floating gr
   - [x] 3 tests in whatsapp.test.ts with specific assertions — buildWhatsAppUrl product URL, generic URL, floating button
   - [x] All acceptance criteria objectively verifiable
   - [x] Note: floating button and header link already implemented; primary work is buildWhatsAppUrl helper and per-card links
+
+## Agent Post-Completion Review
+
+- Agent: claude-sonnet-4-6 (night shift)
+- Date: 2026-04-23
+- Verdict: PASS
+- Findings: none
+- All findings fixed: YES
+
+Quality gates:
+- `npm run typecheck` — 0 errors ✓
+- `npm run lint` — 0 warnings ✓
+- `npm run build` — exits 0 ✓
+- All 3 whatsapp tests pass ✓
+
+## Summary of Changes
+
+Created `src/components/whatsapp.ts` with `buildWhatsAppUrl(product?)` — URL-encodes product-specific pre-filled messages (name, size, units per carton) or a generic order message. Updated `productGrid.ts` to add a .product-card__wa WhatsApp icon link to each card footer. The floating .fab-whatsapp and .btn-whatsapp header link were already in index.html from khaiyran-q7zk with correct wa.me/2348036917058 links, target=_blank, and rel=noopener.
