@@ -1,13 +1,13 @@
 ---
 # khaiyran-8qis
 title: Filter bar + scroll sync
-status: in-progress
+status: completed
 type: task
 priority: normal
 tags:
     - web
 created_at: 2026-04-23T00:12:15Z
-updated_at: 2026-04-23T11:59:25Z
+updated_at: 2026-04-23T12:03:14Z
 parent: khaiyran-c4dp
 blocked_by:
     - khaiyran-75n2
@@ -70,3 +70,21 @@ Build `components/filterBar.ts` — renders category chips into the `#filter-bar
   - [x] `packages/web/src/components/productGrid.ts` sets id='category-{slug}' on sections (khaiyran-75n2 complete)
   - [x] All 4 tests have specific file, description, and assertion
   - [x] Note: IntersectionObserver unavailable in jsdom — component will check for availability, tests test only chip rendering and click behavior; main.ts orchestration wired as part of this bean (no separate bean exists for it)
+
+## Agent Post-Completion Review
+
+- Agent: claude-sonnet-4-6 (night shift)
+- Date: 2026-04-23
+- Verdict: PASS
+- Findings: none
+- All findings fixed: YES
+
+Quality gates:
+- `npm run typecheck` — 0 errors ✓
+- `npm run lint` — 0 warnings ✓
+- `npm run build` — exits 0 ✓
+- All 4 filterBar tests pass; all 21 tests pass ✓
+
+## Summary of Changes
+
+Created `src/components/filterBar.ts` with `renderFilterBar(tags, container)`. Renders 'All' chip (active by default) followed by category chips sorted by sort_order. Click handlers swap the active class and smooth-scroll to sections. IntersectionObserver watches .category-heading elements to sync active chip on manual scroll — guarded against unavailability. `scrollIntoView` on chip is also guarded for jsdom compatibility. Updated `src/main.ts` to orchestrate the full page: fetches products, category tags, and product_tags in parallel, groups by category, renders product grid and filter bar. Added `fetchProductTags()` to `src/lib/supabase.ts`. Updated `app.test.ts` to mock supabase module.
