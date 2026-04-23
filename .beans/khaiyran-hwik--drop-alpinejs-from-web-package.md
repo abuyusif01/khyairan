@@ -1,13 +1,13 @@
 ---
 # khaiyran-hwik
 title: Drop Alpine.js from web package
-status: in-progress
+status: completed
 type: task
 priority: high
 tags:
     - web
 created_at: 2026-04-23T00:12:06Z
-updated_at: 2026-04-23T11:43:43Z
+updated_at: 2026-04-23T11:46:41Z
 parent: khaiyran-c4dp
 ---
 
@@ -49,3 +49,21 @@ Remove all Alpine.js references from `packages/web`. The architecture decision (
 ## Agent Post-Completion Review
 
 (Written by the post-completion reviewing agent — do not fill manually)
+
+## Agent Post-Completion Review
+
+- Agent: claude-sonnet-4-6 (night shift)
+- Date: 2026-04-23
+- Verdict: PASS
+- Findings: none
+- All findings fixed: YES
+
+Quality gates:
+- `npm run typecheck` — 0 errors ✓
+- `npm run lint` — 0 warnings ✓
+- `npm run build` — exits 0 ✓
+- `grep -ri alpine packages/web/` — zero results ✓
+
+## Summary of Changes
+
+Removed all Alpine.js references from `packages/web`. `main.ts` now exports a minimal no-op `initApp()`. `env.d.ts` retains only the Vite client reference. `index.html` is plain HTML with no directives. `app.test.ts` verifies `initApp` runs without error. `CLAUDE.md` updated to reflect vanilla TS stack, white+green brand palette, and the approved single-scroll layout design.
