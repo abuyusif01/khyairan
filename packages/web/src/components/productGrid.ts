@@ -62,7 +62,13 @@ export function renderProductGrid(
       price.className = 'product-card__price'
       price.textContent = formatPrice(product.price_ngn)
 
+      const waIcon = document.createElement('span')
+      waIcon.className = 'product-card__wa'
+      waIcon.setAttribute('aria-hidden', 'true')
+      waIcon.textContent = '💬'
+
       footer.appendChild(price)
+      footer.appendChild(waIcon)
       body.appendChild(name)
       body.appendChild(meta)
       body.appendChild(cartons)
