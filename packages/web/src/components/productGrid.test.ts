@@ -56,4 +56,13 @@ describe('renderProductGrid', () => {
     expect(container.querySelector('#category-carbonated-drinks')).toBeTruthy()
     expect(container.querySelector('#category-juices')).toBeTruthy()
   })
+
+  it('product card links to WhatsApp with product details', () => {
+    renderProductGrid(sampleGroups, container, 'https://test.supabase.co/storage')
+    const card = container.querySelector('a.product-card') as HTMLAnchorElement
+    expect(card).toBeTruthy()
+    expect(card.href).toContain('wa.me/2348036917058')
+    expect(card.href).toContain('Coca-Cola')
+    expect(card.target).toBe('_blank')
+  })
 })

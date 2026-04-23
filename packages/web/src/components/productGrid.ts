@@ -26,8 +26,11 @@ export function renderProductGrid(
     grid.className = 'product-cards'
 
     for (const product of group.products) {
-      const card = document.createElement('div')
+      const card = document.createElement('a')
       card.className = 'product-card'
+      card.href = buildWhatsAppUrl(product)
+      card.target = '_blank'
+      card.rel = 'noopener noreferrer'
 
       const img = document.createElement('img')
       img.className = 'product-card__image'
@@ -59,16 +62,7 @@ export function renderProductGrid(
       price.className = 'product-card__price'
       price.textContent = formatPrice(product.price_ngn)
 
-      const waLink = document.createElement('a')
-      waLink.className = 'product-card__wa'
-      waLink.href = buildWhatsAppUrl(product)
-      waLink.target = '_blank'
-      waLink.rel = 'noopener noreferrer'
-      waLink.setAttribute('aria-label', `Order ${product.name} on WhatsApp`)
-      waLink.textContent = '💬'
-
       footer.appendChild(price)
-      footer.appendChild(waLink)
       body.appendChild(name)
       body.appendChild(meta)
       body.appendChild(cartons)
