@@ -5,6 +5,7 @@ import { renderProductList } from './components/productList'
 import { renderPriceEditor } from './components/priceEditor'
 import { renderAddProductForm } from './components/addProductForm'
 import { renderEditProductForm } from './components/editProductForm'
+import { renderTagList } from './components/tagList'
 import {
   fetchAllProducts,
   fetchAllTags,
@@ -28,6 +29,9 @@ async function renderView(main: HTMLElement, hash: string): Promise<void> {
     renderAddProductForm(main, tags, () => {
       window.location.hash = '#products'
     }, createProduct, setProductTags)
+  } else if (hash === '#tags') {
+    const tags = await fetchAllTags()
+    renderTagList(main, tags)
   } else if (hash.startsWith('#edit-product-')) {
     const productId = hash.slice('#edit-product-'.length)
     const [products, tags, productTags] = await Promise.all([
