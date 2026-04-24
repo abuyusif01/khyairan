@@ -3,16 +3,31 @@ import { checkSession } from './lib/session'
 import { renderLayout } from './components/layout'
 import { renderProductList } from './components/productList'
 import { renderPriceEditor } from './components/priceEditor'
-import { fetchAllProducts, fetchCategoryTags, fetchProductTags, updateProductPrices } from './lib/supabase'
+import { renderAddProductForm } from './components/addProductForm'
+import {
+  fetchAllProducts,
+  fetchAllTags,
+  fetchCategoryTags,
+  fetchProductTags,
+  updateProductPrices,
+  createProduct,
+  setProductTags,
+} from './lib/supabase'
 
 async function renderView(main: HTMLElement, hash: string): Promise<void> {
   main.innerHTML = ''
-  const products = await fetchAllProducts()
 
   if (hash === '#prices') {
+    const products = await fetchAllProducts()
     renderPriceEditor(main, products, updateProductPrices)
+  } else if (hash === '#add-product') {
+    const tags = await fetchAllTags()
+    renderAddProductForm(main, tags, () => {
+      window.location.hash = '#products'
+    }, createProduct, setProductTags)
   } else {
-    const [tags, productTags] = await Promise.all([
+    const [products, tags, productTags] = await Promise.all([
+      fetchAllProducts(),
       fetchCategoryTags(),
       fetchProductTags(),
     ])

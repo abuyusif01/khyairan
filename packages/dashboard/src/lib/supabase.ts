@@ -46,3 +46,45 @@ export async function updateProductPrices(
     if (error) throw error
   }
 }
+
+export interface NewProduct {
+  name: string
+  size: string
+  unit_type: Product['unit_type']
+  units_per_carton: number
+  price_ngn: number
+  published: boolean
+}
+
+export async function createProduct(fields: NewProduct): Promise<{ id: string }> {
+  const { data, error } = await supabase
+    .from('products')
+    .insert(fields)
+    .select('id')
+  if (error) throw error
+  return (data as { id: string }[])[0]
+}
+
+export async function setProductTags(productId: string, tagIds: string[]): Promise<void> {
+  const { error: delError } = await supabase
+    .from('product_tags')
+    .delete()
+    .eq('product_id', productId)
+  if (delError) throw delError
+
+  if (tagIds.length === 0) return
+
+  const { error } = await supabase.from('product_tags').upsert(
+    tagIds.map((tag_id, sort_order) => ({ product_id: productId, tag_id, sort_order }))
+  )
+  if (error) throw error
+}
+
+export async function fetchAllTags(): Promise<Tag[]> {
+  const { data, error } = await supabase
+    .from('tags')
+    .select('id, name, slug, type, sort_order, published')
+    .order('sort_order', { ascending: true })
+  if (error) throw error
+  return (data ?? []) as Tag[]
+}
