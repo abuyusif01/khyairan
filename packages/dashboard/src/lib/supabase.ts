@@ -99,6 +99,14 @@ export async function updateProduct(id: string, fields: UpdateProductFields): Pr
   if (error) throw error
 }
 
+export async function toggleTagPublished(tagId: string, published: boolean): Promise<void> {
+  const { error } = await supabase
+    .from('tags')
+    .update({ published })
+    .eq('id', tagId)
+  if (error) throw error
+}
+
 export async function uploadProductImage(productId: string, file: File): Promise<string> {
   const path = `products/${productId}`
   const { error } = await supabase.storage

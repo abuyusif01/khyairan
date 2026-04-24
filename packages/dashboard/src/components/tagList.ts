@@ -1,6 +1,14 @@
 import type { Tag } from '../types'
 
-export function renderTagList(container: HTMLElement, tags: Tag[]): void {
+export interface TagListOptions {
+  toggleFn?: (tagId: string, published: boolean) => Promise<void>
+  deleteFn?: (tagId: string) => Promise<void>
+  isOwner?: boolean
+}
+
+export function renderTagList(container: HTMLElement, tags: Tag[], options: TagListOptions = {}): void {
+  const { toggleFn, deleteFn, isOwner } = options
+
   container.innerHTML = ''
 
   // Group tags by type
@@ -24,19 +32,59 @@ export function renderTagList(container: HTMLElement, tags: Tag[]): void {
 
     const table = document.createElement('table')
     table.innerHTML = `<thead><tr>
-      <th>Name</th><th>Slug</th><th>Order</th><th>Status</th>
+      <th>Name</th><th>Slug</th><th>Order</th><th>Status</th><th>Actions</th>
     </tr></thead>`
     const tbody = document.createElement('tbody')
 
     sorted.forEach(tag => {
       const tr = document.createElement('tr')
       tr.setAttribute('data-tag-id', tag.id)
+
+      const statusBadge = document.createElement('span')
+      statusBadge.setAttribute('data-status', tag.published ? 'published' : 'draft')
+      statusBadge.textContent = tag.published ? 'Published' : 'Draft'
+
+      const actionsCell = document.createElement('td')
+
+      if (toggleFn) {
+        const toggleBtn = document.createElement('button')
+        toggleBtn.setAttribute('data-action', 'toggle-published')
+        toggleBtn.textContent = tag.published ? 'Unpublish' : 'Publish'
+        toggleBtn.addEventListener('click', () => {
+          const newPublished = !tag.published
+          void toggleFn(tag.id, newPublished).then(() => {
+            tag.published = newPublished
+            statusBadge.setAttribute('data-status', newPublished ? 'published' : 'draft')
+            statusBadge.textContent = newPublished ? 'Published' : 'Draft'
+            toggleBtn.textContent = newPublished ? 'Unpublish' : 'Publish'
+          })
+        })
+        actionsCell.appendChild(toggleBtn)
+      }
+
+      if (deleteFn && isOwner) {
+        const deleteBtn = document.createElement('button')
+        deleteBtn.setAttribute('data-action', 'delete-tag')
+        deleteBtn.textContent = 'Delete'
+        deleteBtn.addEventListener('click', () => {
+          if (confirm(`Delete tag "${tag.name}"?`)) {
+            void deleteFn(tag.id).then(() => tr.remove())
+          }
+        })
+        actionsCell.appendChild(deleteBtn)
+      }
+
+      const statusCell = document.createElement('td')
+      statusCell.appendChild(statusBadge)
+
       tr.innerHTML = `
         <td>${tag.name}</td>
         <td>${tag.slug}</td>
         <td>${tag.sort_order}</td>
-        <td><span data-status="${tag.published ? 'published' : 'draft'}">${tag.published ? 'Published' : 'Draft'}</span></td>
       `
+      tr.appendChild(statusCell)
+      tr.appendChild(actionsCell)
+
       tbody.appendChild(tr)
     })
 
