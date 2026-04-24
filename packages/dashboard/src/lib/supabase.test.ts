@@ -41,3 +41,27 @@ describe('fetchAllProducts', () => {
     expect(selectCall).toContain('id')
   })
 })
+
+describe('updateProductPrices', () => {
+  it('sends batch updates for each changed product', async () => {
+    vi.resetModules()
+    const { createClient } = await import('@supabase/supabase-js')
+    const eqSpy = vi.fn().mockResolvedValue({ error: null })
+    const updateSpy = vi.fn().mockReturnValue({ eq: eqSpy })
+    ;(createClient as unknown as MockInstance).mockReturnValue({
+      from: vi.fn().mockReturnValue({ update: updateSpy }),
+    })
+
+    const { updateProductPrices } = await import('./supabase')
+    await updateProductPrices([
+      { id: 'p1', price_ngn: 5000 },
+      { id: 'p2', price_ngn: 4500 },
+    ])
+
+    expect(updateSpy).toHaveBeenCalledTimes(2)
+    expect(updateSpy).toHaveBeenCalledWith({ price_ngn: 5000 })
+    expect(updateSpy).toHaveBeenCalledWith({ price_ngn: 4500 })
+    expect(eqSpy).toHaveBeenCalledWith('id', 'p1')
+    expect(eqSpy).toHaveBeenCalledWith('id', 'p2')
+  })
+})
