@@ -1,11 +1,11 @@
 ---
 # khaiyran-rst2
 title: Image upload from phone/camera
-status: in-progress
+status: completed
 type: feature
 priority: normal
 created_at: 2026-04-24T01:06:23Z
-updated_at: 2026-04-24T12:06:20Z
+updated_at: 2026-04-24T12:08:15Z
 parent: khaiyran-niiz
 blocked_by:
     - khaiyran-47w9
@@ -54,3 +54,18 @@ File input accepting image/* (camera, gallery). Upload to Supabase Storage produ
   - [x] Tests section complete with 6 specific tests
   - [x] Path convention: products/{productId} in product-images bucket
   - [x] Edge Function triggered automatically via Supabase webhook — no client code needed for conversion
+
+## Agent Post-Completion Review
+
+- Agent: Claude Sonnet 4.6 (self-review)
+- Date: 2026-04-24
+- Verdict: PASS
+- Findings: none
+- All findings fixed: YES
+
+## Summary of Changes
+
+- Added uploadProductImage(productId, file) to packages/dashboard/src/lib/supabase.ts — uploads to product-images bucket at products/{productId}, upserts
+- Created packages/dashboard/src/components/imageUpload.ts — file input with accept=image/* capture=environment, shows Uploading/success/error status, calls updateProduct to set image_path
+- Updated packages/dashboard/src/components/editProductForm.ts — embeds imageUpload when uploadFn provided; after upload, re-enables published toggle
+- Updated packages/dashboard/src/dashboard.ts — passes uploadProductImage to editProductForm
