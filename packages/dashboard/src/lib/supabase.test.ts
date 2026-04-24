@@ -153,3 +153,24 @@ describe('updateProduct', () => {
     expect(eqSpy).toHaveBeenCalledWith('id', 'p1')
   })
 })
+
+describe('uploadProductImage', () => {
+  it('uploads to product-images bucket and returns path', async () => {
+    vi.resetModules()
+    const { createClient } = await import('@supabase/supabase-js')
+    const uploadSpy = vi.fn().mockResolvedValue({ data: { path: 'products/p1' }, error: null })
+    ;(createClient as unknown as MockInstance).mockReturnValue({
+      from: vi.fn(),
+      storage: {
+        from: vi.fn().mockReturnValue({ upload: uploadSpy }),
+      },
+    })
+
+    const { uploadProductImage } = await import('./supabase')
+    const file = new File(['data'], 'photo.jpg', { type: 'image/jpeg' })
+    const path = await uploadProductImage('p1', file)
+
+    expect(uploadSpy).toHaveBeenCalledWith('products/p1', file, { upsert: true })
+    expect(path).toBe('products/p1')
+  })
+})
