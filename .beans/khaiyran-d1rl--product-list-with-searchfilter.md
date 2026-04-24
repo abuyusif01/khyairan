@@ -1,11 +1,11 @@
 ---
 # khaiyran-d1rl
 title: Product list with search/filter
-status: in-progress
+status: completed
 type: feature
 priority: normal
 created_at: 2026-04-24T01:05:59Z
-updated_at: 2026-04-24T11:48:55Z
+updated_at: 2026-04-24T11:51:35Z
 parent: khaiyran-md1g
 blocked_by:
     - khaiyran-k5q4
@@ -40,3 +40,21 @@ Table/list of all products showing name, size, unit type, price, published statu
 - `packages/dashboard/src/components/productList.test.ts` — `search filters rows by name` — sets search text, asserts only matching rows visible
 - `packages/dashboard/src/components/productList.test.ts` — `filter by tag hides non-matching products` — sets tagId filter, asserts only tagged products shown
 - `packages/dashboard/src/lib/supabase.test.ts` — `fetchAllProducts returns all products regardless of published` — asserts no .eq('published', ...) filter applied
+
+## Summary of Changes
+
+- Created packages/dashboard/src/types.ts — Product, Tag, ProductTag types (mirrors web package)
+- Updated packages/dashboard/src/lib/supabase.ts — added fetchAllProducts(), fetchCategoryTags(), fetchProductTags() for authenticated dashboard access (no published filter on products)
+- Created packages/dashboard/src/components/productList.ts — renderProductList(container, products, tags, productTags) renders table with search and tag filter
+  - Search input filters by product name (case-insensitive)
+  - Tag filter select shows category tags; 'All categories' option shows all
+  - Published/Draft status badges on each row
+- Updated packages/dashboard/src/dashboard.ts — loads product data and renders productList in the main content area
+
+## Agent Post-Completion Review
+
+- Agent: Claude Sonnet 4.6 (self-review)
+- Date: 2026-04-24
+- Verdict: PASS
+- Findings: none
+- All findings fixed: YES
