@@ -1,8 +1,10 @@
 import type { Product, Tag } from '../types'
 import type { UpdateProductFields } from '../lib/supabase'
+import { renderImageUpload } from './imageUpload'
 
 type UpdateFn = (id: string, fields: UpdateProductFields) => Promise<void>
 type SetProductTagsFn = (productId: string, tagIds: string[]) => Promise<void>
+type UploadFn = (productId: string, file: File) => Promise<string>
 
 const UNIT_TYPES = ['bottle', 'can', 'pack', 'cup', 'pouch'] as const
 
@@ -13,7 +15,8 @@ export function renderEditProductForm(
   currentTagIds: string[],
   onSuccess: () => void,
   updateFn: UpdateFn,
-  setProductTagsFn: SetProductTagsFn
+  setProductTagsFn: SetProductTagsFn,
+  uploadFn?: UploadFn
 ): void {
   container.innerHTML = ''
 
@@ -101,8 +104,20 @@ export function renderEditProductForm(
   publishedLabel.appendChild(publishedToggle)
   form.appendChild(publishedLabel)
 
-  // Image preview
-  if (product.image_path) {
+  // Image upload
+  if (uploadFn) {
+    const imageSection = document.createElement('div')
+    if (product.image_path) {
+      const imgNote = document.createElement('p')
+      imgNote.textContent = `Current image: ${product.image_path}`
+      imageSection.appendChild(imgNote)
+    }
+    renderImageUpload(imageSection, product.id, () => {
+      // Re-enable published toggle if it was disabled (image now uploaded)
+      publishedToggle.disabled = false
+    }, uploadFn, updateFn)
+    form.appendChild(imageSection)
+  } else if (product.image_path) {
     const imgNote = document.createElement('p')
     imgNote.textContent = `Image: ${product.image_path}`
     form.appendChild(imgNote)

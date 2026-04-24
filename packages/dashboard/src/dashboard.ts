@@ -14,6 +14,7 @@ import {
   createProduct,
   setProductTags,
   updateProduct,
+  uploadProductImage,
 } from './lib/supabase'
 
 async function renderView(main: HTMLElement, hash: string): Promise<void> {
@@ -44,7 +45,7 @@ async function renderView(main: HTMLElement, hash: string): Promise<void> {
       .map(pt => pt.tag_id)
     renderEditProductForm(main, product, tags, currentTagIds, () => {
       window.location.hash = '#products'
-    }, updateProduct, setProductTags)
+    }, updateProduct, setProductTags, uploadProductImage)
   } else {
     const [products, tags, productTags] = await Promise.all([
       fetchAllProducts(),

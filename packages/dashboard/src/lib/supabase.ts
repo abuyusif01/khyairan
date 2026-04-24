@@ -89,7 +89,7 @@ export async function fetchAllTags(): Promise<Tag[]> {
   return (data ?? []) as Tag[]
 }
 
-export type UpdateProductFields = Partial<Omit<Product, 'id' | 'image_path'>>
+export type UpdateProductFields = Partial<Omit<Product, 'id' | 'image_path'>> & { image_path?: string | null }
 
 export async function updateProduct(id: string, fields: UpdateProductFields): Promise<void> {
   const { error } = await supabase
@@ -97,4 +97,13 @@ export async function updateProduct(id: string, fields: UpdateProductFields): Pr
     .update(fields)
     .eq('id', id)
   if (error) throw error
+}
+
+export async function uploadProductImage(productId: string, file: File): Promise<string> {
+  const path = `products/${productId}`
+  const { error } = await supabase.storage
+    .from('product-images')
+    .upload(path, file, { upsert: true })
+  if (error) throw error
+  return path
 }
