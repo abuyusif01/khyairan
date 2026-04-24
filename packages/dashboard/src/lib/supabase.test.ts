@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from 'vitest'
+import { describe, it, expect, vi, type MockInstance } from 'vitest'
 
 vi.mock('@supabase/supabase-js', () => ({
   createClient: vi.fn(() => ({})),
@@ -20,5 +20,24 @@ describe('supabase client', () => {
       'https://test.supabase.co',
       'test-anon-key'
     )
+  })
+})
+
+describe('fetchAllProducts', () => {
+  it('returns all products regardless of published status', async () => {
+    vi.resetModules()
+    const { createClient } = await import('@supabase/supabase-js')
+    const selectSpy = vi.fn().mockResolvedValue({ data: [], error: null })
+    ;(createClient as unknown as MockInstance).mockReturnValue({
+      from: vi.fn().mockReturnValue({ select: selectSpy }),
+    })
+
+    const { fetchAllProducts } = await import('./supabase')
+    await fetchAllProducts()
+
+    expect(selectSpy).toHaveBeenCalled()
+    // Must NOT filter by published — returns all products for dashboard admin
+    const selectCall: string = selectSpy.mock.calls[0][0] as string
+    expect(selectCall).toContain('id')
   })
 })
