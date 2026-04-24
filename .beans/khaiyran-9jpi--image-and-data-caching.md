@@ -1,11 +1,11 @@
 ---
 # khaiyran-9jpi
 title: Image and data caching
-status: todo
+status: completed
 type: task
 priority: high
 created_at: 2026-04-24T00:09:26Z
-updated_at: 2026-04-24T00:09:37Z
+updated_at: 2026-04-24T00:18:57Z
 ---
 
 # Image and data caching
@@ -38,3 +38,11 @@ Two caching fixes:
 - `packages/web/src/lib/supabase.test.ts` — `loadCatalog fetches and caches on first call` — asserts Supabase fns called once and result written to sessionStorage
 - `packages/web/src/lib/supabase.test.ts` — `loadCatalog returns cached data on second call` — calls twice, asserts Supabase fns called only once total
 - `packages/web/src/lib/supabase.test.ts` — `loadCatalog falls back to fetch if sessionStorage throws` — stubs sessionStorage.getItem to throw, asserts still returns data
+
+## Summary of Changes
+
+- loadCatalog() added to supabase.ts — fetches products/tags/product_tags in parallel, stores result in sessionStorage. On subsequent calls within the same tab, reads from sessionStorage without hitting Supabase.
+- main.ts updated to use loadCatalog() instead of three separate fetches.
+- app.test.ts mock updated to match new API.
+- Migration 00005 adds max-age=31536000 to existing storage.objects metadata (applied to remote).
+- Note: Supabase Storage HTTP layer does not honour the metadata cacheControl for serving headers — images still return no-cache from the origin. This is a Supabase platform limitation. Images are still browser-cached via ETag/304 revalidation.
