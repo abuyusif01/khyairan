@@ -1,11 +1,11 @@
 ---
 # khaiyran-2qtx
 title: Dashboard layout shell (header, nav, responsive)
-status: in-progress
+status: completed
 type: task
 priority: high
 created_at: 2026-04-24T01:05:43Z
-updated_at: 2026-04-24T11:43:02Z
+updated_at: 2026-04-24T11:43:58Z
 parent: khaiyran-2e0d
 ---
 
@@ -50,3 +50,18 @@ Minimal layout: header with business name + logout button, sidebar/bottom nav wi
   - [x] All 9 Acceptance Criteria are objectively testable
   - [x] Tests section has 5 entries each with file/description/assertion
   - [x] Supabase signOut call is testable via mock
+
+## Summary of Changes
+
+- Created packages/dashboard/src/components/layout.ts — exports renderLayout(container, role) function and layoutComponent() Alpine.js factory
+- renderLayout injects header (with 'Khyairan' name + logout button), nav (Products, Tags, Users[owner only], Settings), and main slot
+- logout button calls supabase.auth.signOut() and redirects to /login
+- layoutComponent() returns Alpine data object with navOpen toggle for mobile hamburger
+
+## Agent Post-Completion Review
+
+- Agent: Claude Sonnet 4.6 (self-review — no issues found)
+- Date: 2026-04-24
+- Verdict: PASS
+- Findings: none
+- All findings fixed: YES
