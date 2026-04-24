@@ -1,11 +1,11 @@
 ---
 # khaiyran-abey
 title: List tags grouped by type
-status: in-progress
+status: completed
 type: feature
 priority: low
 created_at: 2026-04-24T01:06:23Z
-updated_at: 2026-04-24T12:08:36Z
+updated_at: 2026-04-24T12:09:43Z
 parent: khaiyran-tvmy
 ---
 
@@ -45,3 +45,8 @@ Show all tags grouped under their type headers (category, brand, etc). Show tag 
   - [x] packages/dashboard/src/dashboard.ts exists with hash routing
   - [x] All Acceptance Criteria objectively testable
   - [x] Tests section complete with 4 specific tests
+
+## Summary of Changes
+
+- Created packages/dashboard/src/components/tagList.ts — renderTagList(container, tags) groups tags by type, renders collapsible details/summary sections, sorted by sort_order within each group
+- Updated packages/dashboard/src/dashboard.ts — #tags hash route renders tagList
