@@ -65,3 +65,73 @@ describe('updateProductPrices', () => {
     expect(eqSpy).toHaveBeenCalledWith('id', 'p2')
   })
 })
+
+describe('createProduct', () => {
+  it('inserts product and returns id', async () => {
+    vi.resetModules()
+    const { createClient } = await import('@supabase/supabase-js')
+    const selectSpy = vi.fn().mockResolvedValue({ data: [{ id: 'new-p1' }], error: null })
+    const insertSpy = vi.fn().mockReturnValue({ select: selectSpy })
+    ;(createClient as unknown as MockInstance).mockReturnValue({
+      from: vi.fn().mockReturnValue({ insert: insertSpy }),
+    })
+
+    const { createProduct } = await import('./supabase')
+    const result = await createProduct({
+      name: 'Coca-Cola',
+      size: '35CL',
+      unit_type: 'bottle',
+      units_per_carton: 24,
+      price_ngn: 4500,
+      published: false,
+    })
+
+    expect(insertSpy).toHaveBeenCalledWith({
+      name: 'Coca-Cola',
+      size: '35CL',
+      unit_type: 'bottle',
+      units_per_carton: 24,
+      price_ngn: 4500,
+      published: false,
+    })
+    expect(result.id).toBe('new-p1')
+  })
+})
+
+describe('setProductTags', () => {
+  it('upserts product_tag rows', async () => {
+    vi.resetModules()
+    const { createClient } = await import('@supabase/supabase-js')
+    const upsertSpy = vi.fn().mockResolvedValue({ error: null })
+    const deleteSpy = vi.fn().mockReturnValue({ eq: vi.fn().mockResolvedValue({ error: null }) })
+    ;(createClient as unknown as MockInstance).mockReturnValue({
+      from: vi.fn().mockReturnValue({ upsert: upsertSpy, delete: deleteSpy }),
+    })
+
+    const { setProductTags } = await import('./supabase')
+    await setProductTags('new-p1', ['tag1', 'tag2'])
+
+    expect(upsertSpy).toHaveBeenCalledWith([
+      { product_id: 'new-p1', tag_id: 'tag1', sort_order: 0 },
+      { product_id: 'new-p1', tag_id: 'tag2', sort_order: 1 },
+    ])
+  })
+})
+
+describe('fetchAllTags', () => {
+  it('returns all tags without type filter', async () => {
+    vi.resetModules()
+    const { createClient } = await import('@supabase/supabase-js')
+    const orderSpy = vi.fn().mockResolvedValue({ data: [], error: null })
+    const selectSpy = vi.fn().mockReturnValue({ order: orderSpy })
+    ;(createClient as unknown as MockInstance).mockReturnValue({
+      from: vi.fn().mockReturnValue({ select: selectSpy }),
+    })
+
+    const { fetchAllTags } = await import('./supabase')
+    await fetchAllTags()
+
+    expect(selectSpy).toHaveBeenCalled()
+    // Must NOT filter by type — returns all tags for product assignment
+  })
+})
