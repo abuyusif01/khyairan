@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from 'vitest'
+import { describe, it, expect, vi, beforeEach } from 'vitest'
 import type { Tag } from '../types'
 
 const tags: Tag[] = [
@@ -61,5 +61,31 @@ describe('renderTagList', () => {
     const rows = categoryGroup!.querySelectorAll('[data-tag-id]')
     expect(rows[0]?.getAttribute('data-tag-id')).toBe('tag2') // Juices sort_order=1
     expect(rows[1]?.getAttribute('data-tag-id')).toBe('tag1') // Carbonated sort_order=2
+  })
+
+  it('renders toggle button for each tag', async () => {
+    const { renderTagList } = await import('./tagList')
+    const toggleFn = vi.fn().mockResolvedValue(undefined)
+    renderTagList(container, tags, { toggleFn })
+
+    const buttons = container.querySelectorAll('[data-action="toggle-published"]')
+    expect(buttons.length).toBe(3)
+  })
+
+  it('toggle button calls toggleFn and updates status', async () => {
+    const { renderTagList } = await import('./tagList')
+    const toggleFn = vi.fn().mockResolvedValue(undefined)
+    renderTagList(container, tags, { toggleFn })
+
+    // tag1 is published — toggle should unpublish
+    const tag1Row = container.querySelector('[data-tag-id="tag1"]')
+    const toggleBtn = tag1Row?.querySelector<HTMLButtonElement>('[data-action="toggle-published"]')
+    expect(toggleBtn).toBeTruthy()
+    toggleBtn!.click()
+
+    await vi.waitFor(() => expect(toggleFn).toHaveBeenCalledWith('tag1', false))
+    // Status badge should update to draft
+    const badge = tag1Row?.querySelector('[data-status]')
+    expect(badge?.getAttribute('data-status')).toBe('draft')
   })
 })

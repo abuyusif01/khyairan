@@ -154,6 +154,24 @@ describe('updateProduct', () => {
   })
 })
 
+describe('toggleTagPublished', () => {
+  it('updates published field for given tag id', async () => {
+    vi.resetModules()
+    const { createClient } = await import('@supabase/supabase-js')
+    const eqSpy = vi.fn().mockResolvedValue({ error: null })
+    const updateSpy = vi.fn().mockReturnValue({ eq: eqSpy })
+    ;(createClient as unknown as MockInstance).mockReturnValue({
+      from: vi.fn().mockReturnValue({ update: updateSpy }),
+    })
+
+    const { toggleTagPublished } = await import('./supabase')
+    await toggleTagPublished('tag1', false)
+
+    expect(updateSpy).toHaveBeenCalledWith({ published: false })
+    expect(eqSpy).toHaveBeenCalledWith('id', 'tag1')
+  })
+})
+
 describe('uploadProductImage', () => {
   it('uploads to product-images bucket and returns path', async () => {
     vi.resetModules()
