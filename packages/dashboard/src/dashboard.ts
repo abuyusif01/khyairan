@@ -4,6 +4,7 @@ import { renderLayout } from './components/layout'
 import { renderProductList } from './components/productList'
 import { renderPriceEditor } from './components/priceEditor'
 import { renderAddProductForm } from './components/addProductForm'
+import { renderEditProductForm } from './components/editProductForm'
 import {
   fetchAllProducts,
   fetchAllTags,
@@ -12,6 +13,7 @@ import {
   updateProductPrices,
   createProduct,
   setProductTags,
+  updateProduct,
 } from './lib/supabase'
 
 async function renderView(main: HTMLElement, hash: string): Promise<void> {
@@ -25,6 +27,24 @@ async function renderView(main: HTMLElement, hash: string): Promise<void> {
     renderAddProductForm(main, tags, () => {
       window.location.hash = '#products'
     }, createProduct, setProductTags)
+  } else if (hash.startsWith('#edit-product-')) {
+    const productId = hash.slice('#edit-product-'.length)
+    const [products, tags, productTags] = await Promise.all([
+      fetchAllProducts(),
+      fetchAllTags(),
+      fetchProductTags(),
+    ])
+    const product = products.find(p => p.id === productId)
+    if (!product) {
+      main.textContent = 'Product not found'
+      return
+    }
+    const currentTagIds = productTags
+      .filter(pt => pt.product_id === productId)
+      .map(pt => pt.tag_id)
+    renderEditProductForm(main, product, tags, currentTagIds, () => {
+      window.location.hash = '#products'
+    }, updateProduct, setProductTags)
   } else {
     const [products, tags, productTags] = await Promise.all([
       fetchAllProducts(),
