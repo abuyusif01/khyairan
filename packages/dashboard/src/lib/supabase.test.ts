@@ -135,3 +135,21 @@ describe('fetchAllTags', () => {
     // Must NOT filter by type — returns all tags for product assignment
   })
 })
+
+describe('updateProduct', () => {
+  it('sends update for given fields with id filter', async () => {
+    vi.resetModules()
+    const { createClient } = await import('@supabase/supabase-js')
+    const eqSpy = vi.fn().mockResolvedValue({ error: null })
+    const updateSpy = vi.fn().mockReturnValue({ eq: eqSpy })
+    ;(createClient as unknown as MockInstance).mockReturnValue({
+      from: vi.fn().mockReturnValue({ update: updateSpy }),
+    })
+
+    const { updateProduct } = await import('./supabase')
+    await updateProduct('p1', { name: 'New Name', price_ngn: 5000 })
+
+    expect(updateSpy).toHaveBeenCalledWith({ name: 'New Name', price_ngn: 5000 })
+    expect(eqSpy).toHaveBeenCalledWith('id', 'p1')
+  })
+})
