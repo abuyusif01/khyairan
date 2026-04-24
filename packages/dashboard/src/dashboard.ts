@@ -2,7 +2,23 @@ import Alpine from 'alpinejs'
 import { checkSession } from './lib/session'
 import { renderLayout } from './components/layout'
 import { renderProductList } from './components/productList'
-import { fetchAllProducts, fetchCategoryTags, fetchProductTags } from './lib/supabase'
+import { renderPriceEditor } from './components/priceEditor'
+import { fetchAllProducts, fetchCategoryTags, fetchProductTags, updateProductPrices } from './lib/supabase'
+
+async function renderView(main: HTMLElement, hash: string): Promise<void> {
+  main.innerHTML = ''
+  const products = await fetchAllProducts()
+
+  if (hash === '#prices') {
+    renderPriceEditor(main, products, updateProductPrices)
+  } else {
+    const [tags, productTags] = await Promise.all([
+      fetchCategoryTags(),
+      fetchProductTags(),
+    ])
+    renderProductList(main, products, tags, productTags)
+  }
+}
 
 async function init(): Promise<void> {
   const role = await checkSession()
@@ -15,12 +31,11 @@ async function init(): Promise<void> {
 
   const main = app.querySelector('main')
   if (main) {
-    const [products, tags, productTags] = await Promise.all([
-      fetchAllProducts(),
-      fetchCategoryTags(),
-      fetchProductTags(),
-    ])
-    renderProductList(main, products, tags, productTags)
+    await renderView(main, window.location.hash)
+
+    window.addEventListener('hashchange', () => {
+      void renderView(main, window.location.hash)
+    })
   }
 
   Alpine.start()

@@ -34,3 +34,15 @@ export async function fetchProductTags(): Promise<ProductTag[]> {
   if (error) throw error
   return (data ?? []) as ProductTag[]
 }
+
+export async function updateProductPrices(
+  updates: { id: string; price_ngn: number }[]
+): Promise<void> {
+  for (const { id, price_ngn } of updates) {
+    const { error } = await supabase
+      .from('products')
+      .update({ price_ngn })
+      .eq('id', id)
+    if (error) throw error
+  }
+}
