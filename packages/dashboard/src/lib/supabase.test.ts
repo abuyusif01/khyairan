@@ -154,6 +154,48 @@ describe('updateProduct', () => {
   })
 })
 
+describe('createTag', () => {
+  it('inserts tag and returns id', async () => {
+    vi.resetModules()
+    const { createClient } = await import('@supabase/supabase-js')
+    const selectSpy = vi.fn().mockResolvedValue({ data: [{ id: 'new-tag1' }], error: null })
+    const insertSpy = vi.fn().mockReturnValue({ select: selectSpy })
+    ;(createClient as unknown as MockInstance).mockReturnValue({
+      from: vi.fn().mockReturnValue({ insert: insertSpy }),
+    })
+
+    const { createTag } = await import('./supabase')
+    const result = await createTag({
+      name: 'Carbonated',
+      slug: 'carbonated',
+      type: 'category',
+      sort_order: 1,
+      published: false,
+    })
+
+    expect(insertSpy).toHaveBeenCalled()
+    expect(result.id).toBe('new-tag1')
+  })
+})
+
+describe('updateTag', () => {
+  it('sends update for tag with id filter', async () => {
+    vi.resetModules()
+    const { createClient } = await import('@supabase/supabase-js')
+    const eqSpy = vi.fn().mockResolvedValue({ error: null })
+    const updateSpy = vi.fn().mockReturnValue({ eq: eqSpy })
+    ;(createClient as unknown as MockInstance).mockReturnValue({
+      from: vi.fn().mockReturnValue({ update: updateSpy }),
+    })
+
+    const { updateTag } = await import('./supabase')
+    await updateTag('tag1', { name: 'New Name' })
+
+    expect(updateSpy).toHaveBeenCalledWith({ name: 'New Name' })
+    expect(eqSpy).toHaveBeenCalledWith('id', 'tag1')
+  })
+})
+
 describe('toggleTagPublished', () => {
   it('updates published field for given tag id', async () => {
     vi.resetModules()
