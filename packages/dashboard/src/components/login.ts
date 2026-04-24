@@ -26,7 +26,7 @@ export function loginComponent(): LoginComponent {
         this.error = error.message
         return
       }
-      window.location.href = '/'
+      window.location.href = '/dashboard.html'
     },
   }
 }
