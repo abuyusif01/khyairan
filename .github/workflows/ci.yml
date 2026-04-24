@@ -29,8 +29,14 @@ jobs:
 
       - run: npm run test -w packages/web
 
+      - run: npm run typecheck -w packages/dashboard
+
+      - run: npm run lint -w packages/dashboard
+
+      - run: npm run test -w packages/dashboard
+
   deploy:
-    name: Deploy to Cloudflare Pages
+    name: Deploy web to Cloudflare Pages
     needs: ci
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     runs-on: ubuntu-latest
@@ -57,4 +63,34 @@ jobs:
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           projectName: khaiyran
           directory: packages/web/dist
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
+
+  deploy-dashboard:
+    name: Deploy dashboard to Cloudflare Pages
+    needs: ci
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    permissions:
+      deployments: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - run: npm ci
+
+      - run: npm run build -w packages/dashboard
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_PUBLISHABLE_KEY: ${{ secrets.SUPABASE_PUBLISHABLE_KEY }}
+
+      - uses: cloudflare/pages-action@v1
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          projectName: khaiyran-admin
+          directory: packages/dashboard/dist
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
