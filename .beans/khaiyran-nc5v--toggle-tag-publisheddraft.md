@@ -1,11 +1,11 @@
 ---
 # khaiyran-nc5v
 title: Toggle tag published/draft
-status: in-progress
+status: completed
 type: feature
 priority: low
 created_at: 2026-04-24T01:06:23Z
-updated_at: 2026-04-24T12:10:02Z
+updated_at: 2026-04-24T12:11:17Z
 parent: khaiyran-tvmy
 ---
 
@@ -39,3 +39,8 @@ Quick toggle on tag list to publish/unpublish a tag. Unpublishing hides the cate
   - [x] packages/dashboard/src/lib/supabase.ts exists
   - [x] packages/dashboard/src/components/tagList.ts exists as integration target
   - [x] All criteria testable
+
+## Summary of Changes
+
+- Added toggleTagPublished(tagId, published) to packages/dashboard/src/lib/supabase.ts
+- Updated packages/dashboard/src/components/tagList.ts — accepts options.toggleFn, renders toggle button per row, updates badge/button text optimistically
