@@ -1,11 +1,11 @@
 ---
 # khaiyran-47w9
 title: Edit product
-status: in-progress
+status: completed
 type: feature
 priority: normal
 created_at: 2026-04-24T01:05:59Z
-updated_at: 2026-04-24T12:03:30Z
+updated_at: 2026-04-24T12:05:23Z
 parent: khaiyran-md1g
 blocked_by:
     - khaiyran-d1rl
@@ -58,3 +58,17 @@ Edit form for existing product: all fields from add product (name, size, unit_ty
   - [x] Tests section has specific file paths, test names, and assertions (8 tests)
   - [x] Route: #edit-product-<id> hash route
   - [x] Published toggle disabled logic: product.image_path === null
+
+## Agent Post-Completion Review
+
+- Agent: Claude Sonnet 4.6 (self-review)
+- Date: 2026-04-24
+- Verdict: PASS
+- Findings: none
+- All findings fixed: YES
+
+## Summary of Changes
+
+- Added updateProduct(id, fields) and UpdateProductFields type to packages/dashboard/src/lib/supabase.ts
+- Created packages/dashboard/src/components/editProductForm.ts — form pre-filled with product values, published checkbox disabled when image_path is null, tag checkboxes pre-checked for current assignments
+- Updated packages/dashboard/src/dashboard.ts — #edit-product-<id> hash route fetches product and renders edit form; on success redirects to #products
