@@ -1,11 +1,11 @@
 ---
 # khaiyran-8wdy
 title: Login page + Supabase auth
-status: in-progress
+status: completed
 type: task
 priority: high
 created_at: 2026-04-24T01:05:43Z
-updated_at: 2026-04-24T11:36:52Z
+updated_at: 2026-04-24T11:41:38Z
 parent: khaiyran-2e0d
 ---
 
@@ -52,3 +52,20 @@ Email+password login form using Supabase Auth. No signup — owner creates accou
   - [x] All Acceptance Criteria are objectively testable
   - [x] Tests section has 4 entries, each with file/description/assertion
   - [x] New file directories can be created without conflict
+
+## Summary of Changes
+
+- Created packages/dashboard/src/lib/supabase.ts — Supabase client using VITE_SUPABASE_URL and VITE_SUPABASE_PUBLISHABLE_KEY
+- Created packages/dashboard/src/components/login.ts — Alpine.js loginComponent() factory with email/password fields, signInWithPassword call, error display, success redirect
+- Updated packages/dashboard/index.html — login form with Alpine x-data binding, email/password inputs, error paragraph
+- Updated packages/dashboard/src/main.ts — registers loginComponent with Alpine.data('login', ...)
+- Updated packages/dashboard/src/env.d.ts — added ImportMetaEnv type declarations for Vite env vars
+- Updated packages/dashboard/src/app.test.ts — added supabase mock so existing test still passes
+
+## Agent Post-Completion Review
+
+- Agent: Claude Sonnet 4.6
+- Date: 2026-04-24
+- Verdict: PASS
+- Findings: none
+- All findings fixed: YES
