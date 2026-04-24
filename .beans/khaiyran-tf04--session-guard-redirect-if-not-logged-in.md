@@ -1,11 +1,11 @@
 ---
 # khaiyran-tf04
 title: Session guard — redirect if not logged in
-status: in-progress
+status: completed
 type: task
 priority: high
 created_at: 2026-04-24T01:05:43Z
-updated_at: 2026-04-24T11:46:20Z
+updated_at: 2026-04-24T11:47:37Z
 parent: khaiyran-2e0d
 blocked_by:
     - khaiyran-8wdy
@@ -39,3 +39,19 @@ Architecture: Two-page setup. index.html = login form (already built). A new das
 
 - `packages/dashboard/src/lib/session.test.ts` — `checkSession redirects to / when no session` — mocks getSession returning null session, asserts window.location.href set to /
 - `packages/dashboard/src/lib/session.test.ts` — `checkSession fetches profile and returns role when session exists` — mocks getSession returning user id, mocks profiles query returning {role: 'owner'}, asserts role returned
+
+## Summary of Changes
+
+- Created packages/dashboard/src/lib/session.ts — checkSession() checks auth session, redirects to / if none, queries profiles table for role and returns it
+- Created packages/dashboard/dashboard.html — protected dashboard page that loads /src/dashboard.ts
+- Created packages/dashboard/src/dashboard.ts — calls checkSession() then renders the layout shell with user's role
+- Updated packages/dashboard/src/components/login.ts — success redirect now points to /dashboard.html
+- Updated packages/dashboard/vite.config.ts — multi-page Rollup input (index.html + dashboard.html)
+
+## Agent Post-Completion Review
+
+- Agent: Claude Sonnet 4.6 (self-review)
+- Date: 2026-04-24
+- Verdict: PASS
+- Findings: none
+- All findings fixed: YES
