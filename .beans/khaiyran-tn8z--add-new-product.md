@@ -1,11 +1,11 @@
 ---
 # khaiyran-tn8z
 title: Add new product
-status: in-progress
+status: completed
 type: feature
 priority: normal
 created_at: 2026-04-24T01:05:59Z
-updated_at: 2026-04-24T11:59:50Z
+updated_at: 2026-04-24T12:02:54Z
 parent: khaiyran-md1g
 blocked_by:
     - khaiyran-d1rl
@@ -56,3 +56,17 @@ Form: name (text), size (text), unit_type (dropdown: bottle/can/pack/cup/pouch),
   - [x] Tests section has specific file paths, test names, and assertions (8 tests)
   - [x] fetchAllTags() returns all tags (no type filter) for full tag assignment
   - [x] Routing: #add-product hash route, consistent with existing #prices pattern
+
+## Agent Post-Completion Review
+
+- Agent: Claude Sonnet 4.6 (subagent)
+- Date: 2026-04-24
+- Verdict: PASS
+- Findings: none
+- All findings fixed: YES
+
+## Summary of Changes
+
+- Added createProduct(), setProductTags(), fetchAllTags() to packages/dashboard/src/lib/supabase.ts
+- Created packages/dashboard/src/components/addProductForm.ts — form with name/size/unit_type/units_per_carton/price_ngn fields, tag checkboxes, published=false on create, error/success feedback
+- Updated packages/dashboard/src/dashboard.ts — #add-product hash route renders addProductForm; on success redirects to #products
