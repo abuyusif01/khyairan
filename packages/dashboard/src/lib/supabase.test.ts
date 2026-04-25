@@ -235,6 +235,26 @@ describe('uploadProductImage', () => {
   })
 })
 
+describe('getProductImageUrl', () => {
+  it('returns public URL for path', async () => {
+    vi.resetModules()
+    const { createClient } = await import('@supabase/supabase-js')
+    const getPublicUrlSpy = vi.fn().mockReturnValue({ data: { publicUrl: 'https://example.com/products/p1' } })
+    ;(createClient as unknown as MockInstance).mockReturnValue({
+      from: vi.fn(),
+      storage: {
+        from: vi.fn().mockReturnValue({ getPublicUrl: getPublicUrlSpy }),
+      },
+    })
+
+    const { getProductImageUrl } = await import('./supabase')
+    const url = getProductImageUrl('products/p1')
+
+    expect(getPublicUrlSpy).toHaveBeenCalledWith('products/p1')
+    expect(url).toBe('https://example.com/products/p1')
+  })
+})
+
 describe('deleteTag', () => {
   it('calls delete with tag id', async () => {
     vi.resetModules()

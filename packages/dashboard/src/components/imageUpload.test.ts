@@ -72,6 +72,22 @@ describe('renderImageUpload', () => {
     await vi.waitFor(() => expect(onUploaded).toHaveBeenCalledWith(STORAGE_PATH))
   })
 
+  it('shows img preview after upload', async () => {
+    const { renderImageUpload } = await import('./imageUpload')
+    renderImageUpload(container, PRODUCT_ID, onUploaded, uploadFn, updateFn)
+
+    const input = container.querySelector<HTMLInputElement>('input[type="file"]')!
+    const file = new File(['data'], 'photo.jpg', { type: 'image/jpeg' })
+    Object.defineProperty(input, 'files', { value: [file] })
+    input.dispatchEvent(new Event('change'))
+
+    await vi.waitFor(() => {
+      const preview = container.querySelector<HTMLImageElement>('[data-preview]')
+      expect(preview).toBeTruthy()
+      expect(preview?.getAttribute('data-preview')).toBe(STORAGE_PATH)
+    })
+  })
+
   it('shows error status when upload fails', async () => {
     uploadFn.mockRejectedValueOnce(new Error('storage error'))
     const { renderImageUpload } = await import('./imageUpload')
