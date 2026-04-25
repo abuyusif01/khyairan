@@ -1,5 +1,5 @@
 import { createClient } from '@supabase/supabase-js'
-import type { Product, Tag, ProductTag } from '../types'
+import type { Product, Tag, ProductTag, Profile } from '../types'
 
 export const supabase = createClient(
   import.meta.env.VITE_SUPABASE_URL as string,
@@ -148,6 +148,15 @@ export async function deleteProduct(productId: string): Promise<void> {
     .delete()
     .eq('id', productId)
   if (error) throw error
+}
+
+export async function fetchAllProfiles(): Promise<Profile[]> {
+  const { data, error } = await supabase
+    .from('profiles')
+    .select('id, full_name, role, created_at')
+    .order('created_at', { ascending: true })
+  if (error) throw error
+  return (data ?? []) as Profile[]
 }
 
 export async function updateTagOrder(updates: Array<{ tagId: string; sortOrder: number }>): Promise<void> {

@@ -7,6 +7,7 @@ import { renderAddProductForm } from './components/addProductForm'
 import { renderEditProductForm } from './components/editProductForm'
 import { renderTagList } from './components/tagList'
 import { renderTagForm } from './components/tagForm'
+import { renderUserList } from './components/userList'
 import {
   fetchAllProducts,
   fetchAllTags,
@@ -26,6 +27,7 @@ import {
   countProductsForTag,
   updateTagOrder,
   updateProductTagOrder,
+  fetchAllProfiles,
 } from './lib/supabase'
 import type { NewTag } from './lib/supabase'
 
@@ -42,6 +44,9 @@ async function renderView(main: HTMLElement, hash: string, role: Role): Promise<
     renderAddProductForm(main, tags, () => {
       window.location.hash = '#products'
     }, createProduct, setProductTags)
+  } else if (hash === '#users' && role === 'owner') {
+    const profiles = await fetchAllProfiles()
+    renderUserList(main, profiles)
   } else if (hash === '#tags') {
     const tags = await fetchAllTags()
     renderTagList(main, tags, {
