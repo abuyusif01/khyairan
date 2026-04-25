@@ -150,6 +150,16 @@ export async function deleteProduct(productId: string): Promise<void> {
   if (error) throw error
 }
 
+export async function updateTagOrder(updates: Array<{ id: string; sortOrder: number }>): Promise<void> {
+  for (const { id, sortOrder } of updates) {
+    const { error } = await supabase
+      .from('tags')
+      .update({ sort_order: sortOrder })
+      .eq('id', id)
+    if (error) throw error
+  }
+}
+
 export async function updateProductTagOrder(
   tagId: string,
   updates: Array<{ productId: string; sortOrder: number }>

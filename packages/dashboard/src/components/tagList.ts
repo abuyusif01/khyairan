@@ -5,10 +5,11 @@ export interface TagListOptions {
   deleteFn?: (tagId: string) => Promise<void>
   countProductsFn?: (tagId: string) => Promise<number>
   isOwner?: boolean
+  reorderFn?: (updates: Array<{ tagId: string; sortOrder: number }>) => Promise<void>
 }
 
 export function renderTagList(container: HTMLElement, tags: Tag[], options: TagListOptions = {}): void {
-  const { toggleFn, deleteFn, countProductsFn, isOwner } = options
+  const { toggleFn, deleteFn, countProductsFn, isOwner, reorderFn } = options
 
   container.innerHTML = ''
 
@@ -36,6 +37,81 @@ export function renderTagList(container: HTMLElement, tags: Tag[], options: TagL
       <th>Name</th><th>Slug</th><th>Order</th><th>Status</th><th>Actions</th>
     </tr></thead>`
     const tbody = document.createElement('tbody')
+
+    const getVisibleRows = (): HTMLElement[] =>
+      Array.from(tbody.querySelectorAll<HTMLElement>('[data-tag-id]'))
+
+    const updateReorderButtons = (): void => {
+      if (!reorderFn) return
+      const rows = getVisibleRows()
+      rows.forEach((row, idx) => {
+        const existing = row.querySelectorAll('[data-action="move-up"],[data-action="move-down"]')
+        existing.forEach(el => el.remove())
+
+        const actionsCell = row.querySelector('td:last-child') ?? row
+        const tagId = row.getAttribute('data-tag-id') ?? ''
+        const tag = sorted.find(t => t.id === tagId)
+        if (!tag) return
+
+        if (idx > 0) {
+          const upBtn = document.createElement('button')
+          upBtn.type = 'button'
+          upBtn.setAttribute('data-action', 'move-up')
+          upBtn.textContent = '↑'
+          upBtn.addEventListener('click', () => {
+            upBtn.disabled = true
+            const prevRow = rows[idx - 1]
+            const prevId = prevRow.getAttribute('data-tag-id') ?? ''
+            const prevTag = sorted.find(t => t.id === prevId)
+            if (!prevTag) { upBtn.disabled = false; return }
+            const curOrder = tag.sort_order
+            tag.sort_order = prevTag.sort_order
+            prevTag.sort_order = curOrder
+            void reorderFn([
+              { tagId, sortOrder: tag.sort_order },
+              { tagId: prevId, sortOrder: prevTag.sort_order },
+            ]).then(() => {
+              tbody.insertBefore(row, prevRow)
+              updateReorderButtons()
+            }).catch(() => {
+              prevTag.sort_order = tag.sort_order
+              tag.sort_order = curOrder
+              upBtn.disabled = false
+            })
+          })
+          actionsCell.appendChild(upBtn)
+        }
+
+        if (idx < rows.length - 1) {
+          const downBtn = document.createElement('button')
+          downBtn.type = 'button'
+          downBtn.setAttribute('data-action', 'move-down')
+          downBtn.textContent = '↓'
+          downBtn.addEventListener('click', () => {
+            downBtn.disabled = true
+            const nextRow = rows[idx + 1]
+            const nextId = nextRow.getAttribute('data-tag-id') ?? ''
+            const nextTag = sorted.find(t => t.id === nextId)
+            if (!nextTag) { downBtn.disabled = false; return }
+            const curOrder = tag.sort_order
+            tag.sort_order = nextTag.sort_order
+            nextTag.sort_order = curOrder
+            void reorderFn([
+              { tagId, sortOrder: tag.sort_order },
+              { tagId: nextId, sortOrder: nextTag.sort_order },
+            ]).then(() => {
+              tbody.insertBefore(nextRow, row)
+              updateReorderButtons()
+            }).catch(() => {
+              nextTag.sort_order = tag.sort_order
+              tag.sort_order = curOrder
+              downBtn.disabled = false
+            })
+          })
+          actionsCell.appendChild(downBtn)
+        }
+      })
+    }
 
     sorted.forEach(tag => {
       const tr = document.createElement('tr')
@@ -100,6 +176,8 @@ export function renderTagList(container: HTMLElement, tags: Tag[], options: TagL
 
       tbody.appendChild(tr)
     })
+
+    updateReorderButtons()
 
     table.appendChild(tbody)
     details.appendChild(table)
