@@ -115,4 +115,59 @@ describe('renderTagList', () => {
     await vi.waitFor(() => expect(deleteFn).toHaveBeenCalledWith('tag3'))
     expect(container.querySelector('[data-tag-id="tag3"]')).toBeNull()
   })
+
+  it('reorder buttons appear for each tag when reorderFn provided', async () => {
+    const { renderTagList } = await import('./tagList')
+    const reorderFn = vi.fn().mockResolvedValue(undefined)
+    renderTagList(container, tags, { reorderFn })
+
+    // 3 tags total, each should have at least one reorder button (up or down)
+    const upBtns = container.querySelectorAll('[data-action="move-up"]')
+    const downBtns = container.querySelectorAll('[data-action="move-down"]')
+    expect(upBtns.length).toBeGreaterThan(0)
+    expect(downBtns.length).toBeGreaterThan(0)
+  })
+
+  it('first tag in group has no move-up; last tag in group has no move-down', async () => {
+    const { renderTagList } = await import('./tagList')
+    const reorderFn = vi.fn().mockResolvedValue(undefined)
+    renderTagList(container, tags, { reorderFn })
+
+    // category group: Juices (sort_order=1) is first, Carbonated (sort_order=2) is last
+    const categoryGroup = Array.from(container.querySelectorAll('details')).find(
+      d => d.querySelector('summary')?.textContent?.includes('category')
+    )!
+    const rows = Array.from(categoryGroup.querySelectorAll('[data-tag-id]'))
+
+    const firstRow = rows[0]
+    const lastRow = rows[rows.length - 1]
+
+    expect(firstRow.querySelector('[data-action="move-up"]')).toBeNull()
+    expect(lastRow.querySelector('[data-action="move-down"]')).toBeNull()
+  })
+
+  it('move-up swaps sort_orders and calls reorderFn with correct values', async () => {
+    const { renderTagList } = await import('./tagList')
+    const reorderFn = vi.fn().mockResolvedValue(undefined)
+    renderTagList(container, tags, { reorderFn })
+
+    // category group: Juices (tag2, sort_order=1) first, Carbonated (tag1, sort_order=2) second
+    const categoryGroup = Array.from(container.querySelectorAll('details')).find(
+      d => d.querySelector('summary')?.textContent?.includes('category')
+    )!
+    const rows = Array.from(categoryGroup.querySelectorAll<HTMLElement>('[data-tag-id]'))
+    const secondRow = rows[1] // Carbonated (sort_order=2)
+    const moveUpBtn = secondRow.querySelector<HTMLButtonElement>('[data-action="move-up"]')!
+    moveUpBtn.click()
+
+    await vi.waitFor(() => expect(reorderFn).toHaveBeenCalledOnce())
+
+    const updates = reorderFn.mock.calls[0][0] as Array<{ tagId: string; sortOrder: number }>
+    expect(updates.length).toBe(2)
+
+    const tag1Update = updates.find(u => u.tagId === 'tag1')!
+    const tag2Update = updates.find(u => u.tagId === 'tag2')!
+    expect(tag1Update.sortOrder).toBe(1)  // Carbonated takes Juices's old sort_order
+    expect(tag2Update.sortOrder).toBe(2)  // Juices takes Carbonated's old sort_order
+  })
 })

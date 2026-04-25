@@ -330,3 +330,27 @@ describe('updateProductTagOrder', () => {
     ])
   })
 })
+
+describe('updateTagOrder', () => {
+  it('calls update with new sort_order for each tag', async () => {
+    vi.resetModules()
+    const { createClient } = await import('@supabase/supabase-js')
+    const eqSpy = vi.fn().mockResolvedValue({ error: null })
+    const updateSpy = vi.fn().mockReturnValue({ eq: eqSpy })
+    ;(createClient as unknown as MockInstance).mockReturnValue({
+      from: vi.fn().mockReturnValue({ update: updateSpy }),
+    })
+
+    const { updateTagOrder } = await import('./supabase')
+    await updateTagOrder([
+      { id: 'tag1', sortOrder: 2 },
+      { id: 'tag2', sortOrder: 1 },
+    ])
+
+    expect(updateSpy).toHaveBeenCalledTimes(2)
+    expect(updateSpy).toHaveBeenCalledWith({ sort_order: 2 })
+    expect(updateSpy).toHaveBeenCalledWith({ sort_order: 1 })
+    expect(eqSpy).toHaveBeenCalledWith('id', 'tag1')
+    expect(eqSpy).toHaveBeenCalledWith('id', 'tag2')
+  })
+})
