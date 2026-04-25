@@ -20,6 +20,9 @@ import {
   createTag,
   updateTag,
   toggleTagPublished,
+  deleteTag,
+  deleteProduct,
+  countProductsForTag,
 } from './lib/supabase'
 import type { NewTag } from './lib/supabase'
 
@@ -40,6 +43,8 @@ async function renderView(main: HTMLElement, hash: string, role: Role): Promise<
     const tags = await fetchAllTags()
     renderTagList(main, tags, {
       toggleFn: toggleTagPublished,
+      deleteFn: deleteTag,
+      countProductsFn: countProductsForTag,
       isOwner: role === 'owner',
     })
   } else if (hash === '#add-tag') {
@@ -84,7 +89,10 @@ async function renderView(main: HTMLElement, hash: string, role: Role): Promise<
       fetchCategoryTags(),
       fetchProductTags(),
     ])
-    renderProductList(main, products, tags, productTags)
+    renderProductList(main, products, tags, productTags, {
+      deleteFn: deleteProduct,
+      isOwner: role === 'owner',
+    })
   }
 }
 

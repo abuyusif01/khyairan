@@ -1,5 +1,10 @@
 import type { Product, Tag, ProductTag } from '../types'
 
+export interface ProductListOptions {
+  deleteFn?: (productId: string) => Promise<void>
+  isOwner?: boolean
+}
+
 function formatPrice(ngn: number): string {
   return '₦' + ngn.toLocaleString('en-NG')
 }
@@ -12,8 +17,11 @@ export function renderProductList(
   container: HTMLElement,
   products: Product[],
   tags: Tag[],
-  productTags: ProductTag[]
+  productTags: ProductTag[],
+  options: ProductListOptions = {}
 ): void {
+  const { deleteFn, isOwner } = options
+
   // Build filter controls (search and tag filter) if not already provided by caller
   let searchInput = container.querySelector<HTMLInputElement>('[data-search]')
   let tagFilter = container.querySelector<HTMLSelectElement>('[data-tag-filter]')
@@ -49,14 +57,16 @@ export function renderProductList(
 
   // Build table
   const table = document.createElement('table')
+  const hasActions = deleteFn && isOwner
   table.innerHTML = `<thead><tr>
-    <th>Name</th><th>Size</th><th>Type</th><th>Units/Carton</th><th>Price</th><th>Status</th>
+    <th>Name</th><th>Size</th><th>Type</th><th>Units/Carton</th><th>Price</th><th>Status</th>${hasActions ? '<th>Actions</th>' : ''}
   </tr></thead>`
   const tbody = document.createElement('tbody')
 
   products.forEach(product => {
     const tr = document.createElement('tr')
     tr.setAttribute('data-product-id', product.id)
+
     tr.innerHTML = `
       <td>${product.name}</td>
       <td>${product.size}</td>
@@ -65,6 +75,21 @@ export function renderProductList(
       <td>${formatPrice(product.price_ngn)}</td>
       <td><span data-status="${product.published ? 'published' : 'draft'}">${product.published ? 'Published' : 'Draft'}</span></td>
     `
+
+    if (hasActions) {
+      const actionsCell = document.createElement('td')
+      const deleteBtn = document.createElement('button')
+      deleteBtn.setAttribute('data-action', 'delete-product')
+      deleteBtn.textContent = 'Delete'
+      deleteBtn.addEventListener('click', () => {
+        if (confirm(`Delete product "${product.name}"?`)) {
+          void deleteFn(product.id).then(() => tr.remove())
+        }
+      })
+      actionsCell.appendChild(deleteBtn)
+      tr.appendChild(actionsCell)
+    }
+
     tbody.appendChild(tr)
   })
 

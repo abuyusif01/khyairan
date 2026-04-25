@@ -3,11 +3,12 @@ import type { Tag } from '../types'
 export interface TagListOptions {
   toggleFn?: (tagId: string, published: boolean) => Promise<void>
   deleteFn?: (tagId: string) => Promise<void>
+  countProductsFn?: (tagId: string) => Promise<number>
   isOwner?: boolean
 }
 
 export function renderTagList(container: HTMLElement, tags: Tag[], options: TagListOptions = {}): void {
-  const { toggleFn, deleteFn, isOwner } = options
+  const { toggleFn, deleteFn, countProductsFn, isOwner } = options
 
   container.innerHTML = ''
 
@@ -67,8 +68,20 @@ export function renderTagList(container: HTMLElement, tags: Tag[], options: TagL
         deleteBtn.setAttribute('data-action', 'delete-tag')
         deleteBtn.textContent = 'Delete'
         deleteBtn.addEventListener('click', () => {
-          if (confirm(`Delete tag "${tag.name}"?`)) {
-            void deleteFn(tag.id).then(() => tr.remove())
+          const doDelete = (msg: string) => {
+            if (confirm(msg)) {
+              void deleteFn(tag.id).then(() => tr.remove())
+            }
+          }
+          if (countProductsFn) {
+            void countProductsFn(tag.id).then(count => {
+              const msg = count > 0
+                ? `Tag "${tag.name}" is used by ${count} product(s). Delete anyway?`
+                : `Delete tag "${tag.name}"?`
+              doDelete(msg)
+            })
+          } else {
+            doDelete(`Delete tag "${tag.name}"?`)
           }
         })
         actionsCell.appendChild(deleteBtn)

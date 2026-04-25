@@ -134,6 +134,31 @@ export async function toggleTagPublished(tagId: string, published: boolean): Pro
   if (error) throw error
 }
 
+export async function deleteTag(tagId: string): Promise<void> {
+  const { error } = await supabase
+    .from('tags')
+    .delete()
+    .eq('id', tagId)
+  if (error) throw error
+}
+
+export async function deleteProduct(productId: string): Promise<void> {
+  const { error } = await supabase
+    .from('products')
+    .delete()
+    .eq('id', productId)
+  if (error) throw error
+}
+
+export async function countProductsForTag(tagId: string): Promise<number> {
+  const { count, error } = await supabase
+    .from('product_tags')
+    .select('product_id', { count: 'exact', head: true })
+    .eq('tag_id', tagId)
+  if (error) throw error
+  return count ?? 0
+}
+
 export async function uploadProductImage(productId: string, file: File): Promise<string> {
   const path = `products/${productId}`
   const { error } = await supabase.storage
