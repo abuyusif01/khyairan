@@ -150,6 +150,34 @@ export async function deleteProduct(productId: string): Promise<void> {
   if (error) throw error
 }
 
+async function callAdminFunction(body: object): Promise<void> {
+  const { data: { session } } = await supabase.auth.getSession()
+  const jwt = session?.access_token
+  if (!jwt) throw new Error('Not authenticated')
+
+  const url = `${import.meta.env.VITE_SUPABASE_URL as string}/functions/v1/admin-users`
+  const res = await fetch(url, {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${jwt}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(body),
+  })
+  if (!res.ok) {
+    const { error } = await res.json() as { error: string }
+    throw new Error(error ?? 'Admin function failed')
+  }
+}
+
+export async function inviteUser(email: string, full_name: string, role: Profile['role']): Promise<void> {
+  await callAdminFunction({ action: 'invite', email, full_name, role })
+}
+
+export async function removeUser(userId: string): Promise<void> {
+  await callAdminFunction({ action: 'remove', userId })
+}
+
 export async function updateProfileRole(userId: string, role: Profile['role']): Promise<void> {
   const { error } = await supabase
     .from('profiles')
