@@ -11,10 +11,10 @@ export function renderLayout(container: HTMLElement, role: Role): void {
       <button data-action="logout" class="logout-btn">Logout</button>
     </header>
     <nav class="site-nav">
-      <a href="/products">Products</a>
-      <a href="/tags">Tags</a>
-      ${isOwner ? '<a href="/users">Users</a>' : ''}
-      <a href="/settings">Settings</a>
+      <a href="#products">Products</a>
+      <a href="#tags">Tags</a>
+      ${isOwner ? '<a href="#users">Users</a>' : ''}
+      <a href="#prices">Prices</a>
     </nav>
     <main class="site-content"></main>
   `
@@ -22,7 +22,7 @@ export function renderLayout(container: HTMLElement, role: Role): void {
   const logoutBtn = container.querySelector('[data-action="logout"]')
   logoutBtn?.addEventListener('click', async () => {
     await supabase.auth.signOut()
-    window.location.href = '/login'
+    window.location.href = '/'
   })
 }
 
@@ -42,7 +42,7 @@ export function layoutComponent(role: Role | null = null): LayoutComponent {
     },
     async logout() {
       await supabase.auth.signOut()
-      window.location.href = '/login'
+      window.location.href = '/'
     },
   }
 }
