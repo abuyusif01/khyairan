@@ -150,6 +150,14 @@ export async function deleteProduct(productId: string): Promise<void> {
   if (error) throw error
 }
 
+export async function updateProfileRole(userId: string, role: Profile['role']): Promise<void> {
+  const { error } = await supabase
+    .from('profiles')
+    .update({ role })
+    .eq('id', userId)
+  if (error) throw error
+}
+
 export async function fetchAllProfiles(): Promise<Profile[]> {
   const { data, error } = await supabase
     .from('profiles')
