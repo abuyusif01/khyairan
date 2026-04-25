@@ -150,6 +150,20 @@ export async function deleteProduct(productId: string): Promise<void> {
   if (error) throw error
 }
 
+export async function updateProductTagOrder(
+  tagId: string,
+  updates: Array<{ productId: string; sortOrder: number }>
+): Promise<void> {
+  const { error } = await supabase.from('product_tags').upsert(
+    updates.map(({ productId, sortOrder }) => ({
+      product_id: productId,
+      tag_id: tagId,
+      sort_order: sortOrder,
+    }))
+  )
+  if (error) throw error
+}
+
 export async function countProductsForTag(tagId: string): Promise<number> {
   const { count, error } = await supabase
     .from('product_tags')

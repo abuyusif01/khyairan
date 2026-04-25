@@ -3,6 +3,7 @@ import type { Product, Tag, ProductTag } from '../types'
 export interface ProductListOptions {
   deleteFn?: (productId: string) => Promise<void>
   isOwner?: boolean
+  reorderFn?: (tagId: string, updates: Array<{ productId: string; sortOrder: number }>) => Promise<void>
 }
 
 function formatPrice(ngn: number): string {
@@ -20,7 +21,7 @@ export function renderProductList(
   productTags: ProductTag[],
   options: ProductListOptions = {}
 ): void {
-  const { deleteFn, isOwner } = options
+  const { deleteFn, isOwner, reorderFn } = options
 
   // Build filter controls (search and tag filter) if not already provided by caller
   let searchInput = container.querySelector<HTMLInputElement>('[data-search]')
@@ -96,6 +97,81 @@ export function renderProductList(
   table.appendChild(tbody)
   container.appendChild(table)
 
+  function getVisibleRows(): HTMLElement[] {
+    return Array.from(tbody.querySelectorAll<HTMLElement>('[data-product-id]'))
+      .filter(r => r.style.display !== 'none')
+  }
+
+  function updateReorderButtons(): void {
+    if (!reorderFn) return
+    const tagId = tagFilter?.value ?? ''
+    const visible = getVisibleRows()
+
+    visible.forEach((row, idx) => {
+      const existingUp = row.querySelector('[data-action="move-up"]')
+      const existingDown = row.querySelector('[data-action="move-down"]')
+      if (existingUp) existingUp.remove()
+      if (existingDown) existingDown.remove()
+
+      if (!tagId) return
+
+      const productId = row.getAttribute('data-product-id') ?? ''
+      const actionsCell = row.querySelector('td:last-child') ?? row
+
+      if (idx > 0) {
+        const upBtn = document.createElement('button')
+        upBtn.type = 'button'
+        upBtn.setAttribute('data-action', 'move-up')
+        upBtn.textContent = '↑'
+        upBtn.addEventListener('click', () => {
+          const prevRow = visible[idx - 1]
+          const prevId = prevRow.getAttribute('data-product-id') ?? ''
+          const curPt = productTags.find(pt => pt.product_id === productId && pt.tag_id === tagId)
+          const prevPt = productTags.find(pt => pt.product_id === prevId && pt.tag_id === tagId)
+          if (!curPt || !prevPt) return
+          const curOrder = curPt.sort_order
+          curPt.sort_order = prevPt.sort_order
+          prevPt.sort_order = curOrder
+          void reorderFn(tagId, [
+            { productId, sortOrder: curPt.sort_order },
+            { productId: prevId, sortOrder: prevPt.sort_order },
+          ]).then(() => {
+            // Move row up in DOM
+            tbody.insertBefore(row, prevRow)
+            updateReorderButtons()
+          })
+        })
+        actionsCell.appendChild(upBtn)
+      }
+
+      if (idx < visible.length - 1) {
+        const downBtn = document.createElement('button')
+        downBtn.type = 'button'
+        downBtn.setAttribute('data-action', 'move-down')
+        downBtn.textContent = '↓'
+        downBtn.addEventListener('click', () => {
+          const nextRow = visible[idx + 1]
+          const nextId = nextRow.getAttribute('data-product-id') ?? ''
+          const curPt = productTags.find(pt => pt.product_id === productId && pt.tag_id === tagId)
+          const nextPt = productTags.find(pt => pt.product_id === nextId && pt.tag_id === tagId)
+          if (!curPt || !nextPt) return
+          const curOrder = curPt.sort_order
+          curPt.sort_order = nextPt.sort_order
+          nextPt.sort_order = curOrder
+          void reorderFn(tagId, [
+            { productId, sortOrder: curPt.sort_order },
+            { productId: nextId, sortOrder: nextPt.sort_order },
+          ]).then(() => {
+            // Move row down in DOM
+            tbody.insertBefore(nextRow, row)
+            updateReorderButtons()
+          })
+        })
+        actionsCell.appendChild(downBtn)
+      }
+    })
+  }
+
   function applyFilters(): void {
     const search = (searchInput?.value ?? '').toLowerCase()
     const tagId = tagFilter?.value ?? ''
@@ -111,6 +187,8 @@ export function renderProductList(
 
       row.style.display = matchesSearch && matchesTag ? '' : 'none'
     })
+
+    updateReorderButtons()
   }
 
   searchInput.addEventListener('input', applyFilters)
