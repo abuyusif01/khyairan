@@ -1,11 +1,11 @@
 ---
 # khaiyran-b3ic
 title: Remove user
-status: in-progress
+status: completed
 type: feature
 priority: deferred
 created_at: 2026-04-24T01:06:23Z
-updated_at: 2026-04-25T10:36:36Z
+updated_at: 2026-04-25T10:43:28Z
 parent: khaiyran-dpph
 blocked_by:
     - khaiyran-a3ls
@@ -54,3 +54,17 @@ Owner-only: each user row has a Remove button. Clicking shows a confirmation pro
   - [x] dashboard.ts:115-129 is the init() call site
   - [x] session.test.ts updated assertion specified
   - [x] All 5 userList tests are specific and assertable
+
+## Agent Post-Completion Review
+
+- Agent: claude-sonnet-4-6
+- Date: 2026-04-25
+- Verdict: PASS
+- Findings: None. TDD order confirmed, logic correct, session.ts return type updated, dashboard.ts correctly wired.
+- All findings fixed: N/A
+
+## Summary of Changes
+
+Added Remove button to each user row in userList.ts (disabled for current user's own row). Clicking shows window.confirm with user's name. On confirm: calls removeFn(userId) -> admin-users Edge Function, re-fetches profiles, re-renders table. On error shows inline error; row preserved.
+
+checkSession() in session.ts now returns { role, userId } | null (new Session interface) instead of bare Role. dashboard.ts updated to destructure both and pass userId down to renderView and renderUserList.
