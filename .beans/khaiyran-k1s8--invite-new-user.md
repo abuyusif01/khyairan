@@ -1,11 +1,11 @@
 ---
 # khaiyran-k1s8
 title: Invite new user
-status: in-progress
+status: completed
 type: feature
 priority: deferred
 created_at: 2026-04-24T01:06:23Z
-updated_at: 2026-04-25T10:20:47Z
+updated_at: 2026-04-25T10:33:26Z
 parent: khaiyran-dpph
 blocked_by:
     - khaiyran-a3ls
@@ -51,3 +51,17 @@ Owner-only form above the user table: email, full_name, role dropdown (owner/man
   - [x] dashboard.ts:48-50 is the correct wiring target
   - [x] All 4 tests are specific, file-named, and objectively assertable
   - [x] refetchFn mechanism resolves the void-return ambiguity
+
+## Agent Post-Completion Review
+
+- Agent: claude-sonnet-4-6
+- Date: 2026-04-25
+- Verdict: PASS
+- Findings: Initial review found missing implementation commit (fixed). All logic, coverage, CORS, handler changes verified correct.
+- All findings fixed: YES
+
+## Summary of Changes
+
+Added invite form above user table in userList.ts: email, full_name, role dropdown (owner/manager). On submit calls inviteFn -> admin-users Edge Function. On success re-fetches via refetchFn and re-renders table with new row; form resets. On error shows inline message; inputs preserved. Button disabled while in flight.
+
+Deployed admin-users Edge Function with CORS support (OPTIONS handler, Access-Control-Allow-* headers). Handler updated to accept extraHeaders param propagated to all responses.
