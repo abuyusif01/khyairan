@@ -29,6 +29,7 @@ import {
   updateProductTagOrder,
   fetchAllProfiles,
   updateProfileRole,
+  inviteUser,
 } from './lib/supabase'
 import type { NewTag } from './lib/supabase'
 
@@ -47,7 +48,11 @@ async function renderView(main: HTMLElement, hash: string, role: Role): Promise<
     }, createProduct, setProductTags)
   } else if (hash === '#users' && role === 'owner') {
     const profiles = await fetchAllProfiles()
-    renderUserList(main, profiles, { changeRoleFn: updateProfileRole })
+    renderUserList(main, profiles, {
+      changeRoleFn: updateProfileRole,
+      inviteFn: inviteUser,
+      refetchFn: fetchAllProfiles,
+    })
   } else if (hash === '#tags') {
     const tags = await fetchAllTags()
     renderTagList(main, tags, {

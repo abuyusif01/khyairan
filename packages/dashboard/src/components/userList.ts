@@ -2,6 +2,8 @@ import type { Profile } from '../types'
 
 export interface UserListOptions {
   changeRoleFn?: (userId: string, role: Profile['role']) => Promise<void>
+  inviteFn?: (email: string, full_name: string, role: Profile['role']) => Promise<void>
+  refetchFn?: () => Promise<Profile[]>
 }
 
 function formatDate(isoString: string): string {
@@ -12,9 +14,9 @@ function formatDate(isoString: string): string {
   })
 }
 
-export function renderUserList(container: HTMLElement, profiles: Profile[], options: UserListOptions = {}): void {
-  const { changeRoleFn } = options
-  container.innerHTML = ''
+function renderTable(container: HTMLElement, profiles: Profile[], changeRoleFn?: UserListOptions['changeRoleFn']): void {
+  const existing = container.querySelector('table')
+  if (existing) existing.remove()
 
   const table = document.createElement('table')
   table.innerHTML = `<thead><tr>
@@ -60,4 +62,80 @@ export function renderUserList(container: HTMLElement, profiles: Profile[], opti
 
   table.appendChild(tbody)
   container.appendChild(table)
+}
+
+export function renderUserList(container: HTMLElement, profiles: Profile[], options: UserListOptions = {}): void {
+  const { changeRoleFn, inviteFn, refetchFn } = options
+  container.innerHTML = ''
+
+  if (inviteFn && refetchFn) {
+    const form = document.createElement('form')
+    form.setAttribute('data-invite-form', '')
+    form.style.cssText = 'margin-bottom:1rem;display:flex;flex-wrap:wrap;gap:0.5rem;align-items:flex-end;'
+
+    const emailInput = document.createElement('input')
+    emailInput.type = 'email'
+    emailInput.placeholder = 'Email'
+    emailInput.setAttribute('data-invite-email', '')
+    emailInput.required = true
+
+    const nameInput = document.createElement('input')
+    nameInput.type = 'text'
+    nameInput.placeholder = 'Full name'
+    nameInput.setAttribute('data-invite-name', '')
+    nameInput.required = true
+
+    const roleSelect = document.createElement('select')
+    roleSelect.setAttribute('data-invite-role', '')
+    const roles: Profile['role'][] = ['manager', 'owner']
+    roles.forEach(r => {
+      const opt = document.createElement('option')
+      opt.value = r
+      opt.textContent = r
+      roleSelect.appendChild(opt)
+    })
+
+    const submitBtn = document.createElement('button')
+    submitBtn.type = 'submit'
+    submitBtn.setAttribute('data-invite-submit', '')
+    submitBtn.textContent = 'Invite user'
+
+    const errorEl = document.createElement('span')
+    errorEl.setAttribute('data-invite-error', '')
+    errorEl.style.color = '#c00'
+    errorEl.style.display = 'none'
+
+    form.appendChild(emailInput)
+    form.appendChild(nameInput)
+    form.appendChild(roleSelect)
+    form.appendChild(submitBtn)
+    form.appendChild(errorEl)
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault()
+      errorEl.style.display = 'none'
+      errorEl.textContent = ''
+      submitBtn.disabled = true
+
+      void inviteFn(emailInput.value, nameInput.value, roleSelect.value as Profile['role'])
+        .then(() => refetchFn())
+        .then((updated) => {
+          emailInput.value = ''
+          nameInput.value = ''
+          roleSelect.value = 'manager'
+          renderTable(container, updated, changeRoleFn)
+        })
+        .catch((err: unknown) => {
+          errorEl.textContent = err instanceof Error ? err.message : 'Invite failed'
+          errorEl.style.display = ''
+        })
+        .finally(() => {
+          submitBtn.disabled = false
+        })
+    })
+
+    container.appendChild(form)
+  }
+
+  renderTable(container, profiles, changeRoleFn)
 }

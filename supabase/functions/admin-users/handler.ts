@@ -36,10 +36,10 @@ type InviteBody = { action: 'invite'; email: string; full_name: string; role: 'o
 type RemoveBody = { action: 'remove'; userId: string }
 type ActionBody = InviteBody | RemoveBody | { action: string }
 
-function json(body: object, status = 200): Response {
+function json(body: object, status = 200, extra: Record<string, string> = {}): Response {
   return new Response(JSON.stringify(body), {
     status,
-    headers: { 'Content-Type': 'application/json' },
+    headers: { ...extra, 'Content-Type': 'application/json' },
   })
 }
 
@@ -60,17 +60,18 @@ export async function handleAdminUsers(
   req: Request,
   callerClient: SupabaseClient,
   serviceClient: SupabaseClient,
+  extraHeaders: Record<string, string> = {},
 ): Promise<Response> {
   const isOwner = await verifyOwner(callerClient)
   if (!isOwner) {
-    return json({ error: 'Forbidden — owner role required' }, 403)
+    return json({ error: 'Forbidden — owner role required' }, 403, extraHeaders)
   }
 
   let body: ActionBody
   try {
     body = await req.json() as ActionBody
   } catch {
-    return json({ error: 'Invalid JSON body' }, 400)
+    return json({ error: 'Invalid JSON body' }, 400, extraHeaders)
   }
 
   if (body.action === 'invite') {
@@ -78,7 +79,7 @@ export async function handleAdminUsers(
 
     const { data, error } = await serviceClient.auth.admin.inviteUserByEmail(email)
     if (error || !data) {
-      return json({ error: error?.message ?? 'Invite failed' }, 500)
+      return json({ error: error?.message ?? 'Invite failed' }, 500, extraHeaders)
     }
 
     const userId = data.user.id
@@ -86,10 +87,10 @@ export async function handleAdminUsers(
       .from('profiles')
       .insert({ id: userId, full_name, role })
     if (insertError) {
-      return json({ error: insertError.message }, 500)
+      return json({ error: insertError.message }, 500, extraHeaders)
     }
 
-    return json({ userId })
+    return json({ userId }, 200, extraHeaders)
   }
 
   if (body.action === 'remove') {
@@ -100,16 +101,16 @@ export async function handleAdminUsers(
       .delete()
       .eq('id', userId)
     if (deleteProfileError) {
-      return json({ error: deleteProfileError.message }, 500)
+      return json({ error: deleteProfileError.message }, 500, extraHeaders)
     }
 
     const { error: deleteAuthError } = await serviceClient.auth.admin.deleteUser(userId)
     if (deleteAuthError) {
-      return json({ error: deleteAuthError.message }, 500)
+      return json({ error: deleteAuthError.message }, 500, extraHeaders)
     }
 
-    return json({ removed: true })
+    return json({ removed: true }, 200, extraHeaders)
   }
 
-  return json({ error: `Unknown action: ${body.action}` }, 400)
+  return json({ error: `Unknown action: ${body.action}` }, 400, extraHeaders)
 }
