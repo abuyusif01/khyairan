@@ -6,3 +6,5 @@ Alpine.data('login', loginComponent)
 export function initApp(): void {
   Alpine.start()
 }
+
+initApp()
