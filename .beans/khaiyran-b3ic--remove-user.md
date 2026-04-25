@@ -5,8 +5,10 @@ status: todo
 type: feature
 priority: deferred
 created_at: 2026-04-24T01:06:23Z
-updated_at: 2026-04-25T00:49:44Z
+updated_at: 2026-04-25T09:57:51Z
 parent: khaiyran-dpph
+blocked_by:
+    - khaiyran-a3ls
 ---
 
 Owner-only: remove user with confirmation. Deletes Supabase auth account and profile row.
