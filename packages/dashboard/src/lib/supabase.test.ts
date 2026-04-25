@@ -234,3 +234,57 @@ describe('uploadProductImage', () => {
     expect(path).toBe('products/p1')
   })
 })
+
+describe('deleteTag', () => {
+  it('calls delete with tag id', async () => {
+    vi.resetModules()
+    const { createClient } = await import('@supabase/supabase-js')
+    const eqSpy = vi.fn().mockResolvedValue({ error: null })
+    const deleteSpy = vi.fn().mockReturnValue({ eq: eqSpy })
+    ;(createClient as unknown as MockInstance).mockReturnValue({
+      from: vi.fn().mockReturnValue({ delete: deleteSpy }),
+    })
+
+    const { deleteTag } = await import('./supabase')
+    await deleteTag('tag1')
+
+    expect(deleteSpy).toHaveBeenCalled()
+    expect(eqSpy).toHaveBeenCalledWith('id', 'tag1')
+  })
+})
+
+describe('deleteProduct', () => {
+  it('calls delete with product id', async () => {
+    vi.resetModules()
+    const { createClient } = await import('@supabase/supabase-js')
+    const eqSpy = vi.fn().mockResolvedValue({ error: null })
+    const deleteSpy = vi.fn().mockReturnValue({ eq: eqSpy })
+    ;(createClient as unknown as MockInstance).mockReturnValue({
+      from: vi.fn().mockReturnValue({ delete: deleteSpy }),
+    })
+
+    const { deleteProduct } = await import('./supabase')
+    await deleteProduct('p1')
+
+    expect(deleteSpy).toHaveBeenCalled()
+    expect(eqSpy).toHaveBeenCalledWith('id', 'p1')
+  })
+})
+
+describe('countProductsForTag', () => {
+  it('returns count of products for a tag', async () => {
+    vi.resetModules()
+    const { createClient } = await import('@supabase/supabase-js')
+    const eqSpy = vi.fn().mockResolvedValue({ count: 3, error: null })
+    const selectSpy = vi.fn().mockReturnValue({ eq: eqSpy })
+    ;(createClient as unknown as MockInstance).mockReturnValue({
+      from: vi.fn().mockReturnValue({ select: selectSpy }),
+    })
+
+    const { countProductsForTag } = await import('./supabase')
+    const count = await countProductsForTag('tag1')
+
+    expect(count).toBe(3)
+    expect(eqSpy).toHaveBeenCalledWith('tag_id', 'tag1')
+  })
+})

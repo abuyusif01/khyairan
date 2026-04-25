@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from 'vitest'
+import { describe, it, expect, vi, beforeEach } from 'vitest'
 import type { Product, Tag, ProductTag } from '../types'
 
 const products: Product[] = [
@@ -87,5 +87,32 @@ describe('renderProductList', () => {
     const visibleRows = Array.from(rows).filter(r => (r as HTMLElement).style.display !== 'none')
     expect(visibleRows.length).toBe(1)
     expect(visibleRows[0].getAttribute('data-product-id')).toBe('p3')
+  })
+
+  it('renders delete button only when isOwner', async () => {
+    const { renderProductList } = await import('./productList')
+    const deleteFn = vi.fn().mockResolvedValue(undefined)
+
+    renderProductList(container, products, tags, productTags, { deleteFn, isOwner: false })
+    expect(container.querySelectorAll('[data-action="delete-product"]').length).toBe(0)
+
+    container.innerHTML = ''
+    renderProductList(container, products, tags, productTags, { deleteFn, isOwner: true })
+    expect(container.querySelectorAll('[data-action="delete-product"]').length).toBe(3)
+  })
+
+  it('delete button calls deleteFn after confirmation', async () => {
+    const { renderProductList } = await import('./productList')
+    const deleteFn = vi.fn().mockResolvedValue(undefined)
+    vi.spyOn(window, 'confirm').mockReturnValue(true)
+
+    renderProductList(container, products, tags, productTags, { deleteFn, isOwner: true })
+
+    const p1Row = container.querySelector('[data-product-id="p1"]')!
+    const deleteBtn = p1Row.querySelector<HTMLButtonElement>('[data-action="delete-product"]')!
+    deleteBtn.click()
+
+    await vi.waitFor(() => expect(deleteFn).toHaveBeenCalledWith('p1'))
+    expect(container.querySelector('[data-product-id="p1"]')).toBeNull()
   })
 })

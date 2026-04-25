@@ -88,4 +88,31 @@ describe('renderTagList', () => {
     const badge = tag1Row?.querySelector('[data-status]')
     expect(badge?.getAttribute('data-status')).toBe('draft')
   })
+
+  it('renders delete button only when isOwner', async () => {
+    const { renderTagList } = await import('./tagList')
+    const deleteFn = vi.fn().mockResolvedValue(undefined)
+
+    renderTagList(container, tags, { deleteFn, isOwner: false })
+    expect(container.querySelectorAll('[data-action="delete-tag"]').length).toBe(0)
+
+    container.innerHTML = ''
+    renderTagList(container, tags, { deleteFn, isOwner: true })
+    expect(container.querySelectorAll('[data-action="delete-tag"]').length).toBe(3)
+  })
+
+  it('delete button calls deleteFn after confirmation', async () => {
+    const { renderTagList } = await import('./tagList')
+    const deleteFn = vi.fn().mockResolvedValue(undefined)
+    vi.spyOn(window, 'confirm').mockReturnValue(true)
+
+    renderTagList(container, tags, { deleteFn, isOwner: true })
+
+    const tag3Row = container.querySelector('[data-tag-id="tag3"]')!
+    const deleteBtn = tag3Row.querySelector<HTMLButtonElement>('[data-action="delete-tag"]')!
+    deleteBtn.click()
+
+    await vi.waitFor(() => expect(deleteFn).toHaveBeenCalledWith('tag3'))
+    expect(container.querySelector('[data-tag-id="tag3"]')).toBeNull()
+  })
 })
