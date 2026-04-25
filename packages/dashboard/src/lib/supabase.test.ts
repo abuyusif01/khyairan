@@ -376,3 +376,21 @@ describe('fetchAllProfiles', () => {
     expect(result[0].full_name).toBe('Abu')
   })
 })
+
+describe('updateProfileRole', () => {
+  it('calls update on profiles table with new role', async () => {
+    vi.resetModules()
+    const { createClient } = await import('@supabase/supabase-js')
+    const eqSpy = vi.fn().mockResolvedValue({ error: null })
+    const updateSpy = vi.fn().mockReturnValue({ eq: eqSpy })
+    ;(createClient as unknown as MockInstance).mockReturnValue({
+      from: vi.fn().mockReturnValue({ update: updateSpy }),
+    })
+
+    const { updateProfileRole } = await import('./supabase')
+    await updateProfileRole('u1', 'manager')
+
+    expect(updateSpy).toHaveBeenCalledWith({ role: 'manager' })
+    expect(eqSpy).toHaveBeenCalledWith('id', 'u1')
+  })
+})

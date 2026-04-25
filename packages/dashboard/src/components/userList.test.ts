@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from 'vitest'
+import { describe, it, expect, vi, beforeEach } from 'vitest'
 import type { Profile } from '../types'
 
 const profiles: Profile[] = [
@@ -42,5 +42,33 @@ describe('renderUserList', () => {
 
     const rows = container.querySelectorAll('[data-user-id]')
     expect(rows.length).toBe(0)
+  })
+
+  it('renders role dropdown per row when changeRoleFn provided', async () => {
+    const { renderUserList } = await import('./userList')
+    const changeRoleFn = vi.fn().mockResolvedValue(undefined)
+    renderUserList(container, profiles, { changeRoleFn })
+
+    const selects = container.querySelectorAll('select[data-role-select]')
+    expect(selects.length).toBe(2)
+
+    const u1Select = container.querySelector('[data-user-id="u1"] select[data-role-select]') as HTMLSelectElement
+    expect(u1Select?.value).toBe('owner')
+
+    const u2Select = container.querySelector('[data-user-id="u2"] select[data-role-select]') as HTMLSelectElement
+    expect(u2Select?.value).toBe('manager')
+  })
+
+  it('changing role dropdown calls changeRoleFn with userId and new role', async () => {
+    const { renderUserList } = await import('./userList')
+    const changeRoleFn = vi.fn().mockResolvedValue(undefined)
+    renderUserList(container, profiles, { changeRoleFn })
+
+    const u2Select = container.querySelector('[data-user-id="u2"] select[data-role-select]') as HTMLSelectElement
+    u2Select.value = 'owner'
+    u2Select.dispatchEvent(new Event('change'))
+
+    await vi.waitFor(() => expect(changeRoleFn).toHaveBeenCalledOnce())
+    expect(changeRoleFn).toHaveBeenCalledWith('u2', 'owner')
   })
 })
