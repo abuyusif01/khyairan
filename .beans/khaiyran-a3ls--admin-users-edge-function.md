@@ -1,11 +1,11 @@
 ---
 # khaiyran-a3ls
 title: admin-users Edge Function
-status: in-progress
+status: completed
 type: task
 priority: high
 created_at: 2026-04-25T09:57:45Z
-updated_at: 2026-04-25T09:58:39Z
+updated_at: 2026-04-25T10:04:40Z
 parent: khaiyran-dpph
 ---
 
@@ -50,3 +50,15 @@ Both operations verify the caller is an owner (JWT → profiles.role check) befo
   - [x] profiles table has INSERT/DELETE RLS (owner only) — confirmed
   - [x] `auth.admin.inviteUserByEmail` and `auth.admin.deleteUser` available in Supabase JS v2
   - [x] All 4 tests are objectively testable with mocked Supabase client
+
+## Agent Post-Completion Review
+
+- Agent: claude-sonnet-4-6
+- Date: 2026-04-25
+- Verdict: PASS
+- Findings: None blocking. Three error-path branches untested (not blocking). req.clone() in index.ts harmless. Two-step invite has inherent orphan-user risk unavoidable without DB transactions.
+- All findings fixed: N/A
+
+## Summary of Changes
+
+Created `supabase/functions/admin-users/handler.ts` (testable core) and `index.ts` (Deno entry point). Handler verifies caller is owner via `auth.getUser()` + profiles lookup, then routes invite/remove to Supabase admin API using service role key. Added `inviteUser()` and `removeUser()` helpers to dashboard supabase.ts that call the function with the session JWT.
