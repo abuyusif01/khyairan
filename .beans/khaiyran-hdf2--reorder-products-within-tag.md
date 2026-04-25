@@ -1,11 +1,11 @@
 ---
 # khaiyran-hdf2
 title: Reorder products within tag
-status: in-progress
+status: completed
 type: feature
 priority: deferred
 created_at: 2026-04-24T01:05:59Z
-updated_at: 2026-04-25T00:36:33Z
+updated_at: 2026-04-25T00:41:24Z
 parent: khaiyran-md1g
 ---
 
@@ -47,3 +47,17 @@ Up/down arrow buttons to reorder products within a selected tag. Buttons appear 
   - [x] `packages/dashboard/src/components/productList.ts` exists with `ProductListOptions` and row rendering
   - [x] `product_tags` table has `(product_id, tag_id, sort_order)` confirmed in schema
   - [x] All 5 tests are objectively testable with DOM/mock assertions
+
+## Agent Post-Completion Review
+
+- Agent: claude-sonnet-4-6
+- Date: 2026-04-25
+- Verdict: FAIL (initial) → PASS after fixes
+- Findings fixed:
+  1. Race condition: buttons now disabled during async call, sort_orders restored on failure
+  2. Move-up test now asserts exact sort_order values after swap
+- All findings fixed: YES
+
+## Summary of Changes
+
+Added `updateProductTagOrder(tagId, updates)` to `supabase.ts` which upserts `product_tags` rows with new sort orders. Added `reorderFn` option to `ProductListOptions`. When a tag is selected in the filter, up/down buttons appear per row (with boundary constraints — no up on first row, no down on last row). Clicking swaps sort_orders in memory, disables the button to prevent double-fire, calls `reorderFn`, moves the DOM row, then refreshes button state. Sort_orders are restored in memory on failure.
