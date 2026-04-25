@@ -115,4 +115,75 @@ describe('renderProductList', () => {
     await vi.waitFor(() => expect(deleteFn).toHaveBeenCalledWith('p1'))
     expect(container.querySelector('[data-product-id="p1"]')).toBeNull()
   })
+
+  it('reorder buttons hidden when no tag selected', async () => {
+    const { renderProductList } = await import('./productList')
+    const reorderFn = vi.fn().mockResolvedValue(undefined)
+    renderProductList(container, products, tags, productTags, { reorderFn })
+
+    // No tag selected — reorder buttons must not exist
+    expect(container.querySelectorAll('[data-action="move-up"]').length).toBe(0)
+    expect(container.querySelectorAll('[data-action="move-down"]').length).toBe(0)
+  })
+
+  it('reorder buttons appear when tag selected', async () => {
+    const { renderProductList } = await import('./productList')
+    const reorderFn = vi.fn().mockResolvedValue(undefined)
+    renderProductList(container, products, tags, productTags, { reorderFn })
+
+    const select = container.querySelector<HTMLSelectElement>('[data-tag-filter]')!
+    select.value = 'tag1'
+    select.dispatchEvent(new Event('change'))
+
+    // p1 and p2 are in tag1 — each should have move buttons
+    expect(container.querySelectorAll('[data-action="move-up"]').length).toBeGreaterThan(0)
+    expect(container.querySelectorAll('[data-action="move-down"]').length).toBeGreaterThan(0)
+  })
+
+  it('first visible row has no move-up button; last visible row has no move-down button', async () => {
+    const { renderProductList } = await import('./productList')
+    const reorderFn = vi.fn().mockResolvedValue(undefined)
+    renderProductList(container, products, tags, productTags, { reorderFn })
+
+    const select = container.querySelector<HTMLSelectElement>('[data-tag-filter]')!
+    select.value = 'tag1'
+    select.dispatchEvent(new Event('change'))
+
+    // tag1 has p1 (sort_order 1) and p2 (sort_order 2)
+    const visibleRows = Array.from(container.querySelectorAll<HTMLElement>('[data-product-id]'))
+      .filter(r => r.style.display !== 'none')
+
+    const firstRow = visibleRows[0]
+    const lastRow = visibleRows[visibleRows.length - 1]
+
+    expect(firstRow.querySelector('[data-action="move-up"]')).toBeNull()
+    expect(lastRow.querySelector('[data-action="move-down"]')).toBeNull()
+  })
+
+  it('move-up button calls reorderFn with swapped sort_orders', async () => {
+    const { renderProductList } = await import('./productList')
+    const reorderFn = vi.fn().mockResolvedValue(undefined)
+    renderProductList(container, products, tags, productTags, { reorderFn })
+
+    const select = container.querySelector<HTMLSelectElement>('[data-tag-filter]')!
+    select.value = 'tag1'
+    select.dispatchEvent(new Event('change'))
+
+    // p1 sort_order=1, p2 sort_order=2; click move-up on p2 to swap with p1
+    const visibleRows = Array.from(container.querySelectorAll<HTMLElement>('[data-product-id]'))
+      .filter(r => r.style.display !== 'none')
+    const secondRow = visibleRows[1]
+    const moveUpBtn = secondRow.querySelector<HTMLButtonElement>('[data-action="move-up"]')!
+    moveUpBtn.click()
+
+    await vi.waitFor(() => expect(reorderFn).toHaveBeenCalledOnce())
+
+    const [calledTagId, calledUpdates] = reorderFn.mock.calls[0] as [string, Array<{productId: string, sortOrder: number}>]
+    expect(calledTagId).toBe('tag1')
+    expect(calledUpdates.length).toBe(2)
+    // The two products should have swapped sort_orders
+    const ids = calledUpdates.map(u => u.productId)
+    expect(ids).toContain('p1')
+    expect(ids).toContain('p2')
+  })
 })

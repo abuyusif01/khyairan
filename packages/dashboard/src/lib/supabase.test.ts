@@ -308,3 +308,25 @@ describe('countProductsForTag', () => {
     expect(eqSpy).toHaveBeenCalledWith('tag_id', 'tag1')
   })
 })
+
+describe('updateProductTagOrder', () => {
+  it('upserts product_tag rows with updated sort_orders', async () => {
+    vi.resetModules()
+    const { createClient } = await import('@supabase/supabase-js')
+    const upsertSpy = vi.fn().mockResolvedValue({ error: null })
+    ;(createClient as unknown as MockInstance).mockReturnValue({
+      from: vi.fn().mockReturnValue({ upsert: upsertSpy }),
+    })
+
+    const { updateProductTagOrder } = await import('./supabase')
+    await updateProductTagOrder('tag1', [
+      { productId: 'p1', sortOrder: 1 },
+      { productId: 'p2', sortOrder: 0 },
+    ])
+
+    expect(upsertSpy).toHaveBeenCalledWith([
+      { product_id: 'p1', tag_id: 'tag1', sort_order: 1 },
+      { product_id: 'p2', tag_id: 'tag1', sort_order: 0 },
+    ])
+  })
+})
