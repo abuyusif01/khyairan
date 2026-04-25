@@ -343,8 +343,8 @@ describe('updateTagOrder', () => {
 
     const { updateTagOrder } = await import('./supabase')
     await updateTagOrder([
-      { id: 'tag1', sortOrder: 2 },
-      { id: 'tag2', sortOrder: 1 },
+      { tagId: 'tag1', sortOrder: 2 },
+      { tagId: 'tag2', sortOrder: 1 },
     ])
 
     expect(updateSpy).toHaveBeenCalledTimes(2)

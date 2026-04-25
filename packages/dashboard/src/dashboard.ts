@@ -24,6 +24,8 @@ import {
   deleteTag,
   deleteProduct,
   countProductsForTag,
+  updateTagOrder,
+  updateProductTagOrder,
 } from './lib/supabase'
 import type { NewTag } from './lib/supabase'
 
@@ -47,6 +49,7 @@ async function renderView(main: HTMLElement, hash: string, role: Role): Promise<
       deleteFn: deleteTag,
       countProductsFn: countProductsForTag,
       isOwner: role === 'owner',
+      reorderFn: updateTagOrder,
     })
   } else if (hash === '#add-tag') {
     const tags = await fetchAllTags()
@@ -93,6 +96,7 @@ async function renderView(main: HTMLElement, hash: string, role: Role): Promise<
     renderProductList(main, products, tags, productTags, {
       deleteFn: deleteProduct,
       isOwner: role === 'owner',
+      reorderFn: updateProductTagOrder,
     })
   }
 }

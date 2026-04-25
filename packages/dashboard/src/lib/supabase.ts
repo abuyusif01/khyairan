@@ -150,12 +150,12 @@ export async function deleteProduct(productId: string): Promise<void> {
   if (error) throw error
 }
 
-export async function updateTagOrder(updates: Array<{ id: string; sortOrder: number }>): Promise<void> {
-  for (const { id, sortOrder } of updates) {
+export async function updateTagOrder(updates: Array<{ tagId: string; sortOrder: number }>): Promise<void> {
+  for (const { tagId, sortOrder } of updates) {
     const { error } = await supabase
       .from('tags')
       .update({ sort_order: sortOrder })
-      .eq('id', id)
+      .eq('id', tagId)
     if (error) throw error
   }
 }
