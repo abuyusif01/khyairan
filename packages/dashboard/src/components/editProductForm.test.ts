@@ -15,6 +15,8 @@ const productWithImage: Product = {
   price_ngn: 4500,
   image_path: 'products/p1.jpg',
   published: true,
+  metadata: { origin: 'Nigeria', sku: 'CC-35' },
+  internal_notes: 'Supplier prefers bulk orders.',
 }
 
 const productNoImage: Product = {
@@ -26,6 +28,8 @@ const productNoImage: Product = {
   price_ngn: 4200,
   image_path: null,
   published: false,
+  metadata: {},
+  internal_notes: null,
 }
 
 describe('renderEditProductForm', () => {
@@ -135,5 +139,91 @@ describe('renderEditProductForm', () => {
       expect(feedback).toBeTruthy()
     })
     expect(onSuccess).not.toHaveBeenCalled()
+  })
+
+  it('renders internal_notes textarea pre-filled with current value', async () => {
+    const { renderEditProductForm } = await import('./editProductForm')
+    renderEditProductForm(container, productWithImage, tags, [], onSuccess, updateFn, setProductTagsFn)
+
+    const textarea = container.querySelector<HTMLTextAreaElement>('textarea[name="internal_notes"]')
+    expect(textarea).toBeTruthy()
+    expect(textarea?.value).toBe('Supplier prefers bulk orders.')
+  })
+
+  it('renders internal_notes textarea empty when product has null notes', async () => {
+    const { renderEditProductForm } = await import('./editProductForm')
+    renderEditProductForm(container, productNoImage, tags, [], onSuccess, updateFn, setProductTagsFn)
+
+    const textarea = container.querySelector<HTMLTextAreaElement>('textarea[name="internal_notes"]')
+    expect(textarea).toBeTruthy()
+    expect(textarea?.value).toBe('')
+  })
+
+  it('renders metadata key-value pairs from product', async () => {
+    const { renderEditProductForm } = await import('./editProductForm')
+    renderEditProductForm(container, productWithImage, tags, [], onSuccess, updateFn, setProductTagsFn)
+
+    const metadataSection = container.querySelector('[data-metadata-editor]')
+    expect(metadataSection).toBeTruthy()
+
+    const keyInputs = metadataSection!.querySelectorAll<HTMLInputElement>('input[data-meta-key]')
+    const valInputs = metadataSection!.querySelectorAll<HTMLInputElement>('input[data-meta-value]')
+    expect(keyInputs.length).toBe(2)
+    expect(valInputs.length).toBe(2)
+
+    const keys = Array.from(keyInputs).map(i => i.value)
+    const vals = Array.from(valInputs).map(i => i.value)
+    expect(keys).toContain('origin')
+    expect(keys).toContain('sku')
+    expect(vals).toContain('Nigeria')
+    expect(vals).toContain('CC-35')
+  })
+
+  it('add metadata row button creates new key-value inputs', async () => {
+    const { renderEditProductForm } = await import('./editProductForm')
+    renderEditProductForm(container, productNoImage, tags, [], onSuccess, updateFn, setProductTagsFn)
+
+    const metadataSection = container.querySelector('[data-metadata-editor]')
+    const addBtn = metadataSection!.querySelector<HTMLButtonElement>('[data-action="add-meta-row"]')
+    expect(addBtn).toBeTruthy()
+
+    const before = metadataSection!.querySelectorAll('input[data-meta-key]').length
+    addBtn!.click()
+    const after = metadataSection!.querySelectorAll('input[data-meta-key]').length
+    expect(after).toBe(before + 1)
+  })
+
+  it('remove metadata row button removes that row', async () => {
+    const { renderEditProductForm } = await import('./editProductForm')
+    renderEditProductForm(container, productWithImage, tags, [], onSuccess, updateFn, setProductTagsFn)
+
+    const metadataSection = container.querySelector('[data-metadata-editor]')
+    const rows = metadataSection!.querySelectorAll('[data-meta-row]')
+    expect(rows.length).toBe(2)
+
+    const firstRow = rows[0] as HTMLElement
+    const removeBtn = firstRow.querySelector<HTMLButtonElement>('[data-action="remove-meta-row"]')
+    expect(removeBtn).toBeTruthy()
+    removeBtn!.click()
+
+    const remaining = metadataSection!.querySelectorAll('[data-meta-row]')
+    expect(remaining.length).toBe(1)
+  })
+
+  it('submit includes internal_notes and metadata from form', async () => {
+    const { renderEditProductForm } = await import('./editProductForm')
+    renderEditProductForm(container, productWithImage, tags, ['tag1'], onSuccess, updateFn, setProductTagsFn)
+
+    const notesTextarea = container.querySelector<HTMLTextAreaElement>('textarea[name="internal_notes"]')!
+    notesTextarea.value = 'Updated note'
+
+    const form = container.querySelector('form')!
+    form.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }))
+
+    await vi.waitFor(() => expect(updateFn).toHaveBeenCalledOnce())
+
+    const callArgs = updateFn.mock.calls[0][1]
+    expect(callArgs.internal_notes).toBe('Updated note')
+    expect(callArgs.metadata).toEqual({ origin: 'Nigeria', sku: 'CC-35' })
   })
 })

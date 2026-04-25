@@ -7,6 +7,8 @@ export interface Product {
   price_ngn: number
   image_path: string | null
   published: boolean
+  metadata: Record<string, string>
+  internal_notes: string | null
 }
 
 export interface Tag {

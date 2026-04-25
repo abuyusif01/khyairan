@@ -2,9 +2,9 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import type { Product } from '../types'
 
 const products: Product[] = [
-  { id: 'p1', name: 'Coca-Cola', size: '35CL', unit_type: 'bottle', units_per_carton: 24, price_ngn: 4500, image_path: null, published: true },
-  { id: 'p2', name: 'Sprite', size: '35CL', unit_type: 'bottle', units_per_carton: 24, price_ngn: 4200, image_path: null, published: false },
-  { id: 'p3', name: 'Chivita', size: '1L', unit_type: 'pack', units_per_carton: 12, price_ngn: 6000, image_path: null, published: true },
+  { id: 'p1', name: 'Coca-Cola', size: '35CL', unit_type: 'bottle', units_per_carton: 24, price_ngn: 4500, image_path: null, published: true, metadata: {}, internal_notes: null },
+  { id: 'p2', name: 'Sprite', size: '35CL', unit_type: 'bottle', units_per_carton: 24, price_ngn: 4200, image_path: null, published: false, metadata: {}, internal_notes: null },
+  { id: 'p3', name: 'Chivita', size: '1L', unit_type: 'pack', units_per_carton: 12, price_ngn: 6000, image_path: null, published: true, metadata: {}, internal_notes: null },
 ]
 
 describe('renderPriceEditor', () => {
