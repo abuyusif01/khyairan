@@ -1,20 +1,53 @@
 ---
 # khaiyran-k1s8
 title: Invite new user
-status: todo
+status: in-progress
 type: feature
 priority: deferred
 created_at: 2026-04-24T01:06:23Z
-updated_at: 2026-04-25T09:57:51Z
+updated_at: 2026-04-25T10:20:47Z
 parent: khaiyran-dpph
 blocked_by:
     - khaiyran-a3ls
 ---
 
-Owner-only form: email, full_name, role (dropdown: owner/manager). Creates Supabase auth account via admin API + inserts profile row. Sends invite email.
+Owner-only form above the user table: email, full_name, role dropdown (owner/manager). On submit calls `inviteUser()` from supabase.ts (which proxies to the admin-users Edge Function). On success re-fetches the full profile list via `fetchAllProfiles()` and re-renders the table; form resets. On error shows inline message.
 
-## Blocked
+## Related Code
 
-- Blocked by: Supabase admin API requires service role key, which cannot be exposed in frontend JS
-- Reason: `supabase.auth.admin.inviteUserByEmail()` only works with service role key. Options: (1) Supabase Edge Function acting as a proxy, (2) external backend. Needs human decision on approach.
-- Next available bean: khaiyran-885a
+- `packages/dashboard/src/components/userList.ts` — add invite form above the table; add `inviteFn` to UserListOptions
+- `packages/dashboard/src/components/userList.test.ts` — unit tests
+- `packages/dashboard/src/dashboard.ts:48-50` — pass `inviteUser` as `inviteFn` and `fetchAllProfiles` as `refetchFn` to renderUserList
+- `packages/dashboard/src/lib/supabase.ts:173-175` — `inviteUser()` helper already exists
+
+## Acceptance Criteria
+
+- [ ] Invite form appears above user table (owner-only route already enforced by dashboard.ts)
+- [ ] Form has email, full_name, name, role dropdown (owner/manager)
+- [ ] Submit button is disabled while request is in flight
+- [ ] On success: new row appears in the table; form resets
+- [ ] On error: error message shown inline; form remains filled
+- [ ] `npm run typecheck` 0 errors, `npm run lint` 0 warnings
+
+## Tests
+
+- `userList.test.ts` — `renders invite form above table` — asserts email/name/role inputs and submit button are present
+- `userList.test.ts` — `invite submit calls inviteFn with email, full_name, role` — fills form, clicks submit, asserts inviteFn called with correct args
+- `userList.test.ts` — `shows error message on inviteFn rejection` — inviteFn rejects, asserts error text visible
+- `userList.test.ts` — `resets form after successful invite` — inviteFn resolves, refetchFn resolves with updated profile list, asserts new row added and inputs cleared
+- playwright: navigate to /dashboard.html#users — invite form renders above the table
+- playwright: fill and submit invite form — new user row appears in the table
+- playwright: submit with inviteFn returning error — error message appears inline
+
+## Agent Pre-Start Checkpoint
+
+- Agent: claude-sonnet-4-6
+- Date: 2026-04-25
+- Verdict: APPROVED (after one revision)
+- Checkpoints:
+  - [x] userList.ts and UserListOptions exist at stated path
+  - [x] inviteUser() exists at supabase.ts:173-175, returns Promise<void>
+  - [x] fetchAllProfiles() exists at supabase.ts:189, returns Promise<Profile[]>
+  - [x] dashboard.ts:48-50 is the correct wiring target
+  - [x] All 4 tests are specific, file-named, and objectively assertable
+  - [x] refetchFn mechanism resolves the void-return ambiguity
