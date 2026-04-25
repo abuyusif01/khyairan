@@ -1,11 +1,11 @@
 ---
 # khaiyran-8uvb
 title: Reorder tags within type
-status: in-progress
+status: completed
 type: feature
 priority: deferred
 created_at: 2026-04-24T01:06:23Z
-updated_at: 2026-04-25T00:41:58Z
+updated_at: 2026-04-25T00:48:26Z
 parent: khaiyran-tvmy
 ---
 
@@ -45,3 +45,18 @@ Up/down arrow buttons to reorder tags within their type group. Updates `tags.sor
   - [x] `tags.sort_order` column confirmed in schema (integer, not null, default 0)
   - [x] Existing `updateTag` in supabase.ts can update sort_order per tag
   - [x] All 4 tests are objectively testable
+
+## Agent Post-Completion Review
+
+- Agent: claude-sonnet-4-6
+- Date: 2026-04-25
+- Verdict: FAIL (initial) → PASS after fixes
+- Findings fixed:
+  1. Renamed updateTagOrder parameter field from `id` to `tagId` to match reorderFn contract
+  2. Wired updateTagOrder into renderTagList call in dashboard.ts
+  3. Wired updateProductTagOrder into renderProductList call in dashboard.ts (also missing from khaiyran-hdf2 implementation)
+- All findings fixed: YES
+
+## Summary of Changes
+
+Added `updateTagOrder(updates)` to `supabase.ts` which iterates and calls update per tag. Added `reorderFn` option to `TagListOptions`. Each type group now renders `updateReorderButtons()` after building rows — up/down arrow buttons per row, with boundary constraints (no up on first, no down on last). Click handlers disable the button, swap sort_orders in memory, call `reorderFn`, move DOM row, rebuild button state. Sort_orders restored in memory on failure.
