@@ -1,11 +1,11 @@
 ---
 # khaiyran-885a
 title: List users with roles
-status: in-progress
+status: completed
 type: feature
 priority: deferred
 created_at: 2026-04-24T01:06:23Z
-updated_at: 2026-04-25T00:50:09Z
+updated_at: 2026-04-25T00:54:19Z
 parent: khaiyran-dpph
 ---
 
@@ -51,3 +51,15 @@ Owner-only view: table of all profiles showing full_name, role, created_at. Emai
   - [x] `profiles` table exists with `id, full_name, role, created_at` (confirmed in schema)
   - [x] RLS allows authenticated users to SELECT from profiles (confirmed in 00002_rls_policies.sql:87-89)
   - [x] All 3 tests are objectively testable
+
+## Agent Post-Completion Review
+
+- Agent: claude-sonnet-4-6
+- Date: 2026-04-25
+- Verdict: PASS
+- Findings: None blocking. Pre-existing XSS interpolation pattern (not introduced here). Email omitted intentionally — documented in Blocked section.
+- All findings fixed: N/A
+
+## Summary of Changes
+
+Added `Profile` type to `types.ts`. Added `fetchAllProfiles()` to `supabase.ts` fetching id, full_name, role, created_at from the profiles table ordered by created_at. Created `userList.ts` component rendering a table with data-user-id rows. Wired into dashboard.ts as `#users` route (owner-only guard at route level).
