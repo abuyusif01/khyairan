@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import type { Profile } from '../types'
 
 const profiles: Profile[] = [
@@ -168,5 +168,95 @@ describe('renderUserList — invite form', () => {
     // inputs cleared
     expect(emailInput.value).toBe('')
     expect(nameInput.value).toBe('')
+  })
+})
+
+describe('renderUserList — remove button', () => {
+  let container: HTMLElement
+
+  beforeEach(() => {
+    container = document.createElement('div')
+    vi.stubGlobal('confirm', vi.fn())
+  })
+
+  afterEach(() => {
+    vi.unstubAllGlobals()
+  })
+
+  it('renders Remove button per row, disabled for current user own row', async () => {
+    const { renderUserList } = await import('./userList')
+    const removeFn = vi.fn().mockResolvedValue(undefined)
+    const refetchFn = vi.fn().mockResolvedValue(profiles)
+    renderUserList(container, profiles, { removeFn, refetchFn, currentUserId: 'u1' })
+
+    const u1Btn = container.querySelector('[data-user-id="u1"] button[data-remove-btn]') as HTMLButtonElement
+    const u2Btn = container.querySelector('[data-user-id="u2"] button[data-remove-btn]') as HTMLButtonElement
+    expect(u1Btn).not.toBeNull()
+    expect(u2Btn).not.toBeNull()
+    expect(u1Btn.disabled).toBe(true)
+    expect(u2Btn.disabled).toBe(false)
+  })
+
+  it('Remove button calls removeFn with userId after confirm', async () => {
+    const { renderUserList } = await import('./userList')
+    vi.mocked(window.confirm).mockReturnValue(true)
+    const removeFn = vi.fn().mockResolvedValue(undefined)
+    const refetchFn = vi.fn().mockResolvedValue(profiles)
+    renderUserList(container, profiles, { removeFn, refetchFn, currentUserId: 'u1' })
+
+    const u2Btn = container.querySelector('[data-user-id="u2"] button[data-remove-btn]') as HTMLButtonElement
+    u2Btn.click()
+
+    await vi.waitFor(() => expect(removeFn).toHaveBeenCalledOnce())
+    expect(removeFn).toHaveBeenCalledWith('u2')
+  })
+
+  it('Remove button does nothing when confirm cancelled', async () => {
+    const { renderUserList } = await import('./userList')
+    vi.mocked(window.confirm).mockReturnValue(false)
+    const removeFn = vi.fn()
+    const refetchFn = vi.fn().mockResolvedValue(profiles)
+    renderUserList(container, profiles, { removeFn, refetchFn, currentUserId: 'u1' })
+
+    const u2Btn = container.querySelector('[data-user-id="u2"] button[data-remove-btn]') as HTMLButtonElement
+    u2Btn.click()
+
+    expect(removeFn).not.toHaveBeenCalled()
+  })
+
+  it('shows error on removeFn rejection; row remains', async () => {
+    const { renderUserList } = await import('./userList')
+    vi.mocked(window.confirm).mockReturnValue(true)
+    const removeFn = vi.fn().mockRejectedValue(new Error('Cannot remove last owner'))
+    const refetchFn = vi.fn().mockResolvedValue(profiles)
+    renderUserList(container, profiles, { removeFn, refetchFn, currentUserId: 'u1' })
+
+    const u2Btn = container.querySelector('[data-user-id="u2"] button[data-remove-btn]') as HTMLButtonElement
+    u2Btn.click()
+
+    await vi.waitFor(() => {
+      const errEl = container.querySelector('[data-remove-error]')
+      expect(errEl?.textContent).toContain('Cannot remove last owner')
+    })
+    // row still present
+    const rows = container.querySelectorAll('[data-user-id]')
+    expect(rows.length).toBe(2)
+  })
+
+  it('re-renders table without removed user on success', async () => {
+    const { renderUserList } = await import('./userList')
+    vi.mocked(window.confirm).mockReturnValue(true)
+    const removeFn = vi.fn().mockResolvedValue(undefined)
+    const refetchFn = vi.fn().mockResolvedValue([profiles[0]])
+    renderUserList(container, profiles, { removeFn, refetchFn, currentUserId: 'u1' })
+
+    const u2Btn = container.querySelector('[data-user-id="u2"] button[data-remove-btn]') as HTMLButtonElement
+    u2Btn.click()
+
+    await vi.waitFor(() => {
+      const rows = container.querySelectorAll('[data-user-id]')
+      expect(rows.length).toBe(1)
+    })
+    expect(container.querySelector('[data-user-id="u2"]')).toBeNull()
   })
 })

@@ -48,9 +48,10 @@ describe('checkSession', () => {
     mockEq.mockReturnValue({ single: mockSingle })
 
     const { checkSession } = await import('./session')
-    const role = await checkSession()
+    const result = await checkSession()
 
     expect(mockFrom).toHaveBeenCalledWith('profiles')
-    expect(role).toBe('owner')
+    expect(result?.role).toBe('owner')
+    expect(result?.userId).toBe('user-123')
   })
 })
