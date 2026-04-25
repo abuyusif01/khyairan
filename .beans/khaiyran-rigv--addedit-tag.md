@@ -1,11 +1,11 @@
 ---
 # khaiyran-rigv
 title: Add/edit tag
-status: in-progress
+status: completed
 type: feature
 priority: low
 created_at: 2026-04-24T01:06:23Z
-updated_at: 2026-04-24T12:11:33Z
+updated_at: 2026-04-25T00:21:12Z
 parent: khaiyran-tvmy
 ---
 
@@ -48,3 +48,9 @@ Form: name (text), slug (auto-generated from name, editable), type (datalist of 
   - [x] All existing files exist
   - [x] All criteria testable
   - [x] Slug generation: name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')
+
+## Summary of Changes
+
+- Added createTag(), updateTag(), UpdateTagFields type to packages/dashboard/src/lib/supabase.ts
+- Created packages/dashboard/src/components/tagForm.ts — form with name/slug/type(datalist)/sort_order/published, slug auto-generated from name unless manually edited, works for both create and edit
+- Updated packages/dashboard/src/dashboard.ts — #add-tag and #edit-tag-<id> routes; #tags route now passes toggleFn and isOwner to renderTagList
