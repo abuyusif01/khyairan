@@ -1,11 +1,11 @@
 ---
 # khaiyran-xper
 title: Change user role
-status: in-progress
+status: completed
 type: feature
 priority: deferred
 created_at: 2026-04-24T01:06:23Z
-updated_at: 2026-04-25T00:54:38Z
+updated_at: 2026-04-25T00:57:33Z
 parent: khaiyran-dpph
 ---
 
@@ -42,3 +42,15 @@ Owner-only: dropdown to change a user profile role between owner and manager. Up
   - [x] RLS allows owner to UPDATE profiles (confirmed in 00002_rls_policies.sql:97-99)
   - [x] `userList.ts` exists with profile rows
   - [x] All 3 tests are objectively testable
+
+## Agent Post-Completion Review
+
+- Agent: claude-sonnet-4-6
+- Date: 2026-04-25
+- Verdict: PASS
+- Findings: None
+- All findings fixed: N/A
+
+## Summary of Changes
+
+Added `updateProfileRole(userId, role)` to `supabase.ts`. Updated `renderUserList` to accept `UserListOptions.changeRoleFn` and render a role dropdown (owner/manager) pre-selected to current role when provided. Wired into `#users` route in dashboard.ts with `updateProfileRole` as the handler.
