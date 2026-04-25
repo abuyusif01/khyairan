@@ -1,7 +1,12 @@
 import { supabase } from './supabase'
 import type { Role } from '../components/layout'
 
-export async function checkSession(): Promise<Role | null> {
+export interface Session {
+  role: Role
+  userId: string
+}
+
+export async function checkSession(): Promise<Session | null> {
   const { data: { session } } = await supabase.auth.getSession()
 
   if (!session) {
@@ -15,5 +20,6 @@ export async function checkSession(): Promise<Role | null> {
     .eq('id', session.user.id)
     .single()
 
-  return (data?.role as Role) ?? null
+  if (!data?.role) return null
+  return { role: data.role as Role, userId: session.user.id }
 }

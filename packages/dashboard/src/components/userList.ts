@@ -3,7 +3,9 @@ import type { Profile } from '../types'
 export interface UserListOptions {
   changeRoleFn?: (userId: string, role: Profile['role']) => Promise<void>
   inviteFn?: (email: string, full_name: string, role: Profile['role']) => Promise<void>
+  removeFn?: (userId: string) => Promise<void>
   refetchFn?: () => Promise<Profile[]>
+  currentUserId?: string
 }
 
 function formatDate(isoString: string): string {
@@ -14,13 +16,26 @@ function formatDate(isoString: string): string {
   })
 }
 
-function renderTable(container: HTMLElement, profiles: Profile[], changeRoleFn?: UserListOptions['changeRoleFn']): void {
+function renderTable(
+  container: HTMLElement,
+  profiles: Profile[],
+  changeRoleFn?: UserListOptions['changeRoleFn'],
+  removeFn?: UserListOptions['removeFn'],
+  refetchFn?: UserListOptions['refetchFn'],
+  currentUserId?: string,
+): void {
   const existing = container.querySelector('table')
   if (existing) existing.remove()
+  const existingErr = container.querySelector('[data-remove-error]')
+  if (existingErr) existingErr.remove()
+
+  const errorEl = document.createElement('span')
+  errorEl.setAttribute('data-remove-error', '')
+  errorEl.style.cssText = 'color:#c00;display:none;'
 
   const table = document.createElement('table')
   table.innerHTML = `<thead><tr>
-    <th>Name</th><th>Role</th><th>Member since</th>
+    <th>Name</th><th>Role</th><th>Member since</th>${removeFn ? '<th></th>' : ''}
   </tr></thead>`
   const tbody = document.createElement('tbody')
 
@@ -57,15 +72,46 @@ function renderTable(container: HTMLElement, profiles: Profile[], changeRoleFn?:
     tr.appendChild(nameCell)
     tr.appendChild(roleCell)
     tr.appendChild(dateCell)
+
+    if (removeFn && refetchFn) {
+      const actionCell = document.createElement('td')
+      const removeBtn = document.createElement('button')
+      removeBtn.setAttribute('data-remove-btn', '')
+      removeBtn.textContent = 'Remove'
+      removeBtn.disabled = profile.id === currentUserId
+
+      removeBtn.addEventListener('click', () => {
+        if (!window.confirm(`Remove ${profile.full_name}?`)) return
+        errorEl.style.display = 'none'
+        errorEl.textContent = ''
+        removeBtn.disabled = true
+
+        void removeFn(profile.id)
+          .then(() => refetchFn())
+          .then((updated) => {
+            renderTable(container, updated, changeRoleFn, removeFn, refetchFn, currentUserId)
+          })
+          .catch((err: unknown) => {
+            errorEl.textContent = err instanceof Error ? err.message : 'Remove failed'
+            errorEl.style.display = ''
+            removeBtn.disabled = profile.id === currentUserId
+          })
+      })
+
+      actionCell.appendChild(removeBtn)
+      tr.appendChild(actionCell)
+    }
+
     tbody.appendChild(tr)
   })
 
   table.appendChild(tbody)
+  container.appendChild(errorEl)
   container.appendChild(table)
 }
 
 export function renderUserList(container: HTMLElement, profiles: Profile[], options: UserListOptions = {}): void {
-  const { changeRoleFn, inviteFn, refetchFn } = options
+  const { changeRoleFn, inviteFn, removeFn, refetchFn, currentUserId } = options
   container.innerHTML = ''
 
   if (inviteFn && refetchFn) {
@@ -123,7 +169,7 @@ export function renderUserList(container: HTMLElement, profiles: Profile[], opti
           emailInput.value = ''
           nameInput.value = ''
           roleSelect.value = 'manager'
-          renderTable(container, updated, changeRoleFn)
+          renderTable(container, updated, changeRoleFn, removeFn, refetchFn, currentUserId)
         })
         .catch((err: unknown) => {
           errorEl.textContent = err instanceof Error ? err.message : 'Invite failed'
@@ -137,5 +183,5 @@ export function renderUserList(container: HTMLElement, profiles: Profile[], opti
     container.appendChild(form)
   }
 
-  renderTable(container, profiles, changeRoleFn)
+  renderTable(container, profiles, changeRoleFn, removeFn, refetchFn, currentUserId)
 }

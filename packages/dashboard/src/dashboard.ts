@@ -30,12 +30,13 @@ import {
   fetchAllProfiles,
   updateProfileRole,
   inviteUser,
+  removeUser,
 } from './lib/supabase'
 import type { NewTag } from './lib/supabase'
 
 type Role = 'owner' | 'manager'
 
-async function renderView(main: HTMLElement, hash: string, role: Role): Promise<void> {
+async function renderView(main: HTMLElement, hash: string, role: Role, userId: string): Promise<void> {
   main.innerHTML = ''
 
   if (hash === '#prices') {
@@ -51,7 +52,9 @@ async function renderView(main: HTMLElement, hash: string, role: Role): Promise<
     renderUserList(main, profiles, {
       changeRoleFn: updateProfileRole,
       inviteFn: inviteUser,
+      removeFn: removeUser,
       refetchFn: fetchAllProfiles,
+      currentUserId: userId,
     })
   } else if (hash === '#tags') {
     const tags = await fetchAllTags()
@@ -113,8 +116,10 @@ async function renderView(main: HTMLElement, hash: string, role: Role): Promise<
 }
 
 async function init(): Promise<void> {
-  const role = await checkSession()
-  if (!role) return // redirecting
+  const session = await checkSession()
+  if (!session) return // redirecting
+
+  const { role, userId } = session
 
   const app = document.getElementById('app')
   if (!app) return
@@ -123,10 +128,10 @@ async function init(): Promise<void> {
 
   const main = app.querySelector('main')
   if (main) {
-    await renderView(main, window.location.hash, role)
+    await renderView(main, window.location.hash, role, userId)
 
     window.addEventListener('hashchange', () => {
-      void renderView(main, window.location.hash, role)
+      void renderView(main, window.location.hash, role, userId)
     })
   }
 
