@@ -1,11 +1,11 @@
 ---
 # khaiyran-znec
 title: Delete tag (owner only)
-status: in-progress
+status: completed
 type: feature
 priority: low
 created_at: 2026-04-24T01:06:23Z
-updated_at: 2026-04-25T00:21:25Z
+updated_at: 2026-04-25T00:23:44Z
 parent: khaiyran-tvmy
 ---
 
@@ -42,3 +42,9 @@ Owner-only delete with confirmation. If tag has products attached (via product_t
 - Checkpoints:
   - [x] tagList.ts already has deleteFn/isOwner option infrastructure
   - [x] All criteria testable
+
+## Summary of Changes
+
+- Added deleteTag(), countProductsForTag() to supabase.ts
+- Updated tagList.ts — delete button per row when isOwner, shows product count warning via countProductsFn before confirm
+- Updated dashboard.ts — passes deleteFn/countProductsFn/isOwner to renderTagList

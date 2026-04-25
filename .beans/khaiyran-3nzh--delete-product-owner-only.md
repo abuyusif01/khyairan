@@ -1,11 +1,11 @@
 ---
 # khaiyran-3nzh
 title: Delete product (owner only)
-status: in-progress
+status: completed
 type: feature
 priority: low
 created_at: 2026-04-24T01:05:59Z
-updated_at: 2026-04-25T00:21:32Z
+updated_at: 2026-04-25T00:23:44Z
 parent: khaiyran-md1g
 blocked_by:
     - khaiyran-d1rl
@@ -44,3 +44,9 @@ Owner-only delete button on product list (in product list table). Confirmation d
 - Checkpoints:
   - [x] productList.ts exists as integration target
   - [x] All criteria testable
+
+## Summary of Changes
+
+- Added deleteProduct() to supabase.ts
+- Updated productList.ts — ProductListOptions interface, delete button per row when isOwner, confirm before delete
+- Updated dashboard.ts — passes deleteFn/isOwner to renderProductList
