@@ -124,11 +124,12 @@ export function renderProductList(
         upBtn.setAttribute('data-action', 'move-up')
         upBtn.textContent = '↑'
         upBtn.addEventListener('click', () => {
+          upBtn.disabled = true
           const prevRow = visible[idx - 1]
           const prevId = prevRow.getAttribute('data-product-id') ?? ''
           const curPt = productTags.find(pt => pt.product_id === productId && pt.tag_id === tagId)
           const prevPt = productTags.find(pt => pt.product_id === prevId && pt.tag_id === tagId)
-          if (!curPt || !prevPt) return
+          if (!curPt || !prevPt) { upBtn.disabled = false; return }
           const curOrder = curPt.sort_order
           curPt.sort_order = prevPt.sort_order
           prevPt.sort_order = curOrder
@@ -139,6 +140,11 @@ export function renderProductList(
             // Move row up in DOM
             tbody.insertBefore(row, prevRow)
             updateReorderButtons()
+          }).catch(() => {
+            // Restore sort_orders on failure
+            prevPt.sort_order = curPt.sort_order
+            curPt.sort_order = curOrder
+            upBtn.disabled = false
           })
         })
         actionsCell.appendChild(upBtn)
@@ -150,11 +156,12 @@ export function renderProductList(
         downBtn.setAttribute('data-action', 'move-down')
         downBtn.textContent = '↓'
         downBtn.addEventListener('click', () => {
+          downBtn.disabled = true
           const nextRow = visible[idx + 1]
           const nextId = nextRow.getAttribute('data-product-id') ?? ''
           const curPt = productTags.find(pt => pt.product_id === productId && pt.tag_id === tagId)
           const nextPt = productTags.find(pt => pt.product_id === nextId && pt.tag_id === tagId)
-          if (!curPt || !nextPt) return
+          if (!curPt || !nextPt) { downBtn.disabled = false; return }
           const curOrder = curPt.sort_order
           curPt.sort_order = nextPt.sort_order
           nextPt.sort_order = curOrder
@@ -165,6 +172,11 @@ export function renderProductList(
             // Move row down in DOM
             tbody.insertBefore(nextRow, row)
             updateReorderButtons()
+          }).catch(() => {
+            // Restore sort_orders on failure
+            nextPt.sort_order = curPt.sort_order
+            curPt.sort_order = curOrder
+            downBtn.disabled = false
           })
         })
         actionsCell.appendChild(downBtn)

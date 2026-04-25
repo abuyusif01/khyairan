@@ -181,9 +181,11 @@ describe('renderProductList', () => {
     const [calledTagId, calledUpdates] = reorderFn.mock.calls[0] as [string, Array<{productId: string, sortOrder: number}>]
     expect(calledTagId).toBe('tag1')
     expect(calledUpdates.length).toBe(2)
-    // The two products should have swapped sort_orders
-    const ids = calledUpdates.map(u => u.productId)
-    expect(ids).toContain('p1')
-    expect(ids).toContain('p2')
+
+    // Verify sort_orders are actually swapped (p1 was sort_order=1, p2 was sort_order=2)
+    const p1Update = calledUpdates.find(u => u.productId === 'p1')!
+    const p2Update = calledUpdates.find(u => u.productId === 'p2')!
+    expect(p1Update.sortOrder).toBe(2)  // p1 takes p2's old sort_order
+    expect(p2Update.sortOrder).toBe(1)  // p2 takes p1's old sort_order
   })
 })
