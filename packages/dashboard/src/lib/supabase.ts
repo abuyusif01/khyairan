@@ -159,6 +159,11 @@ export async function countProductsForTag(tagId: string): Promise<number> {
   return count ?? 0
 }
 
+export function getProductImageUrl(path: string): string {
+  const { data } = supabase.storage.from('product-images').getPublicUrl(path)
+  return data.publicUrl
+}
+
 export async function uploadProductImage(productId: string, file: File): Promise<string> {
   const path = `products/${productId}`
   const { error } = await supabase.storage

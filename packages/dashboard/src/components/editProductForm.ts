@@ -5,6 +5,7 @@ import { renderImageUpload } from './imageUpload'
 type UpdateFn = (id: string, fields: UpdateProductFields) => Promise<void>
 type SetProductTagsFn = (productId: string, tagIds: string[]) => Promise<void>
 type UploadFn = (productId: string, file: File) => Promise<string>
+type GetUrlFn = (path: string) => string
 
 const UNIT_TYPES = ['bottle', 'can', 'pack', 'cup', 'pouch'] as const
 
@@ -16,7 +17,8 @@ export function renderEditProductForm(
   onSuccess: () => void,
   updateFn: UpdateFn,
   setProductTagsFn: SetProductTagsFn,
-  uploadFn?: UploadFn
+  uploadFn?: UploadFn,
+  getUrlFn?: GetUrlFn
 ): void {
   container.innerHTML = ''
 
@@ -115,7 +117,7 @@ export function renderEditProductForm(
     renderImageUpload(imageSection, product.id, () => {
       // Re-enable published toggle if it was disabled (image now uploaded)
       publishedToggle.disabled = false
-    }, uploadFn, updateFn)
+    }, uploadFn, updateFn, getUrlFn)
     form.appendChild(imageSection)
   } else if (product.image_path) {
     const imgNote = document.createElement('p')

@@ -17,6 +17,7 @@ import {
   setProductTags,
   updateProduct,
   uploadProductImage,
+  getProductImageUrl,
   createTag,
   updateTag,
   toggleTagPublished,
@@ -82,7 +83,7 @@ async function renderView(main: HTMLElement, hash: string, role: Role): Promise<
       .map(pt => pt.tag_id)
     renderEditProductForm(main, product, tags, currentTagIds, () => {
       window.location.hash = '#products'
-    }, updateProduct, setProductTags, uploadProductImage)
+    }, updateProduct, setProductTags, uploadProductImage, getProductImageUrl)
   } else {
     const [products, tags, productTags] = await Promise.all([
       fetchAllProducts(),

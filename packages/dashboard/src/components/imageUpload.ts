@@ -2,13 +2,15 @@ import type { UpdateProductFields } from '../lib/supabase'
 
 type UploadFn = (productId: string, file: File) => Promise<string>
 type UpdateFn = (id: string, fields: UpdateProductFields) => Promise<void>
+type GetUrlFn = (path: string) => string
 
 export function renderImageUpload(
   container: HTMLElement,
   productId: string,
   onUploaded: (path: string) => void,
   uploadFn: UploadFn,
-  updateFn: UpdateFn
+  updateFn: UpdateFn,
+  getUrlFn?: GetUrlFn
 ): void {
   container.innerHTML = ''
 
@@ -36,6 +38,16 @@ export function renderImageUpload(
       .then(path => {
         status.setAttribute('data-upload-status', 'success')
         status.textContent = `Uploaded: ${path}`
+
+        // Show preview image
+        const existing = container.querySelector('[data-preview]')
+        existing?.remove()
+        const img = document.createElement('img')
+        img.setAttribute('data-preview', path)
+        img.src = getUrlFn ? getUrlFn(path) : path
+        img.alt = 'Product image preview'
+        container.appendChild(img)
+
         onUploaded(path)
       })
       .catch(() => {
