@@ -1,11 +1,11 @@
 ---
 # khaiyran-vru3
 title: Image preview after upload
-status: in-progress
+status: completed
 type: feature
 priority: normal
 created_at: 2026-04-24T01:06:23Z
-updated_at: 2026-04-25T00:24:02Z
+updated_at: 2026-04-25T00:25:24Z
 parent: khaiyran-niiz
 blocked_by:
     - khaiyran-rst2
@@ -41,3 +41,9 @@ After image upload and Edge Function processing, show the processed WebP preview
 - Checkpoints:
   - [x] imageUpload.ts exists as integration target
   - [x] All criteria testable
+
+## Summary of Changes
+
+- Added getProductImageUrl(path) to supabase.ts — synchronously returns public URL from storage
+- Updated imageUpload.ts — after successful upload, renders img[data-preview] element; accepts optional getUrlFn
+- Updated editProductForm.ts and dashboard.ts to pass getProductImageUrl through
