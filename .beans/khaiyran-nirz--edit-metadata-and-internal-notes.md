@@ -1,11 +1,11 @@
 ---
 # khaiyran-nirz
 title: Edit metadata and internal notes
-status: in-progress
+status: completed
 type: feature
 priority: deferred
 created_at: 2026-04-24T01:05:59Z
-updated_at: 2026-04-25T00:30:21Z
+updated_at: 2026-04-25T00:35:13Z
 parent: khaiyran-md1g
 ---
 
@@ -52,3 +52,15 @@ JSONB metadata editor (key-value pairs) and free-text internal_notes field on pr
   - [x] DB schema has `metadata jsonb` and `internal_notes text` columns (confirmed in 00001_initial_schema.sql)
   - [x] All 5 tests listed are objectively testable with DOM assertions
   - [x] Acceptance criteria are all objectively verifiable
+
+## Agent Post-Completion Review
+
+- Agent: claude-sonnet-4-6
+- Date: 2026-04-25
+- Verdict: PASS
+- Findings: Duplicate metadata keys are silently last-write-wins (low severity, usability gap — not a bug). No other issues.
+- All findings fixed: N/A (finding is low-severity, recommend follow-up bean)
+
+## Summary of Changes
+
+Added `metadata: Record<string, string>` and `internal_notes: string | null` to the `Product` type. Updated `fetchAllProducts` to select these fields from Supabase. Extended `editProductForm` with a textarea for internal notes (pre-filled, trims to null on save) and a dynamic key-value metadata editor with add/remove row buttons. Submit handler collects metadata rows into a plain object and passes both fields to `updateFn`.
