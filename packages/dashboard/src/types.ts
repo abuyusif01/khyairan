@@ -25,3 +25,10 @@ export interface ProductTag {
   tag_id: string
   sort_order: number
 }
+
+export interface Profile {
+  id: string
+  full_name: string
+  role: 'owner' | 'manager'
+  created_at: string
+}

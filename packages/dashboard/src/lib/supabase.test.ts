@@ -354,3 +354,25 @@ describe('updateTagOrder', () => {
     expect(eqSpy).toHaveBeenCalledWith('id', 'tag2')
   })
 })
+
+describe('fetchAllProfiles', () => {
+  it('returns profiles ordered by created_at', async () => {
+    vi.resetModules()
+    const { createClient } = await import('@supabase/supabase-js')
+    const orderSpy = vi.fn().mockResolvedValue({
+      data: [{ id: 'u1', full_name: 'Abu', role: 'owner', created_at: '2026-01-01T00:00:00Z' }],
+      error: null,
+    })
+    const selectSpy = vi.fn().mockReturnValue({ order: orderSpy })
+    ;(createClient as unknown as MockInstance).mockReturnValue({
+      from: vi.fn().mockReturnValue({ select: selectSpy }),
+    })
+
+    const { fetchAllProfiles } = await import('./supabase')
+    const result = await fetchAllProfiles()
+
+    expect(selectSpy).toHaveBeenCalled()
+    expect(orderSpy).toHaveBeenCalledWith('created_at', { ascending: true })
+    expect(result[0].full_name).toBe('Abu')
+  })
+})
