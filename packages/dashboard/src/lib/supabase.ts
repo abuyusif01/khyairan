@@ -99,6 +99,33 @@ export async function updateProduct(id: string, fields: UpdateProductFields): Pr
   if (error) throw error
 }
 
+export interface NewTag {
+  name: string
+  slug: string
+  type: string
+  sort_order: number
+  published: boolean
+}
+
+export async function createTag(fields: NewTag): Promise<{ id: string }> {
+  const { data, error } = await supabase
+    .from('tags')
+    .insert(fields)
+    .select('id')
+  if (error) throw error
+  return (data as { id: string }[])[0]
+}
+
+export type UpdateTagFields = Partial<NewTag>
+
+export async function updateTag(id: string, fields: UpdateTagFields): Promise<void> {
+  const { error } = await supabase
+    .from('tags')
+    .update(fields)
+    .eq('id', id)
+  if (error) throw error
+}
+
 export async function toggleTagPublished(tagId: string, published: boolean): Promise<void> {
   const { error } = await supabase
     .from('tags')

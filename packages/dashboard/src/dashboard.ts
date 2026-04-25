@@ -6,6 +6,7 @@ import { renderPriceEditor } from './components/priceEditor'
 import { renderAddProductForm } from './components/addProductForm'
 import { renderEditProductForm } from './components/editProductForm'
 import { renderTagList } from './components/tagList'
+import { renderTagForm } from './components/tagForm'
 import {
   fetchAllProducts,
   fetchAllTags,
@@ -16,9 +17,15 @@ import {
   setProductTags,
   updateProduct,
   uploadProductImage,
+  createTag,
+  updateTag,
+  toggleTagPublished,
 } from './lib/supabase'
+import type { NewTag } from './lib/supabase'
 
-async function renderView(main: HTMLElement, hash: string): Promise<void> {
+type Role = 'owner' | 'manager'
+
+async function renderView(main: HTMLElement, hash: string, role: Role): Promise<void> {
   main.innerHTML = ''
 
   if (hash === '#prices') {
@@ -31,7 +38,28 @@ async function renderView(main: HTMLElement, hash: string): Promise<void> {
     }, createProduct, setProductTags)
   } else if (hash === '#tags') {
     const tags = await fetchAllTags()
-    renderTagList(main, tags)
+    renderTagList(main, tags, {
+      toggleFn: toggleTagPublished,
+      isOwner: role === 'owner',
+    })
+  } else if (hash === '#add-tag') {
+    const tags = await fetchAllTags()
+    const existingTypes = [...new Set(tags.map(t => t.type))]
+    renderTagForm(main, null, existingTypes, () => {
+      window.location.hash = '#tags'
+    }, (fields: NewTag) => createTag(fields).then(() => undefined))
+  } else if (hash.startsWith('#edit-tag-')) {
+    const tagId = hash.slice('#edit-tag-'.length)
+    const tags = await fetchAllTags()
+    const tag = tags.find(t => t.id === tagId)
+    if (!tag) {
+      main.textContent = 'Tag not found'
+      return
+    }
+    const existingTypes = [...new Set(tags.map(t => t.type))]
+    renderTagForm(main, tag, existingTypes, () => {
+      window.location.hash = '#tags'
+    }, (fields: NewTag) => updateTag(tagId, fields))
   } else if (hash.startsWith('#edit-product-')) {
     const productId = hash.slice('#edit-product-'.length)
     const [products, tags, productTags] = await Promise.all([
@@ -71,10 +99,10 @@ async function init(): Promise<void> {
 
   const main = app.querySelector('main')
   if (main) {
-    await renderView(main, window.location.hash)
+    await renderView(main, window.location.hash, role)
 
     window.addEventListener('hashchange', () => {
-      void renderView(main, window.location.hash)
+      void renderView(main, window.location.hash, role)
     })
   }
 
