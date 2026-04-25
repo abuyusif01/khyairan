@@ -112,6 +112,8 @@ describe('renderEditProductForm', () => {
       units_per_carton: 24,
       price_ngn: 5000,
       published: true,
+      internal_notes: 'Supplier prefers bulk orders.',
+      metadata: { origin: 'Nigeria', sku: 'CC-35' },
     })
     expect(setProductTagsFn).toHaveBeenCalledWith('p1', expect.arrayContaining(['tag1', 'tag2']))
   })

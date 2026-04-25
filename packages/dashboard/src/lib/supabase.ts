@@ -9,7 +9,7 @@ export const supabase = createClient(
 export async function fetchAllProducts(): Promise<Product[]> {
   const { data, error } = await supabase
     .from('products')
-    .select('id, name, size, unit_type, units_per_carton, price_ngn, image_path, published')
+    .select('id, name, size, unit_type, units_per_carton, price_ngn, image_path, published, metadata, internal_notes')
 
   if (error) throw error
   return (data ?? []) as Product[]

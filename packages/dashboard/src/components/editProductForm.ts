@@ -125,6 +125,62 @@ export function renderEditProductForm(
     form.appendChild(imgNote)
   }
 
+  // Internal notes
+  const notesLabel = document.createElement('label')
+  notesLabel.textContent = 'Internal notes'
+  const notesTextarea = document.createElement('textarea')
+  notesTextarea.name = 'internal_notes'
+  notesTextarea.value = product.internal_notes ?? ''
+  notesLabel.appendChild(notesTextarea)
+  form.appendChild(notesLabel)
+
+  // Metadata editor
+  const metadataSection = document.createElement('div')
+  metadataSection.setAttribute('data-metadata-editor', '')
+
+  const metadataLegend = document.createElement('p')
+  metadataLegend.textContent = 'Metadata (internal key-value pairs)'
+  metadataSection.appendChild(metadataLegend)
+
+  function addMetaRow(key = '', value = ''): void {
+    const row = document.createElement('div')
+    row.setAttribute('data-meta-row', '')
+
+    const keyInput = document.createElement('input')
+    keyInput.type = 'text'
+    keyInput.setAttribute('data-meta-key', '')
+    keyInput.placeholder = 'Key'
+    keyInput.value = key
+
+    const valInput = document.createElement('input')
+    valInput.type = 'text'
+    valInput.setAttribute('data-meta-value', '')
+    valInput.placeholder = 'Value'
+    valInput.value = value
+
+    const removeBtn = document.createElement('button')
+    removeBtn.type = 'button'
+    removeBtn.textContent = 'Remove'
+    removeBtn.setAttribute('data-action', 'remove-meta-row')
+    removeBtn.addEventListener('click', () => row.remove())
+
+    row.appendChild(keyInput)
+    row.appendChild(valInput)
+    row.appendChild(removeBtn)
+    metadataSection.appendChild(row)
+  }
+
+  Object.entries(product.metadata).forEach(([k, v]) => addMetaRow(k, v))
+
+  const addMetaBtn = document.createElement('button')
+  addMetaBtn.type = 'button'
+  addMetaBtn.textContent = 'Add row'
+  addMetaBtn.setAttribute('data-action', 'add-meta-row')
+  addMetaBtn.addEventListener('click', () => addMetaRow())
+  metadataSection.appendChild(addMetaBtn)
+
+  form.appendChild(metadataSection)
+
   // Tags
   const tagsFieldset = document.createElement('fieldset')
   const tagsLegend = document.createElement('legend')
@@ -155,6 +211,13 @@ export function renderEditProductForm(
       tagsFieldset.querySelectorAll<HTMLInputElement>('input[type="checkbox"][data-tag-id]:checked')
     ).map(cb => cb.getAttribute('data-tag-id') as string)
 
+    const metadata: Record<string, string> = {}
+    metadataSection.querySelectorAll<HTMLElement>('[data-meta-row]').forEach(row => {
+      const k = (row.querySelector<HTMLInputElement>('[data-meta-key]')?.value ?? '').trim()
+      const v = (row.querySelector<HTMLInputElement>('[data-meta-value]')?.value ?? '').trim()
+      if (k) metadata[k] = v
+    })
+
     const fields: UpdateProductFields = {
       name: nameInput.value.trim(),
       size: sizeInput.value.trim(),
@@ -162,6 +225,8 @@ export function renderEditProductForm(
       units_per_carton: Number(unitsInput.value),
       price_ngn: Number(priceInput.value),
       published: publishedToggle.checked,
+      internal_notes: notesTextarea.value.trim() || null,
+      metadata,
     }
 
     submitBtn.disabled = true
