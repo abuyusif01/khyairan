@@ -124,6 +124,11 @@ export function renderTagList(container: HTMLElement, tags: Tag[], options: TagL
 
       const actionsCell = document.createElement('td')
 
+      const editLink = document.createElement('a')
+      editLink.href = `#edit-tag-${tag.id}`
+      editLink.textContent = 'Edit'
+      actionsCell.appendChild(editLink)
+
       if (toggleFn) {
         const toggleBtn = document.createElement('button')
         toggleBtn.setAttribute('data-action', tag.published ? 'unpublish' : 'publish')
