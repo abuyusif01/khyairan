@@ -5,7 +5,7 @@ status: completed
 type: feature
 priority: deferred
 created_at: 2026-04-24T01:06:23Z
-updated_at: 2026-04-25T10:33:26Z
+updated_at: 2026-04-26T05:56:23Z
 parent: khaiyran-dpph
 blocked_by:
     - khaiyran-a3ls
@@ -22,12 +22,12 @@ Owner-only form above the user table: email, full_name, role dropdown (owner/man
 
 ## Acceptance Criteria
 
-- [ ] Invite form appears above user table (owner-only route already enforced by dashboard.ts)
-- [ ] Form has email, full_name, name, role dropdown (owner/manager)
-- [ ] Submit button is disabled while request is in flight
-- [ ] On success: new row appears in the table; form resets
-- [ ] On error: error message shown inline; form remains filled
-- [ ] `npm run typecheck` 0 errors, `npm run lint` 0 warnings
+- [x] Invite form appears above user table (owner-only route already enforced by dashboard.ts)
+- [x] Form has email, full_name, name, role dropdown (owner/manager)
+- [x] Submit button is disabled while request is in flight
+- [x] On success: new row appears in the table; form resets
+- [x] On error: error message shown inline; form remains filled
+- [x] `npm run typecheck` 0 errors, `npm run lint` 0 warnings
 
 ## Tests
 

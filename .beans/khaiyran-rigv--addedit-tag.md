@@ -5,7 +5,7 @@ status: completed
 type: feature
 priority: low
 created_at: 2026-04-24T01:06:23Z
-updated_at: 2026-04-25T00:21:12Z
+updated_at: 2026-04-26T05:56:22Z
 parent: khaiyran-tvmy
 ---
 
@@ -21,14 +21,14 @@ Form: name (text), slug (auto-generated from name, editable), type (datalist of 
 
 ## Acceptance Criteria
 
-- [ ] Form renders: name (text, required), slug (text, required), type (input with datalist of existing types, required), sort_order (number, required), published (checkbox)
-- [ ] Slug auto-fills from name (lowercase, hyphens for spaces) when name changes, if slug not manually edited
-- [ ] When existingTag provided, form is pre-filled
-- [ ] Submitting calls saveFn with correct fields and calls onSuccess
-- [ ] On error, error feedback shown
-- [ ] `npm run typecheck -w packages/dashboard` passes with 0 errors
-- [ ] `npm run lint -w packages/dashboard` passes with 0 warnings
-- [ ] `npm run build -w packages/dashboard` exits 0
+- [x] Form renders: name (text, required), slug (text, required), type (input with datalist of existing types, required), sort_order (number, required), published (checkbox)
+- [x] Slug auto-fills from name (lowercase, hyphens for spaces) when name changes, if slug not manually edited
+- [x] When existingTag provided, form is pre-filled
+- [x] Submitting calls saveFn with correct fields and calls onSuccess
+- [x] On error, error feedback shown
+- [x] `npm run typecheck -w packages/dashboard` passes with 0 errors
+- [x] `npm run lint -w packages/dashboard` passes with 0 warnings
+- [x] `npm run build -w packages/dashboard` exits 0
 
 ## Tests
 

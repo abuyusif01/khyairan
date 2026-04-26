@@ -5,7 +5,7 @@ status: completed
 type: feature
 priority: deferred
 created_at: 2026-04-24T01:06:23Z
-updated_at: 2026-04-25T00:57:33Z
+updated_at: 2026-04-26T05:56:23Z
 parent: khaiyran-dpph
 ---
 
@@ -20,11 +20,11 @@ Owner-only: dropdown to change a user profile role between owner and manager. Up
 
 ## Acceptance Criteria
 
-- [ ] Each user row in the user list renders a role dropdown (owner/manager) pre-selected to current role
-- [ ] Changing the dropdown calls `updateProfileRole` with the user's id and new role
-- [ ] Dropdown is shown only when `changeRoleFn` option is provided (owner-only gating at route level)
-- [ ] `npm run typecheck` passes with 0 errors
-- [ ] `npm run lint` passes with 0 warnings
+- [x] Each user row in the user list renders a role dropdown (owner/manager) pre-selected to current role
+- [x] Changing the dropdown calls `updateProfileRole` with the user's id and new role
+- [x] Dropdown is shown only when `changeRoleFn` option is provided (owner-only gating at route level)
+- [x] `npm run typecheck` passes with 0 errors
+- [x] `npm run lint` passes with 0 warnings
 
 ## Tests
 

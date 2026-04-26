@@ -5,7 +5,7 @@ status: completed
 type: feature
 priority: normal
 created_at: 2026-04-24T01:05:59Z
-updated_at: 2026-04-24T12:05:23Z
+updated_at: 2026-04-26T05:56:22Z
 parent: khaiyran-md1g
 blocked_by:
     - khaiyran-d1rl
@@ -23,15 +23,15 @@ Edit form for existing product: all fields from add product (name, size, unit_ty
 
 ## Acceptance Criteria
 
-- [ ] Form renders with all fields pre-filled from the product object
-- [ ] Published toggle is a checkbox, disabled when product.image_path is null
-- [ ] Published toggle is enabled and reflects product.published when image_path is not null
-- [ ] Tag checkboxes are pre-checked for currentTagIds
-- [ ] Submitting calls updateProduct with changed fields, then setProductTags, then onSuccess
-- [ ] On Supabase error, error feedback shown and form not reset
-- [ ] `npm run typecheck -w packages/dashboard` passes with 0 errors
-- [ ] `npm run lint -w packages/dashboard` passes with 0 warnings
-- [ ] `npm run build -w packages/dashboard` exits 0
+- [x] Form renders with all fields pre-filled from the product object
+- [x] Published toggle is a checkbox, disabled when product.image_path is null
+- [x] Published toggle is enabled and reflects product.published when image_path is not null
+- [x] Tag checkboxes are pre-checked for currentTagIds
+- [x] Submitting calls updateProduct with changed fields, then setProductTags, then onSuccess
+- [x] On Supabase error, error feedback shown and form not reset
+- [x] `npm run typecheck -w packages/dashboard` passes with 0 errors
+- [x] `npm run lint -w packages/dashboard` passes with 0 warnings
+- [x] `npm run build -w packages/dashboard` exits 0
 
 ## Tests
 

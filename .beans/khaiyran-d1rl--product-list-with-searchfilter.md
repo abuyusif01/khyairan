@@ -5,7 +5,7 @@ status: completed
 type: feature
 priority: normal
 created_at: 2026-04-24T01:05:59Z
-updated_at: 2026-04-24T11:51:35Z
+updated_at: 2026-04-26T05:56:22Z
 parent: khaiyran-md1g
 blocked_by:
     - khaiyran-k5q4
@@ -23,14 +23,14 @@ Table/list of all products showing name, size, unit type, price, published statu
 
 ## Acceptance Criteria
 
-- [ ] All products (published and draft) fetched from Supabase
-- [ ] Product table shows: name, size, unit_type, price_ngn, published status
-- [ ] Published products show a visual indicator distinct from draft
-- [ ] Search input filters rows by product name (case-insensitive)
-- [ ] Filter dropdown filters by category tag; 'All' option shows all products
-- [ ] `npm run typecheck -w packages/dashboard` passes with 0 errors
-- [ ] `npm run lint -w packages/dashboard` passes with 0 warnings
-- [ ] `npm run build -w packages/dashboard` exits 0
+- [x] All products (published and draft) fetched from Supabase
+- [x] Product table shows: name, size, unit_type, price_ngn, published status
+- [x] Published products show a visual indicator distinct from draft
+- [x] Search input filters rows by product name (case-insensitive)
+- [x] Filter dropdown filters by category tag; 'All' option shows all products
+- [x] `npm run typecheck -w packages/dashboard` passes with 0 errors
+- [x] `npm run lint -w packages/dashboard` passes with 0 warnings
+- [x] `npm run build -w packages/dashboard` exits 0
 
 ## Tests
 

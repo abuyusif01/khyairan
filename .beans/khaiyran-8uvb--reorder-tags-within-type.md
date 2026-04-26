@@ -5,7 +5,7 @@ status: completed
 type: feature
 priority: deferred
 created_at: 2026-04-24T01:06:23Z
-updated_at: 2026-04-25T00:48:26Z
+updated_at: 2026-04-26T05:56:23Z
 parent: khaiyran-tvmy
 ---
 
@@ -21,12 +21,12 @@ Up/down arrow buttons to reorder tags within their type group. Updates `tags.sor
 
 ## Acceptance Criteria
 
-- [ ] Up/down reorder buttons appear on each tag row within each type group
-- [ ] Up button absent for the first tag in a group; down button absent for the last tag in a group
-- [ ] Clicking up/down swaps sort_order in memory, disables clicked button, calls `reorderFn` with the two affected rows, then moves the DOM row
-- [ ] Sort_orders restored in memory on failure; button re-enabled
-- [ ] `npm run typecheck` passes with 0 errors
-- [ ] `npm run lint` passes with 0 warnings
+- [x] Up/down reorder buttons appear on each tag row within each type group
+- [x] Up button absent for the first tag in a group; down button absent for the last tag in a group
+- [x] Clicking up/down swaps sort_order in memory, disables clicked button, calls `reorderFn` with the two affected rows, then moves the DOM row
+- [x] Sort_orders restored in memory on failure; button re-enabled
+- [x] `npm run typecheck` passes with 0 errors
+- [x] `npm run lint` passes with 0 warnings
 
 ## Tests
 

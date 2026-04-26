@@ -5,7 +5,7 @@ status: completed
 type: feature
 priority: low
 created_at: 2026-04-24T01:06:23Z
-updated_at: 2026-04-24T12:09:43Z
+updated_at: 2026-04-26T05:56:22Z
 parent: khaiyran-tvmy
 ---
 
@@ -20,13 +20,13 @@ Show all tags grouped under their type headers (category, brand, etc). Show tag 
 
 ## Acceptance Criteria
 
-- [ ] Renders one `<details>` group per distinct tag type (e.g. category, brand)
-- [ ] Each group header (`<summary>`) shows the type name
-- [ ] Each tag row shows: name, slug, sort_order, published status badge
-- [ ] Tags within each group are sorted by sort_order ascending
-- [ ] `npm run typecheck -w packages/dashboard` passes with 0 errors
-- [ ] `npm run lint -w packages/dashboard` passes with 0 warnings
-- [ ] `npm run build -w packages/dashboard` exits 0
+- [x] Renders one `<details>` group per distinct tag type (e.g. category, brand)
+- [x] Each group header (`<summary>`) shows the type name
+- [x] Each tag row shows: name, slug, sort_order, published status badge
+- [x] Tags within each group are sorted by sort_order ascending
+- [x] `npm run typecheck -w packages/dashboard` passes with 0 errors
+- [x] `npm run lint -w packages/dashboard` passes with 0 warnings
+- [x] `npm run build -w packages/dashboard` exits 0
 
 ## Tests
 

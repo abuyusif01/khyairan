@@ -5,7 +5,7 @@ status: completed
 type: feature
 priority: low
 created_at: 2026-04-24T01:05:59Z
-updated_at: 2026-04-25T00:23:44Z
+updated_at: 2026-04-26T05:56:22Z
 parent: khaiyran-md1g
 blocked_by:
     - khaiyran-d1rl
@@ -23,12 +23,12 @@ Owner-only delete button on product list (in product list table). Confirmation d
 
 ## Acceptance Criteria
 
-- [ ] Delete button only rendered when isOwner=true in productList
-- [ ] Clicking delete shows confirmation dialog
-- [ ] On confirmation, calls deleteProduct and removes row from DOM
-- [ ] `npm run typecheck -w packages/dashboard` passes with 0 errors
-- [ ] `npm run lint -w packages/dashboard` passes with 0 warnings
-- [ ] `npm run build -w packages/dashboard` exits 0
+- [x] Delete button only rendered when isOwner=true in productList
+- [x] Clicking delete shows confirmation dialog
+- [x] On confirmation, calls deleteProduct and removes row from DOM
+- [x] `npm run typecheck -w packages/dashboard` passes with 0 errors
+- [x] `npm run lint -w packages/dashboard` passes with 0 warnings
+- [x] `npm run build -w packages/dashboard` exits 0
 
 ## Tests
 

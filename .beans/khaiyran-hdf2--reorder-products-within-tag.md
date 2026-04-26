@@ -5,7 +5,7 @@ status: completed
 type: feature
 priority: deferred
 created_at: 2026-04-24T01:05:59Z
-updated_at: 2026-04-25T00:41:24Z
+updated_at: 2026-04-26T05:56:22Z
 parent: khaiyran-md1g
 ---
 
@@ -21,13 +21,13 @@ Up/down arrow buttons to reorder products within a selected tag. Buttons appear 
 
 ## Acceptance Criteria
 
-- [ ] Up/down reorder buttons appear per row only when a specific tag is selected in the filter
-- [ ] Up button is disabled (or absent) for the first row; down button disabled (or absent) for the last row
-- [ ] Clicking up/down swaps sort_order in memory and calls `reorderFn` with the two affected rows
-- [ ] Rows visually reorder in the DOM after a successful swap
-- [ ] `reorderFn` is not called when no tag filter is active
-- [ ] `npm run typecheck` passes with 0 errors
-- [ ] `npm run lint` passes with 0 warnings
+- [x] Up/down reorder buttons appear per row only when a specific tag is selected in the filter
+- [x] Up button is disabled (or absent) for the first row; down button disabled (or absent) for the last row
+- [x] Clicking up/down swaps sort_order in memory and calls `reorderFn` with the two affected rows
+- [x] Rows visually reorder in the DOM after a successful swap
+- [x] `reorderFn` is not called when no tag filter is active
+- [x] `npm run typecheck` passes with 0 errors
+- [x] `npm run lint` passes with 0 warnings
 
 ## Tests
 

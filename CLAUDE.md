@@ -88,7 +88,7 @@ beans create         # new bean
 beans done <id>      # mark completed
 ```
 
-Use the [Bean Spec Format](#5-bean-spec-format). A spec is not ready until every section is filled — especially **Related Code**.
+Use the [Bean Spec Format](#5-bean-spec-format). For **tasks, features, and bugs**, a spec is not ready until every section is filled — especially **Related Code**. For **epics and milestones**, use the [lighter format](#epics--milestones) instead.
 
 ### Step 2 — Pre-start agent review ← HARD GATE
 
@@ -127,6 +127,29 @@ src/
     ProductCard.test.ts
 ```
 
+### Frontend Testing — Playwright (MANDATORY)
+
+Code-level tests are not sufficient for frontend beans. Every feature or bug that touches the UI **must** also be verified with the `/playwright-cli` skill.
+
+Use `/playwright-cli` to:
+
+- Navigate to the relevant page (`npm run dev` must be running first)
+- Interact with the UI as a real user would (click, fill, submit)
+- Assert visible state — elements present, text correct, no overflow, no broken layout
+- Cover the happy path **and** at least one error/edge case (e.g. empty state, validation error)
+
+Playwright checks happen **after** code tests pass, as part of Step 3 (before committing the implementation). If Playwright reveals a bug that unit tests missed, fix it before moving on.
+
+Document each Playwright scenario in the bean's **Tests** section alongside the code tests:
+
+```
+- playwright: navigate to /admin/products — product list renders with at least one row
+- playwright: click "Add product" — modal opens and form is visible
+- playwright: submit empty form — validation errors appear inline
+```
+
+The post-completion review agent must confirm Playwright scenarios were run and passed.
+
 ### Step 4 — Commit structure
 
 2–3 commits per task in this exact order:
@@ -151,6 +174,7 @@ Spawn a subagent to review the finished implementation. The agent must:
 - Run all quality gate commands and paste output into the review
 - Read every file listed in **Related Code** and verify correctness
 - Confirm tests were committed before implementation (check git log)
+- For frontend beans: confirm Playwright scenarios were run and passed
 - Write the **Agent Post-Completion Review** with verdict `PASS` or `FAIL`
 
 If `FAIL`: fix all findings, re-run the review. Do not close the bean until `PASS`.
@@ -164,6 +188,34 @@ beans done <id>      # add a one-line summary of what changed
 ---
 
 ## 5. Bean Spec Format
+
+### Epics & Milestones
+
+Epics and milestones are **containers**, not implementable work. They don't need Related Code, Tests, or agent reviews — those gates apply to their children.
+
+```markdown
+# <Title>
+
+## Description
+
+What this group of work achieves and why.
+
+## Acceptance Criteria
+
+High-level criteria — typically "all child beans completed".
+
+- [ ] All child beans are completed
+- [ ] Dashboard is usable end-to-end
+```
+
+No Related Code, no Tests, no Pre-Start Review, no Post-Completion Review.
+The full working process (Steps 2–5) is skipped — just create the bean, create children, and close it when all children are done.
+
+---
+
+### Tasks, Features & Bugs
+
+The full spec format below applies to all implementable work.
 
 ```markdown
 # <Title>
@@ -233,13 +285,14 @@ This section is MANDATORY and must be filled before the pre-start review. No tes
 
 Gates, not targets. A bean cannot close until all pass.
 
-| Check      | Command             | Required             |
-| ---------- | ------------------- | -------------------- |
-| TypeScript | `npm run typecheck` | 0 errors             |
-| ESLint     | `npm run lint`      | 0 errors, 0 warnings |
-| Build      | `npm run build`     | exits 0              |
+| Check      | Command             | Required                                    |
+| ---------- | ------------------- | ------------------------------------------- |
+| TypeScript | `npm run typecheck` | 0 errors                                    |
+| ESLint     | `npm run lint`      | 0 errors, 0 warnings                        |
+| Build      | `npm run build`     | exits 0                                     |
+| Playwright | `/playwright-cli`   | all UI scenarios pass (frontend beans only) |
 
-The post-completion review agent runs all three and includes full output in the review.
+The post-completion review agent runs all checks and includes full output in the review.
 
 **No exceptions without written justification in the bean:**
 

@@ -5,7 +5,7 @@ status: completed
 type: feature
 priority: deferred
 created_at: 2026-04-24T01:05:59Z
-updated_at: 2026-04-25T00:35:13Z
+updated_at: 2026-04-26T05:56:22Z
 parent: khaiyran-md1g
 ---
 
@@ -21,15 +21,15 @@ JSONB metadata editor (key-value pairs) and free-text internal_notes field on pr
 
 ## Acceptance Criteria
 
-- [ ] `Product` type includes `metadata: Record<string, string>` and `internal_notes: string | null`
-- [ ] `fetchAllProducts` selects `metadata` and `internal_notes` from DB
-- [ ] Edit product form renders an `internal_notes` textarea pre-filled with current value (empty string if null)
-- [ ] Edit product form renders a metadata key-value editor pre-populated from product.metadata
-- [ ] User can add/remove key-value rows in the metadata editor
-- [ ] On submit, `internal_notes` and flattened `metadata` object are passed to updateFn
-- [ ] Fields are never shown publicly (admin only — no public-facing code touched)
-- [ ] `npm run typecheck` passes with 0 errors
-- [ ] `npm run lint` passes with 0 warnings
+- [x] `Product` type includes `metadata: Record<string, string>` and `internal_notes: string | null`
+- [x] `fetchAllProducts` selects `metadata` and `internal_notes` from DB
+- [x] Edit product form renders an `internal_notes` textarea pre-filled with current value (empty string if null)
+- [x] Edit product form renders a metadata key-value editor pre-populated from product.metadata
+- [x] User can add/remove key-value rows in the metadata editor
+- [x] On submit, `internal_notes` and flattened `metadata` object are passed to updateFn
+- [x] Fields are never shown publicly (admin only — no public-facing code touched)
+- [x] `npm run typecheck` passes with 0 errors
+- [x] `npm run lint` passes with 0 warnings
 
 ## Tests
 

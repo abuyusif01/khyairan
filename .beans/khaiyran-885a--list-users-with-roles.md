@@ -5,7 +5,7 @@ status: completed
 type: feature
 priority: deferred
 created_at: 2026-04-24T01:06:23Z
-updated_at: 2026-04-25T00:54:19Z
+updated_at: 2026-04-26T05:56:23Z
 parent: khaiyran-dpph
 ---
 
@@ -28,13 +28,13 @@ Owner-only view: table of all profiles showing full_name, role, created_at. Emai
 
 ## Acceptance Criteria
 
-- [ ] `Profile` type added to `types.ts` with `id, full_name, role, created_at`
-- [ ] `fetchAllProfiles()` fetches from `profiles` table, ordered by `created_at`
-- [ ] User list renders a table with full_name, role, created_at columns
-- [ ] Component accepts `isOwner` prop (owner-only gating is done at the route level in dashboard.ts)
-- [ ] `#users` route in dashboard.ts renders the user list (owner only)
-- [ ] `npm run typecheck` passes with 0 errors
-- [ ] `npm run lint` passes with 0 warnings
+- [x] `Profile` type added to `types.ts` with `id, full_name, role, created_at`
+- [x] `fetchAllProfiles()` fetches from `profiles` table, ordered by `created_at`
+- [x] User list renders a table with full_name, role, created_at columns
+- [x] Component accepts `isOwner` prop (owner-only gating is done at the route level in dashboard.ts)
+- [x] `#users` route in dashboard.ts renders the user list (owner only)
+- [x] `npm run typecheck` passes with 0 errors
+- [x] `npm run lint` passes with 0 warnings
 
 ## Tests
 

@@ -5,7 +5,7 @@ status: completed
 type: feature
 priority: deferred
 created_at: 2026-04-24T01:06:23Z
-updated_at: 2026-04-25T10:43:28Z
+updated_at: 2026-04-26T05:56:23Z
 parent: khaiyran-dpph
 blocked_by:
     - khaiyran-a3ls
@@ -26,12 +26,12 @@ Owner-only: each user row has a Remove button. Clicking shows a confirmation pro
 
 ## Acceptance Criteria
 
-- [ ] Each user row has a Remove button (disabled for current user's own row)
-- [ ] Clicking Remove shows window.confirm prompt with user name
-- [ ] On confirm: calls removeFn(userId), re-fetches, re-renders; removed user is gone
-- [ ] On cancel: nothing happens
-- [ ] On error: inline error visible; row remains
-- [ ] `npm run typecheck` 0 errors, `npm run lint` 0 warnings
+- [x] Each user row has a Remove button (disabled for current user's own row)
+- [x] Clicking Remove shows window.confirm prompt with user name
+- [x] On confirm: calls removeFn(userId), re-fetches, re-renders; removed user is gone
+- [x] On cancel: nothing happens
+- [x] On error: inline error visible; row remains
+- [x] `npm run typecheck` 0 errors, `npm run lint` 0 warnings
 
 ## Tests
 

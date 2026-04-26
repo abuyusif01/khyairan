@@ -5,7 +5,7 @@ status: completed
 type: feature
 priority: normal
 created_at: 2026-04-24T01:05:59Z
-updated_at: 2026-04-24T12:02:54Z
+updated_at: 2026-04-26T05:56:22Z
 parent: khaiyran-md1g
 blocked_by:
     - khaiyran-d1rl
@@ -23,14 +23,14 @@ Form: name (text), size (text), unit_type (dropdown: bottle/can/pack/cup/pouch),
 
 ## Acceptance Criteria
 
-- [ ] Form renders fields: name (text, required), size (text, required), unit_type (select with 5 options, required), units_per_carton (number, required, min=1), price_ngn (number, required, min=0)
-- [ ] Form renders tag multi-select showing all tags
-- [ ] Submitting with empty required fields shows validation error (HTML5 `required`)
-- [ ] Successful submit calls `createProduct` with published=false, then calls `setProductTags`, then calls `onSuccess`
-- [ ] On Supabase error, error feedback is shown and form not reset
-- [ ] `npm run typecheck -w packages/dashboard` passes with 0 errors
-- [ ] `npm run lint -w packages/dashboard` passes with 0 warnings
-- [ ] `npm run build -w packages/dashboard` exits 0
+- [x] Form renders fields: name (text, required), size (text, required), unit_type (select with 5 options, required), units_per_carton (number, required, min=1), price_ngn (number, required, min=0)
+- [x] Form renders tag multi-select showing all tags
+- [x] Submitting with empty required fields shows validation error (HTML5 `required`)
+- [x] Successful submit calls `createProduct` with published=false, then calls `setProductTags`, then calls `onSuccess`
+- [x] On Supabase error, error feedback is shown and form not reset
+- [x] `npm run typecheck -w packages/dashboard` passes with 0 errors
+- [x] `npm run lint -w packages/dashboard` passes with 0 warnings
+- [x] `npm run build -w packages/dashboard` exits 0
 
 ## Tests
 
