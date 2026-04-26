@@ -296,6 +296,36 @@
       .form-field textarea { min-height: 80px; resize: vertical; }
       .form-actions { display: flex; gap: 0.5rem; margin-top: 1.25rem; }
 
+      /* ── Fieldset / legend ── */
+      .form-card fieldset {
+        border: 1px solid #e5e7eb;
+        border-radius: 6px;
+        padding: 0.75rem 1rem;
+        margin-bottom: 1rem;
+        background: #f9fafb;
+      }
+      .form-card legend {
+        font-size: 0.8rem;
+        font-weight: 500;
+        color: #374151;
+        padding: 0 0.25rem;
+      }
+
+      /* ── Metadata editor ── */
+      [data-metadata-editor] { display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 1rem; }
+      [data-meta-row] { display: flex; gap: 0.5rem; align-items: center; }
+      [data-meta-row] input { flex: 1; }
+
+      /* ── Image upload status ── */
+      [data-upload-status] { font-size: 0.8rem; margin-top: 0.25rem; }
+      [data-upload-status=""] { display: none; }
+      [data-upload-status="uploading"] { color: #9ca3af; }
+      [data-upload-status="success"] { color: #16a34a; }
+      [data-upload-status="error"] { color: #dc2626; }
+
+      /* ── Changed price row highlight ── */
+      tr[data-changed] { background: #fefce8; border-left: 3px solid #fbbf24; }
+
       /* ── Image preview ── */
       .image-preview img {
         border-radius: 6px;
