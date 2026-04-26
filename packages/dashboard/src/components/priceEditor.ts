@@ -17,8 +17,9 @@ export function renderPriceEditor(
   container.appendChild(feedback)
 
   const table = document.createElement('table')
+  table.setAttribute('data-table', 'prices')
   table.innerHTML = `<thead><tr>
-    <th>Name</th><th>Size</th><th>Units/Carton</th><th>Price (₦)</th>
+    <th>Name</th><th>Size</th><th class="col-upc">Units/Carton</th><th>Price (₦)</th>
   </tr></thead>`
   const tbody = document.createElement('tbody')
 
@@ -47,7 +48,7 @@ export function renderPriceEditor(
     tr.innerHTML = `
       <td>${product.name}</td>
       <td>${product.size}</td>
-      <td>${product.units_per_carton}</td>
+      <td class="col-upc">${product.units_per_carton}</td>
     `
     const priceTd = document.createElement('td')
     priceTd.appendChild(input)
@@ -57,7 +58,10 @@ export function renderPriceEditor(
   })
 
   table.appendChild(tbody)
-  container.appendChild(table)
+  const wrap = document.createElement('div')
+  wrap.className = 'table-wrap'
+  wrap.appendChild(table)
+  container.appendChild(wrap)
 
   const saveBtn = document.createElement('button')
   saveBtn.setAttribute('data-action', 'save-prices')

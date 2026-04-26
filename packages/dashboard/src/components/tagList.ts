@@ -33,8 +33,9 @@ export function renderTagList(container: HTMLElement, tags: Tag[], options: TagL
     details.appendChild(summary)
 
     const table = document.createElement('table')
+    table.setAttribute('data-table', 'tags')
     table.innerHTML = `<thead><tr>
-      <th>Name</th><th>Slug</th><th>Order</th><th>Status</th><th>Actions</th>
+      <th>Name</th><th class="col-slug">Slug</th><th class="col-order">Order</th><th>Status</th><th>Actions</th>
     </tr></thead>`
     const tbody = document.createElement('tbody')
 
@@ -169,8 +170,8 @@ export function renderTagList(container: HTMLElement, tags: Tag[], options: TagL
 
       tr.innerHTML = `
         <td>${tag.name}</td>
-        <td>${tag.slug}</td>
-        <td>${tag.sort_order}</td>
+        <td class="col-slug">${tag.slug}</td>
+        <td class="col-order">${tag.sort_order}</td>
       `
       tr.appendChild(statusCell)
       tr.appendChild(actionsCell)
@@ -181,7 +182,10 @@ export function renderTagList(container: HTMLElement, tags: Tag[], options: TagL
     updateReorderButtons()
 
     table.appendChild(tbody)
-    details.appendChild(table)
+    const wrap = document.createElement('div')
+    wrap.className = 'table-wrap'
+    wrap.appendChild(table)
+    details.appendChild(wrap)
     container.appendChild(details)
   }
 }

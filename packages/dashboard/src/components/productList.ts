@@ -59,8 +59,9 @@ export function renderProductList(
 
   // Build table
   const table = document.createElement('table')
+  table.setAttribute('data-table', 'products')
   table.innerHTML = `<thead><tr>
-    <th>Name</th><th>Size</th><th>Type</th><th>Units/Carton</th><th>Price</th><th>Status</th><th>Actions</th>
+    <th>Name</th><th>Size</th><th class="col-type">Type</th><th class="col-upc">Units/Carton</th><th>Price</th><th class="col-status">Status</th><th>Actions</th>
   </tr></thead>`
   const tbody = document.createElement('tbody')
 
@@ -75,11 +76,12 @@ export function renderProductList(
     tr.innerHTML = `
       <td>${product.name}</td>
       <td>${product.size}</td>
-      <td>${product.unit_type}</td>
-      <td>${product.units_per_carton}</td>
+      <td class="col-type">${product.unit_type}</td>
+      <td class="col-upc">${product.units_per_carton}</td>
       <td>${formatPrice(product.price_ngn)}</td>
     `
     const statusCell = document.createElement('td')
+    statusCell.className = 'col-status'
     statusCell.appendChild(statusBadge)
     tr.appendChild(statusCell)
 
@@ -124,7 +126,10 @@ export function renderProductList(
   })
 
   table.appendChild(tbody)
-  container.appendChild(table)
+  const wrap = document.createElement('div')
+  wrap.className = 'table-wrap'
+  wrap.appendChild(table)
+  container.appendChild(wrap)
 
   function getVisibleRows(): HTMLElement[] {
     return Array.from(tbody.querySelectorAll<HTMLElement>('[data-product-id]'))
