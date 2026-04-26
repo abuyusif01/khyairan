@@ -188,8 +188,13 @@
       button[data-action="save-prices"]:hover:not(:disabled) { background: #1d4ed8; }
 
       /* ── Status badges ── */
-      td:has(.status-published), .status-published { color: #16a34a; font-weight: 500; }
-      td:has(.status-draft), .status-draft { color: #9ca3af; }
+      td:has([data-status="published"]), [data-status="published"] { color: #16a34a; font-weight: 500; }
+      td:has([data-status="draft"]), [data-status="draft"] { color: #9ca3af; }
+
+      /* ── Form feedback ── */
+      [data-feedback] { display: none; margin-top: 0.5rem; font-size: 0.875rem; }
+      [data-feedback="error"] { display: block; color: #dc2626; }
+      [data-feedback="success"] { display: block; color: #16a34a; }
 
       /* ── Inputs & selects ── */
       input[type="text"], input[type="email"], input[type="number"], input[type="search"], select, textarea {
