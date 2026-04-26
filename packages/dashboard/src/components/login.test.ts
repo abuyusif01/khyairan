@@ -2,12 +2,14 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 
 const mockSignInWithPassword = vi.fn()
 const mockGetSession = vi.fn()
+const mockUpdateUser = vi.fn()
 
 vi.mock('../lib/supabase', () => ({
   supabase: {
     auth: {
       signInWithPassword: mockSignInWithPassword,
       getSession: mockGetSession,
+      updateUser: mockUpdateUser,
     },
   },
 }))
@@ -16,6 +18,7 @@ describe('login component', () => {
   beforeEach(() => {
     mockSignInWithPassword.mockReset()
     mockGetSession.mockReset()
+    mockUpdateUser.mockReset()
     document.body.innerHTML = ''
   })
 
@@ -80,6 +83,64 @@ describe('login component', () => {
     await component.init()
 
     expect(component.mode).toBe('login')
+  })
+
+  it('init sets mode to set-password when type=invite in search params and session exists', async () => {
+    mockGetSession.mockResolvedValue({
+      data: { session: { user: { id: 'user-1' } } },
+      error: null,
+    })
+    Object.defineProperty(window, 'location', {
+      value: { hash: '', search: '?type=invite' },
+      writable: true,
+    })
+
+    const { loginComponent } = await import('./login')
+    const component = loginComponent()
+    await component.init()
+
+    expect(component.mode).toBe('set-password')
+  })
+
+  it('setPassword rejects mismatched passwords', async () => {
+    const { loginComponent } = await import('./login')
+    const component = loginComponent()
+    component.newPassword = 'password123'
+    component.confirmPassword = 'password456'
+    await component.setPassword()
+
+    expect(component.error).toBe('Passwords do not match')
+    expect(mockUpdateUser).not.toHaveBeenCalled()
+  })
+
+  it('setPassword rejects passwords under 8 chars', async () => {
+    const { loginComponent } = await import('./login')
+    const component = loginComponent()
+    component.newPassword = 'short'
+    component.confirmPassword = 'short'
+    await component.setPassword()
+
+    expect(component.error).toBeTruthy()
+    expect(typeof component.error).toBe('string')
+    expect(mockUpdateUser).not.toHaveBeenCalled()
+  })
+
+  it('setPassword success calls updateUser and redirects', async () => {
+    mockUpdateUser.mockResolvedValue({ data: { user: {} }, error: null })
+    Object.defineProperty(window, 'location', {
+      value: { href: '' },
+      writable: true,
+    })
+
+    const { loginComponent } = await import('./login')
+    const component = loginComponent()
+    component.newPassword = 'newpassword123'
+    component.confirmPassword = 'newpassword123'
+    await component.setPassword()
+
+    expect(mockUpdateUser).toHaveBeenCalledWith({ password: 'newpassword123' })
+    expect(window.location.href).toBe('/dashboard.html')
+    expect(component.error).toBeNull()
   })
 
   it('calls signInWithPassword with form values', async () => {
