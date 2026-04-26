@@ -19,12 +19,25 @@
   <body>
     <div class="login-card" x-data="login()">
       <h1>Khyairan Admin</h1>
-      <form @submit.prevent="submit()">
+
+      <!-- Normal login -->
+      <form @submit.prevent="submit()" x-show="mode === 'login'">
         <label for="email">Email</label>
         <input id="email" type="email" name="email" x-model="email" autocomplete="email" required />
         <label for="password">Password</label>
         <input id="password" type="password" name="password" x-model="password" autocomplete="current-password" required />
         <button type="submit" :disabled="loading" x-text="loading ? 'Signing in…' : 'Sign in'"></button>
+        <p class="error" x-show="error" x-text="error"></p>
+      </form>
+
+      <!-- Invite — set password -->
+      <form @submit.prevent="setPassword()" x-show="mode === 'set-password'">
+        <p style="font-size:0.85rem;color:#555;margin-bottom:1.25rem;">Welcome! Set a password to activate your account.</p>
+        <label for="new-password">Password</label>
+        <input id="new-password" type="password" x-model="newPassword" autocomplete="new-password" minlength="8" required />
+        <label for="confirm-password">Confirm password</label>
+        <input id="confirm-password" type="password" x-model="confirmPassword" autocomplete="new-password" minlength="8" required />
+        <button type="submit" :disabled="loading" x-text="loading ? 'Saving…' : 'Set password'"></button>
         <p class="error" x-show="error" x-text="error"></p>
       </form>
     </div>
