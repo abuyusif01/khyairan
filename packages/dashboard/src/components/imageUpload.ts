@@ -39,14 +39,16 @@ export function renderImageUpload(
         status.setAttribute('data-upload-status', 'success')
         status.textContent = `Uploaded: ${path}`
 
-        // Show preview image
+        // Show preview image (only if getUrlFn is provided to construct a valid URL)
         const existing = container.querySelector('[data-preview]')
         existing?.remove()
-        const img = document.createElement('img')
-        img.setAttribute('data-preview', path)
-        img.src = getUrlFn ? getUrlFn(path) : path
-        img.alt = 'Product image preview'
-        container.appendChild(img)
+        if (getUrlFn) {
+          const img = document.createElement('img')
+          img.setAttribute('data-preview', path)
+          img.src = getUrlFn(path)
+          img.alt = 'Product image preview'
+          container.appendChild(img)
+        }
 
         onUploaded(path)
       })
