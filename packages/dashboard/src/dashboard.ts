@@ -1,3 +1,4 @@
+import './dashboard.css'
 import Alpine from 'alpinejs'
 import { checkSession } from './lib/session'
 import { renderLayout, updateActiveNav } from './components/layout'

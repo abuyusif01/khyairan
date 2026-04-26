@@ -68,6 +68,8 @@ export function renderAddProductForm(
   const tagsLegend = document.createElement('legend')
   tagsLegend.textContent = 'Tags'
   tagsFieldset.appendChild(tagsLegend)
+  const tagOptions = document.createElement('div')
+  tagOptions.className = 'tag-options'
   tags.forEach(tag => {
     const tagLabel = document.createElement('label')
     const checkbox = document.createElement('input')
@@ -75,8 +77,9 @@ export function renderAddProductForm(
     checkbox.setAttribute('data-tag-id', tag.id)
     tagLabel.appendChild(checkbox)
     tagLabel.appendChild(document.createTextNode(tag.name))
-    tagsFieldset.appendChild(tagLabel)
+    tagOptions.appendChild(tagLabel)
   })
+  tagsFieldset.appendChild(tagOptions)
   form.appendChild(tagsFieldset)
 
   const submitBtn = document.createElement('button')

@@ -1,3 +1,4 @@
+import './login.css'
 import Alpine from 'alpinejs'
 import { loginComponent } from './components/login'
 
