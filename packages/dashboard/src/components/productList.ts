@@ -96,6 +96,10 @@ export function renderProductList(
       const toggleBtn = document.createElement('button')
       toggleBtn.setAttribute('data-action', product.published ? 'unpublish' : 'publish')
       toggleBtn.textContent = product.published ? 'Unpublish' : 'Publish'
+      if (!product.published && !product.image_path) {
+        toggleBtn.disabled = true
+        toggleBtn.title = 'Upload an image before publishing'
+      }
       toggleBtn.addEventListener('click', () => {
         const newPublished = !product.published
         void toggleFn(product.id, newPublished).then(() => {
