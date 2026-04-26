@@ -24,7 +24,7 @@ This is the company website. Each package in the monorepo has its own `CLAUDE.md
 | Task tracking | beans (`.beans/`)    |
 | Hosting       | Cloudflare R2        |
 | CI/CD         | GitHub CI            |
-| Dev env       | Flox                 |
+| Dev env       | Flox + shadowenv     |
 
 ---
 
@@ -32,11 +32,18 @@ This is the company website. Each package in the monorepo has its own `CLAUDE.md
 
 ### Environment
 
-Always activate Flox first. It provides `node`, `mdbook`, and `beans`:
+This project uses **Flox** (for tools) and **shadowenv** (for secrets/env vars). Both must be active.
+
+`.envrc` runs `use flox` via direnv — this activates Flox automatically when you `cd` into the project. Shadowenv loads `.shadowenv.d/*.lisp` files which provide `SUPABASE_URL`, `SUPABASE_PUBLISHABLE_KEY`, and other secrets.
+
+If env vars are missing (Supabase calls fail, dev server has no config), shadowenv is not active. Run:
 
 ```bash
-flox activate
+shadowenv trust   # trust the .shadowenv.d config (once)
+# then re-enter the directory or source the env manually
 ```
+
+Flox provides `node`, `mdbook`, and `beans`. Shadowenv provides the credentials.
 
 ### Commands
 
