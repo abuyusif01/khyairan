@@ -72,9 +72,10 @@ describe('renderImageUpload', () => {
     await vi.waitFor(() => expect(onUploaded).toHaveBeenCalledWith(STORAGE_PATH))
   })
 
-  it('shows img preview after upload', async () => {
+  it('shows img preview after upload when getUrlFn provided', async () => {
     const { renderImageUpload } = await import('./imageUpload')
-    renderImageUpload(container, PRODUCT_ID, onUploaded, uploadFn, updateFn)
+    const getUrlFn = vi.fn().mockReturnValue('https://cdn.test/img.jpg')
+    renderImageUpload(container, PRODUCT_ID, onUploaded, uploadFn, updateFn, getUrlFn)
 
     const input = container.querySelector<HTMLInputElement>('input[type="file"]')!
     const file = new File(['data'], 'photo.jpg', { type: 'image/jpeg' })
@@ -86,6 +87,37 @@ describe('renderImageUpload', () => {
       expect(preview).toBeTruthy()
       expect(preview?.getAttribute('data-preview')).toBe(STORAGE_PATH)
     })
+  })
+
+  it('image preview sets src to getUrlFn result', async () => {
+    const { renderImageUpload } = await import('./imageUpload')
+    const getUrlFn = vi.fn().mockReturnValue('https://cdn.test/img.jpg')
+    renderImageUpload(container, PRODUCT_ID, onUploaded, uploadFn, updateFn, getUrlFn)
+
+    const input = container.querySelector<HTMLInputElement>('input[type="file"]')!
+    const file = new File(['data'], 'photo.jpg', { type: 'image/jpeg' })
+    Object.defineProperty(input, 'files', { value: [file] })
+    input.dispatchEvent(new Event('change'))
+
+    await vi.waitFor(() => {
+      const img = container.querySelector<HTMLImageElement>('[data-preview]')
+      expect(img).toBeTruthy()
+      expect(img!.src).toBe('https://cdn.test/img.jpg')
+    })
+    expect(getUrlFn).toHaveBeenCalledWith(STORAGE_PATH)
+  })
+
+  it('no img rendered when getUrlFn not provided', async () => {
+    const { renderImageUpload } = await import('./imageUpload')
+    renderImageUpload(container, PRODUCT_ID, onUploaded, uploadFn, updateFn)
+
+    const input = container.querySelector<HTMLInputElement>('input[type="file"]')!
+    const file = new File(['data'], 'photo.jpg', { type: 'image/jpeg' })
+    Object.defineProperty(input, 'files', { value: [file] })
+    input.dispatchEvent(new Event('change'))
+
+    await vi.waitFor(() => expect(onUploaded).toHaveBeenCalled())
+    expect(container.querySelector('[data-preview]')).toBeNull()
   })
 
   it('shows error status when upload fails', async () => {
