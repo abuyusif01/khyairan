@@ -134,6 +134,14 @@ export async function toggleTagPublished(tagId: string, published: boolean): Pro
   if (error) throw error
 }
 
+export async function toggleProductPublished(productId: string, published: boolean): Promise<void> {
+  const { error } = await supabase
+    .from('products')
+    .update({ published })
+    .eq('id', productId)
+  if (error) throw error
+}
+
 export async function deleteTag(tagId: string): Promise<void> {
   const { error } = await supabase
     .from('tags')

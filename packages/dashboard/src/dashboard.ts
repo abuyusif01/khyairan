@@ -25,6 +25,7 @@ import {
   deleteTag,
   deleteProduct,
   countProductsForTag,
+  toggleProductPublished,
   updateTagOrder,
   updateProductTagOrder,
   fetchAllProfiles,
@@ -109,6 +110,7 @@ async function renderView(main: HTMLElement, hash: string, role: Role, userId: s
     ])
     renderProductList(main, products, tags, productTags, {
       deleteFn: deleteProduct,
+      toggleFn: toggleProductPublished,
       isOwner: role === 'owner',
       reorderFn: updateProductTagOrder,
     })

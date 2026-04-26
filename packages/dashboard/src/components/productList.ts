@@ -2,6 +2,7 @@ import type { Product, Tag, ProductTag } from '../types'
 
 export interface ProductListOptions {
   deleteFn?: (productId: string) => Promise<void>
+  toggleFn?: (productId: string, published: boolean) => Promise<void>
   isOwner?: boolean
   reorderFn?: (tagId: string, updates: Array<{ productId: string; sortOrder: number }>) => Promise<void>
 }
@@ -21,7 +22,7 @@ export function renderProductList(
   productTags: ProductTag[],
   options: ProductListOptions = {}
 ): void {
-  const { deleteFn, isOwner, reorderFn } = options
+  const { deleteFn, toggleFn, isOwner, reorderFn } = options
 
   // Build filter controls (search and tag filter) if not already provided by caller
   let searchInput = container.querySelector<HTMLInputElement>('[data-search]')
@@ -58,9 +59,8 @@ export function renderProductList(
 
   // Build table
   const table = document.createElement('table')
-  const hasActions = deleteFn && isOwner
   table.innerHTML = `<thead><tr>
-    <th>Name</th><th>Size</th><th>Type</th><th>Units/Carton</th><th>Price</th><th>Status</th>${hasActions ? '<th>Actions</th>' : ''}
+    <th>Name</th><th>Size</th><th>Type</th><th>Units/Carton</th><th>Price</th><th>Status</th><th>Actions</th>
   </tr></thead>`
   const tbody = document.createElement('tbody')
 
@@ -68,19 +68,48 @@ export function renderProductList(
     const tr = document.createElement('tr')
     tr.setAttribute('data-product-id', product.id)
 
+    const statusBadge = document.createElement('span')
+    statusBadge.setAttribute('data-status', product.published ? 'published' : 'draft')
+    statusBadge.textContent = product.published ? 'Published' : 'Draft'
+
     tr.innerHTML = `
       <td>${product.name}</td>
       <td>${product.size}</td>
       <td>${product.unit_type}</td>
       <td>${product.units_per_carton}</td>
       <td>${formatPrice(product.price_ngn)}</td>
-      <td><span data-status="${product.published ? 'published' : 'draft'}">${product.published ? 'Published' : 'Draft'}</span></td>
     `
+    const statusCell = document.createElement('td')
+    statusCell.appendChild(statusBadge)
+    tr.appendChild(statusCell)
 
-    if (hasActions) {
-      const actionsCell = document.createElement('td')
+    const actionsCell = document.createElement('td')
+
+    const editLink = document.createElement('a')
+    editLink.href = `#edit-product-${product.id}`
+    editLink.textContent = 'Edit'
+    actionsCell.appendChild(editLink)
+
+    if (toggleFn) {
+      const toggleBtn = document.createElement('button')
+      toggleBtn.setAttribute('data-action', product.published ? 'unpublish' : 'publish')
+      toggleBtn.textContent = product.published ? 'Unpublish' : 'Publish'
+      toggleBtn.addEventListener('click', () => {
+        const newPublished = !product.published
+        void toggleFn(product.id, newPublished).then(() => {
+          product.published = newPublished
+          statusBadge.setAttribute('data-status', newPublished ? 'published' : 'draft')
+          statusBadge.textContent = newPublished ? 'Published' : 'Draft'
+          toggleBtn.setAttribute('data-action', newPublished ? 'unpublish' : 'publish')
+          toggleBtn.textContent = newPublished ? 'Unpublish' : 'Publish'
+        })
+      })
+      actionsCell.appendChild(toggleBtn)
+    }
+
+    if (deleteFn && isOwner) {
       const deleteBtn = document.createElement('button')
-      deleteBtn.setAttribute('data-action', 'delete-product')
+      deleteBtn.setAttribute('data-action', 'delete')
       deleteBtn.textContent = 'Delete'
       deleteBtn.addEventListener('click', () => {
         if (confirm(`Delete product "${product.name}"?`)) {
@@ -88,9 +117,9 @@ export function renderProductList(
         }
       })
       actionsCell.appendChild(deleteBtn)
-      tr.appendChild(actionsCell)
     }
 
+    tr.appendChild(actionsCell)
     tbody.appendChild(tr)
   })
 

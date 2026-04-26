@@ -125,7 +125,7 @@ export function renderTagList(container: HTMLElement, tags: Tag[], options: TagL
 
       if (toggleFn) {
         const toggleBtn = document.createElement('button')
-        toggleBtn.setAttribute('data-action', 'toggle-published')
+        toggleBtn.setAttribute('data-action', tag.published ? 'unpublish' : 'publish')
         toggleBtn.textContent = tag.published ? 'Unpublish' : 'Publish'
         toggleBtn.addEventListener('click', () => {
           const newPublished = !tag.published
@@ -133,6 +133,7 @@ export function renderTagList(container: HTMLElement, tags: Tag[], options: TagL
             tag.published = newPublished
             statusBadge.setAttribute('data-status', newPublished ? 'published' : 'draft')
             statusBadge.textContent = newPublished ? 'Published' : 'Draft'
+            toggleBtn.setAttribute('data-action', newPublished ? 'unpublish' : 'publish')
             toggleBtn.textContent = newPublished ? 'Unpublish' : 'Publish'
           })
         })
@@ -141,7 +142,7 @@ export function renderTagList(container: HTMLElement, tags: Tag[], options: TagL
 
       if (deleteFn && isOwner) {
         const deleteBtn = document.createElement('button')
-        deleteBtn.setAttribute('data-action', 'delete-tag')
+        deleteBtn.setAttribute('data-action', 'delete')
         deleteBtn.textContent = 'Delete'
         deleteBtn.addEventListener('click', () => {
           const doDelete = (msg: string) => {

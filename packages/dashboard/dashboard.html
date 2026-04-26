@@ -94,6 +94,7 @@
         vertical-align: middle;
         color: #374151;
       }
+      td:has(button), td:has(a[href^="#"]) { white-space: nowrap; }
       tbody tr:last-child td { border-bottom: none; }
       tbody tr:hover { background: #fafbfc; }
 
@@ -141,13 +142,13 @@
       button[data-action="unpublish"]:hover, button[data-action="publish"]:hover { background: #f9fafb; }
 
       /* reorder */
-      button[data-move-up], button[data-move-down] {
+      button[data-action="move-up"], button[data-action="move-down"] {
         background: #fff;
         color: #6b7280;
         border-color: #e5e7eb;
         padding: 0.25rem 0.5rem;
       }
-      button[data-move-up]:hover:not(:disabled), button[data-move-down]:hover:not(:disabled) { background: #f3f4f6; color: #111; }
+      button[data-action="move-up"]:hover:not(:disabled), button[data-action="move-down"]:hover:not(:disabled) { background: #f3f4f6; color: #111; }
 
       /* edit link styled as button */
       a[href*="edit-product"], a[href*="edit-tag"] {
