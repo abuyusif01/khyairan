@@ -146,6 +146,20 @@ describe('renderTagList', () => {
     expect(lastRow.querySelector('[data-action="move-down"]')).toBeNull()
   })
 
+  it('renders edit link for each tag row', async () => {
+    const { renderTagList } = await import('./tagList')
+    renderTagList(container, tags)
+
+    // Each tag row must have an edit link pointing to #edit-tag-{id}
+    for (const tag of tags) {
+      const row = container.querySelector(`[data-tag-id="${tag.id}"]`)
+      expect(row).toBeTruthy()
+      const editLink = row!.querySelector<HTMLAnchorElement>(`a[href="#edit-tag-${tag.id}"]`)
+      expect(editLink).toBeTruthy()
+      expect(editLink!.textContent?.trim()).toBe('Edit')
+    }
+  })
+
   it('move-up swaps sort_orders and calls reorderFn with correct values', async () => {
     const { renderTagList } = await import('./tagList')
     const reorderFn = vi.fn().mockResolvedValue(undefined)
