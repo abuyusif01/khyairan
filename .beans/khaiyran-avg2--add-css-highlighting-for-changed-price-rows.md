@@ -1,11 +1,11 @@
 ---
 # khaiyran-avg2
 title: Add CSS highlighting for changed price rows
-status: todo
+status: completed
 type: bug
 priority: normal
 created_at: 2026-04-26T07:45:01Z
-updated_at: 2026-04-26T07:45:01Z
+updated_at: 2026-04-26T11:21:02Z
 ---
 
 `priceEditor.ts` sets `[data-changed]` on table rows when a price is edited inline. There is no CSS rule for `[data-changed]` — rows look identical whether they've been changed or not. Users cannot tell which prices they've modified before saving.
@@ -30,3 +30,7 @@ updated_at: 2026-04-26T07:45:01Z
 ## Agent Pre-Start Checkpoint
 
 (Written by the pre-start reviewing agent — do not fill manually)
+
+## Summary of Changes
+
+Added tr[data-changed] { background: #fefce8; border-left: 3px solid #fbbf24; } to dashboard.html. Playwright verified: changed row has yellow background rgb(254, 252, 232).

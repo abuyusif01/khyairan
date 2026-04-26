@@ -1,11 +1,11 @@
 ---
 # khaiyran-85f0
 title: Highlight active nav tab in dashboard
-status: todo
+status: completed
 type: bug
 priority: high
 created_at: 2026-04-26T07:44:44Z
-updated_at: 2026-04-26T07:44:44Z
+updated_at: 2026-04-26T11:20:51Z
 ---
 
 The navigation bar renders links for Products, Tags, Users, Prices but never marks the active one. Users — especially on mobile — have no visual anchor for which section they are in. The nav link for the current tab should be highlighted.
@@ -34,3 +34,7 @@ The navigation bar renders links for Products, Tags, Users, Prices but never mar
 ## Agent Pre-Start Checkpoint
 
 (Written by the pre-start reviewing agent — do not fill manually)
+
+## Summary of Changes
+
+Added updateActiveNav() function to layout.ts that sets aria-current="page" on the matching nav link. renderLayout() now accepts optional currentHash param to set initial active state. dashboard.ts passes window.location.hash on init and calls updateActiveNav on hashchange. CSS added to dashboard.html: .site-nav a[aria-current="page"] { color: #2563eb; border-bottom-color: #2563eb; font-weight: 600; }. Two unit tests added to layout.test.ts. Playwright verified: active link is highlighted blue; switches on hash change.

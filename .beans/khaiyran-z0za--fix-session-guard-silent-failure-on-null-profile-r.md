@@ -1,11 +1,11 @@
 ---
 # khaiyran-z0za
 title: Fix session guard silent failure on null profile role
-status: todo
+status: completed
 type: bug
 priority: normal
 created_at: 2026-04-26T07:45:50Z
-updated_at: 2026-04-26T07:45:50Z
+updated_at: 2026-04-26T11:21:12Z
 ---
 
 `session.ts` returns `null` when `profiles.role` is missing or undefined (corrupted row, DB issue). `dashboard.ts` destructures the result without checking for null — this silently fails with no user-facing error. The user is left on a blank page with no indication of what went wrong.
@@ -31,3 +31,7 @@ updated_at: 2026-04-26T07:45:50Z
 ## Agent Pre-Start Checkpoint
 
 (Written by the pre-start reviewing agent — do not fill manually)
+
+## Summary of Changes
+
+Fixed session.ts: when profile data has no role (or profile row is missing), now redirects to /?error=session before returning null, consistent with no-session behavior. Added two unit tests to session.test.ts covering both null-role and missing-profile-row cases.

@@ -1,11 +1,11 @@
 ---
 # khaiyran-i8oi
 title: Add 'Add product' and 'Add tag' buttons to list views
-status: todo
+status: completed
 type: feature
 priority: high
 created_at: 2026-04-26T07:44:36Z
-updated_at: 2026-04-26T07:44:36Z
+updated_at: 2026-04-26T11:21:12Z
 ---
 
 The product list and tag list have no "Add" button. Users must manually type a hash route (`#add-product`, `#add-tag`) to create anything — there is no UI entry point visible on either list view.
@@ -35,3 +35,7 @@ The product list and tag list have no "Add" button. Users must manually type a h
 ## Agent Pre-Start Checkpoint
 
 (Written by the pre-start reviewing agent — do not fill manually)
+
+## Summary of Changes
+
+Added Add product link (a[href="#add-product"]) in a .page-actions div to productList.ts (before filter controls). Added Add tag link (a[href="#add-tag"]) in a .page-actions div at the top of tagList.ts. Unit tests added to productList.test.ts and tagList.test.ts. Playwright verified: both buttons are visible and styled correctly on desktop and mobile.

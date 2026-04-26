@@ -1,11 +1,11 @@
 ---
 # khaiyran-c9qs
 title: Fix image preview using raw storage path instead of public URL
-status: todo
+status: completed
 type: bug
 priority: normal
 created_at: 2026-04-26T07:45:28Z
-updated_at: 2026-04-26T07:45:28Z
+updated_at: 2026-04-26T11:21:12Z
 ---
 
 `imageUpload.ts:47` falls back to setting `img.src = path` (raw storage path, e.g. `"products/p1.jpg"`) when `getUrlFn` is not provided. A storage path is not a valid URL — the image won't render. The function should always require `getUrlFn` to construct a valid public URL.
@@ -31,3 +31,7 @@ updated_at: 2026-04-26T07:45:28Z
 ## Agent Pre-Start Checkpoint
 
 (Written by the pre-start reviewing agent — do not fill manually)
+
+## Summary of Changes
+
+Fixed imageUpload.ts: img preview now only rendered when getUrlFn is provided (always uses getUrlFn(path) for src). When getUrlFn is absent, no img element is added (avoids broken image). Updated existing test to pass getUrlFn; added two new tests: one verifying src equals getUrlFn result, one verifying no img when getUrlFn absent.

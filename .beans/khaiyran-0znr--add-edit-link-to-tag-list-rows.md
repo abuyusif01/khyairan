@@ -1,11 +1,11 @@
 ---
 # khaiyran-0znr
 title: Add Edit link to tag list rows
-status: todo
+status: completed
 type: bug
 priority: high
 created_at: 2026-04-26T07:44:29Z
-updated_at: 2026-04-26T07:44:29Z
+updated_at: 2026-04-26T11:20:45Z
 ---
 
 Add an Edit link to each tag row in the tag list. The dashboard already has the `#edit-tag-{id}` route wired in `dashboard.ts` but there is no UI entry point — users cannot navigate to edit a tag.
@@ -32,3 +32,7 @@ Add an Edit link to each tag row in the tag list. The dashboard already has the 
 ## Agent Pre-Start Checkpoint
 
 (Written by the pre-start reviewing agent — do not fill manually)
+
+## Summary of Changes
+
+Added Edit link to each tag row in tagList.ts. The link uses href="#edit-tag-{id}" and is inserted before the toggle button in the actionsCell. The existing CSS in dashboard.html already styled these links. Unit test added to tagList.test.ts. Playwright verified: each row shows blue Edit link; clicking navigates to edit form.

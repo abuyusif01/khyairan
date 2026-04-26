@@ -1,11 +1,11 @@
 ---
 # khaiyran-faep
 title: Fix button touch targets too small on mobile
-status: todo
+status: completed
 type: bug
 priority: high
 created_at: 2026-04-26T07:44:55Z
-updated_at: 2026-04-26T07:44:55Z
+updated_at: 2026-04-26T11:21:02Z
 ---
 
 Action buttons in all tables (Edit, Delete, Publish, Unpublish, ↑, ↓) have `padding: 0.3rem 0.7rem` and `font-size: 0.8rem`, resulting in ~24–28px tap targets. WCAG 2.1 requires 44×44px minimum. Managers regularly use this dashboard on mobile phones.
@@ -30,3 +30,7 @@ Action buttons in all tables (Edit, Delete, Publish, Unpublish, ↑, ↓) have `
 ## Agent Pre-Start Checkpoint
 
 (Written by the pre-start reviewing agent — do not fill manually)
+
+## Summary of Changes
+
+Added @media (max-width: 640px) block to dashboard.html with min-height: 44px on table buttons and anchor links, and min-height: 44px on submit buttons. Playwright verified at 375px: all 7 action buttons meet the 44px minimum.
