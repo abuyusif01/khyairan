@@ -6,3 +6,5 @@ dist/
 .shadowenv.d/
 supabase/.temp/
 .playwright-cli/
+*.png
+deno.lock
