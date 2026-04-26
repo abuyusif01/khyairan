@@ -146,6 +146,15 @@ describe('renderTagList', () => {
     expect(lastRow.querySelector('[data-action="move-down"]')).toBeNull()
   })
 
+  it('renders Add tag link', async () => {
+    const { renderTagList } = await import('./tagList')
+    renderTagList(container, tags)
+
+    const addLink = container.querySelector<HTMLAnchorElement>('a[href="#add-tag"]')
+    expect(addLink).toBeTruthy()
+    expect(addLink!.textContent?.trim()).toContain('Add tag')
+  })
+
   it('renders edit link for each tag row', async () => {
     const { renderTagList } = await import('./tagList')
     renderTagList(container, tags)

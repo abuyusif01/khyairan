@@ -205,4 +205,14 @@ describe('renderProductList', () => {
     expect(p1Update.sortOrder).toBe(2)  // p1 takes p2's old sort_order
     expect(p2Update.sortOrder).toBe(1)  // p2 takes p1's old sort_order
   })
+
+
+  it('renders Add product link', async () => {
+    const { renderProductList } = await import('./productList')
+    renderProductList(container, products, tags, productTags)
+
+    const addLink = container.querySelector<HTMLAnchorElement>('a[href="#add-product"]')
+    expect(addLink).toBeTruthy()
+    expect(addLink!.textContent?.trim()).toContain('Add product')
+  })
 })
