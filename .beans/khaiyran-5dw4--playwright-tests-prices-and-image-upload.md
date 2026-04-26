@@ -5,7 +5,7 @@ status: todo
 type: task
 priority: high
 created_at: 2026-04-26T07:46:19Z
-updated_at: 2026-04-26T07:46:19Z
+updated_at: 2026-04-26T11:22:58Z
 ---
 
 The price editor and image upload have zero Playwright test coverage. CLAUDE.md mandates Playwright for all frontend features. Inline price editing, save-all flow, and image upload/preview must be verified in a real browser.
@@ -35,3 +35,10 @@ The price editor and image upload have zero Playwright test coverage. CLAUDE.md 
 ## Agent Pre-Start Checkpoint
 
 (Written by the pre-start reviewing agent — do not fill manually)
+
+## Blocked
+
+- Blocked by: Running Supabase backend (local or remote)
+- Reason: These Playwright tests require authenticated dashboard access, which requires a working Supabase instance. No local Supabase container was running (supabase start fails — container not found) and no SUPABASE_URL / SUPABASE_PUBLISHABLE_KEY env vars are configured.
+- Next available bean: none (all other ready beans are completed)
+- To unblock: run `supabase start` in the project root with Docker running, or set SUPABASE_URL and SUPABASE_PUBLISHABLE_KEY in packages/dashboard/.env, then resume these beans.
