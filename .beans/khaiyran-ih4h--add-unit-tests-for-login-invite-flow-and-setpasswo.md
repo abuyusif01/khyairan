@@ -1,11 +1,11 @@
 ---
 # khaiyran-ih4h
 title: Add unit tests for login invite flow and setPassword validation
-status: todo
+status: completed
 type: task
 priority: high
 created_at: 2026-04-26T07:45:39Z
-updated_at: 2026-04-26T07:45:39Z
+updated_at: 2026-04-26T11:22:42Z
 ---
 
 `login.ts` has `init()`, `setPassword()`, and mode-switching logic but `login.test.ts` only has 3 tests covering normal login. The entire invite/set-password flow has zero unit test coverage, including password validation and mode detection.
@@ -38,3 +38,7 @@ updated_at: 2026-04-26T07:45:39Z
 ## Agent Pre-Start Checkpoint
 
 (Written by the pre-start reviewing agent — do not fill manually)
+
+## Summary of Changes
+
+Added 4 missing test cases to login.test.ts: (1) init with search param ?type=invite sets mode to set-password, (2) setPassword rejects mismatched passwords with error message, (3) setPassword rejects short passwords (<8 chars), (4) setPassword success calls updateUser with correct password and redirects to /dashboard.html. Also added mockUpdateUser to the Supabase mock. All 9 login tests pass.
