@@ -174,7 +174,7 @@ Spawn a subagent to review the finished implementation. The agent must:
 - Run all quality gate commands and paste output into the review
 - Read every file listed in **Related Code** and verify correctness
 - Confirm tests were committed before implementation (check git log)
-- For frontend beans: confirm Playwright scenarios were run and passed
+- **For frontend beans**: run `/playwright-cli` to verify each Playwright scenario from the **Tests** section — navigate to the page, interact, assert visible state. Confirm each scenario passed. This is mandatory, not optional.
 - Write the **Agent Post-Completion Review** with verdict `PASS` or `FAIL`
 
 If `FAIL`: fix all findings, re-run the review. Do not close the bean until `PASS`.
