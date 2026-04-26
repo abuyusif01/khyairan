@@ -1,6 +1,6 @@
 import Alpine from 'alpinejs'
 import { checkSession } from './lib/session'
-import { renderLayout } from './components/layout'
+import { renderLayout, updateActiveNav } from './components/layout'
 import { renderProductList } from './components/productList'
 import { renderPriceEditor } from './components/priceEditor'
 import { renderAddProductForm } from './components/addProductForm'
@@ -126,13 +126,14 @@ async function init(): Promise<void> {
   const app = document.getElementById('app')
   if (!app) return
 
-  renderLayout(app, role)
+  renderLayout(app, role, window.location.hash)
 
   const main = app.querySelector('main')
   if (main) {
     await renderView(main, window.location.hash, role, userId)
 
     window.addEventListener('hashchange', () => {
+      updateActiveNav(app, window.location.hash)
       void renderView(main, window.location.hash, role, userId)
     })
   }

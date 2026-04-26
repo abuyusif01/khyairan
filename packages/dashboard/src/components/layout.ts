@@ -2,7 +2,19 @@ import { supabase } from '../lib/supabase'
 
 export type Role = 'owner' | 'manager'
 
-export function renderLayout(container: HTMLElement, role: Role): void {
+export function updateActiveNav(container: HTMLElement, hash: string): void {
+  const nav = container.querySelector('nav')
+  if (!nav) return
+  nav.querySelectorAll<HTMLAnchorElement>('a[href]').forEach(link => {
+    if (link.getAttribute('href') === hash) {
+      link.setAttribute('aria-current', 'page')
+    } else {
+      link.removeAttribute('aria-current')
+    }
+  })
+}
+
+export function renderLayout(container: HTMLElement, role: Role, currentHash?: string): void {
   const isOwner = role === 'owner'
 
   container.innerHTML = `
@@ -18,6 +30,10 @@ export function renderLayout(container: HTMLElement, role: Role): void {
     </nav>
     <main class="site-content"></main>
   `
+
+  if (currentHash) {
+    updateActiveNav(container, currentHash)
+  }
 
   const logoutBtn = container.querySelector('[data-action="logout"]')
   logoutBtn?.addEventListener('click', async () => {
