@@ -24,6 +24,17 @@ export function renderProductList(
 ): void {
   const { deleteFn, toggleFn, isOwner, reorderFn } = options
 
+  // Add product link (if not already present)
+  if (!container.querySelector('a[href="#add-product"]')) {
+    const pageActions = document.createElement('div')
+    pageActions.className = 'page-actions'
+    const addLink = document.createElement('a')
+    addLink.href = '#add-product'
+    addLink.textContent = 'Add product'
+    pageActions.appendChild(addLink)
+    container.prepend(pageActions)
+  }
+
   // Build filter controls (search and tag filter) if not already provided by caller
   let searchInput = container.querySelector<HTMLInputElement>('[data-search]')
   let tagFilter = container.querySelector<HTMLSelectElement>('[data-tag-filter]')

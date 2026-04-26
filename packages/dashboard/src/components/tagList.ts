@@ -13,6 +13,15 @@ export function renderTagList(container: HTMLElement, tags: Tag[], options: TagL
 
   container.innerHTML = ''
 
+  // Add tag link
+  const pageActions = document.createElement('div')
+  pageActions.className = 'page-actions'
+  const addLink = document.createElement('a')
+  addLink.href = '#add-tag'
+  addLink.textContent = 'Add tag'
+  pageActions.appendChild(addLink)
+  container.appendChild(pageActions)
+
   // Group tags by type
   const byType = new Map<string, Tag[]>()
   for (const tag of tags) {
