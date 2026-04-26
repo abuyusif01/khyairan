@@ -308,6 +308,16 @@
       .loading { padding: 3rem; text-align: center; color: #9ca3af; font-size: 0.9rem; }
 
       /* ── Responsive ── */
+      @media (max-width: 640px) {
+        /* Ensure table action buttons meet WCAG 44px minimum touch target */
+        table button, table a[href^="#"] {
+          min-height: 44px;
+          padding-top: 0.6rem;
+          padding-bottom: 0.6rem;
+        }
+        /* Form submit buttons: verify at least 44px tall */
+        button[type="submit"] { min-height: 44px; }
+      }
       @media (max-width: 600px) {
         .site-content { padding: 1rem 0.75rem; }
         .site-nav { overflow-x: auto; }
