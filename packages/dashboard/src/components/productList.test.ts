@@ -94,11 +94,11 @@ describe('renderProductList', () => {
     const deleteFn = vi.fn().mockResolvedValue(undefined)
 
     renderProductList(container, products, tags, productTags, { deleteFn, isOwner: false })
-    expect(container.querySelectorAll('[data-action="delete-product"]').length).toBe(0)
+    expect(container.querySelectorAll('[data-action="delete"]').length).toBe(0)
 
     container.innerHTML = ''
     renderProductList(container, products, tags, productTags, { deleteFn, isOwner: true })
-    expect(container.querySelectorAll('[data-action="delete-product"]').length).toBe(3)
+    expect(container.querySelectorAll('[data-action="delete"]').length).toBe(3)
   })
 
   it('delete button calls deleteFn after confirmation', async () => {
@@ -109,7 +109,7 @@ describe('renderProductList', () => {
     renderProductList(container, products, tags, productTags, { deleteFn, isOwner: true })
 
     const p1Row = container.querySelector('[data-product-id="p1"]')!
-    const deleteBtn = p1Row.querySelector<HTMLButtonElement>('[data-action="delete-product"]')!
+    const deleteBtn = p1Row.querySelector<HTMLButtonElement>('[data-action="delete"]')!
     deleteBtn.click()
 
     await vi.waitFor(() => expect(deleteFn).toHaveBeenCalledWith('p1'))

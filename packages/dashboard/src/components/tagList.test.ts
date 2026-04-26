@@ -68,7 +68,7 @@ describe('renderTagList', () => {
     const toggleFn = vi.fn().mockResolvedValue(undefined)
     renderTagList(container, tags, { toggleFn })
 
-    const buttons = container.querySelectorAll('[data-action="toggle-published"]')
+    const buttons = container.querySelectorAll('[data-action="unpublish"], [data-action="publish"]')
     expect(buttons.length).toBe(3)
   })
 
@@ -79,7 +79,7 @@ describe('renderTagList', () => {
 
     // tag1 is published — toggle should unpublish
     const tag1Row = container.querySelector('[data-tag-id="tag1"]')
-    const toggleBtn = tag1Row?.querySelector<HTMLButtonElement>('[data-action="toggle-published"]')
+    const toggleBtn = tag1Row?.querySelector<HTMLButtonElement>('[data-action="unpublish"]')
     expect(toggleBtn).toBeTruthy()
     toggleBtn!.click()
 
@@ -94,11 +94,11 @@ describe('renderTagList', () => {
     const deleteFn = vi.fn().mockResolvedValue(undefined)
 
     renderTagList(container, tags, { deleteFn, isOwner: false })
-    expect(container.querySelectorAll('[data-action="delete-tag"]').length).toBe(0)
+    expect(container.querySelectorAll('[data-action="delete"]').length).toBe(0)
 
     container.innerHTML = ''
     renderTagList(container, tags, { deleteFn, isOwner: true })
-    expect(container.querySelectorAll('[data-action="delete-tag"]').length).toBe(3)
+    expect(container.querySelectorAll('[data-action="delete"]').length).toBe(3)
   })
 
   it('delete button calls deleteFn after confirmation', async () => {
@@ -109,7 +109,7 @@ describe('renderTagList', () => {
     renderTagList(container, tags, { deleteFn, isOwner: true })
 
     const tag3Row = container.querySelector('[data-tag-id="tag3"]')!
-    const deleteBtn = tag3Row.querySelector<HTMLButtonElement>('[data-action="delete-tag"]')!
+    const deleteBtn = tag3Row.querySelector<HTMLButtonElement>('[data-action="delete"]')!
     deleteBtn.click()
 
     await vi.waitFor(() => expect(deleteFn).toHaveBeenCalledWith('tag3'))
