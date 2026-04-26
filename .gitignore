@@ -3,7 +3,8 @@ dist/
 .env
 .env.*
 *.local
-.shadowenv.d/
+.shadowenv.d/*.lisp
+!.shadowenv.d/*.example.lisp
 supabase/.temp/
 .playwright-cli/
 *.png

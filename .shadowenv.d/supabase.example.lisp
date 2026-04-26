@@ -1,0 +1,5 @@
+(env/set "SUPABASE_ACCESS_TOKEN" "your-supabase-access-token")
+(env/set "SUPABASE_PROJECT_ID" "your-supabase-project-id")
+(env/set "SUPABASE_URL" "https://your-supabase-project-id.supabase.co")
+(env/set "SUPABASE_PUBLISHABLE_KEY" "your-supabase-publishable-key")
+(env/set "SUPABASE_SECRET_KEY" "your-supabase-secret-key")
