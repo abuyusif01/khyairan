@@ -63,25 +63,27 @@ describe('fetchPublishedCategoryTags', () => {
 describe('loadCatalog', () => {
   beforeEach(() => {
     vi.resetModules()
-    sessionStorage.clear()
   })
 
-  it('loadCatalog fetches and caches on first call', async () => {
+  it('fetches products, tags, and productTags from Supabase', async () => {
     const { createClient } = await import('@supabase/supabase-js')
-    const mockFrom = vi.fn().mockReturnValue({
+    const fromSpy = vi.fn().mockReturnValue({
       select: vi.fn().mockReturnThis(),
       eq: vi.fn().mockReturnThis(),
       order: vi.fn().mockResolvedValue({ data: [], error: null }),
     })
-    ;(createClient as unknown as MockInstance).mockReturnValue({ from: mockFrom })
+    ;(createClient as unknown as MockInstance).mockReturnValue({ from: fromSpy })
 
     const { loadCatalog } = await import('./supabase')
-    await loadCatalog()
+    const result = await loadCatalog()
 
-    expect(sessionStorage.getItem('khaiyran_catalog')).not.toBeNull()
+    expect(result).toHaveProperty('products')
+    expect(result).toHaveProperty('tags')
+    expect(result).toHaveProperty('productTags')
+    expect(fromSpy).toHaveBeenCalledTimes(3)
   })
 
-  it('loadCatalog returns cached data on second call without hitting Supabase', async () => {
+  it('fetches fresh data on every call', async () => {
     const { createClient } = await import('@supabase/supabase-js')
     const fromSpy = vi.fn().mockReturnValue({
       select: vi.fn().mockReturnThis(),
@@ -92,30 +94,9 @@ describe('loadCatalog', () => {
 
     const { loadCatalog } = await import('./supabase')
     await loadCatalog()
-    const callsAfterFirst = fromSpy.mock.calls.length
     await loadCatalog()
 
-    expect(fromSpy.mock.calls.length).toBe(callsAfterFirst)
-  })
-
-  it('loadCatalog falls back to fetch if sessionStorage throws', async () => {
-    const { createClient } = await import('@supabase/supabase-js')
-    ;(createClient as unknown as MockInstance).mockReturnValue({
-      from: vi.fn().mockReturnValue({
-        select: vi.fn().mockReturnThis(),
-        eq: vi.fn().mockReturnThis(),
-        order: vi.fn().mockResolvedValue({ data: [], error: null }),
-      }),
-    })
-    vi.spyOn(Storage.prototype, 'getItem').mockImplementation(() => { throw new Error('storage unavailable') })
-
-    const { loadCatalog } = await import('./supabase')
-    const result = await loadCatalog()
-
-    expect(result).toBeDefined()
-    expect(result).toHaveProperty('products')
-    expect(result).toHaveProperty('tags')
-    expect(result).toHaveProperty('productTags')
+    expect(fromSpy).toHaveBeenCalledTimes(6)
   })
 })
 

@@ -37,8 +37,6 @@ export async function fetchProductTags(): Promise<ProductTag[]> {
   return (data ?? []) as ProductTag[]
 }
 
-const CATALOG_CACHE_KEY = 'khaiyran_catalog'
-
 interface CatalogCache {
   products: Product[]
   tags: Tag[]
@@ -46,24 +44,11 @@ interface CatalogCache {
 }
 
 export async function loadCatalog(): Promise<CatalogCache> {
-  try {
-    const cached = sessionStorage.getItem(CATALOG_CACHE_KEY)
-    if (cached) return JSON.parse(cached) as CatalogCache
-  } catch {
-    // sessionStorage unavailable — fall through to fetch
-  }
-
   const [products, tags, productTags] = await Promise.all([
     fetchPublishedProducts(),
     fetchPublishedCategoryTags(),
     fetchProductTags(),
   ])
-
-  try {
-    sessionStorage.setItem(CATALOG_CACHE_KEY, JSON.stringify({ products, tags, productTags }))
-  } catch {
-    // sessionStorage unavailable — ignore
-  }
 
   return { products, tags, productTags }
 }
