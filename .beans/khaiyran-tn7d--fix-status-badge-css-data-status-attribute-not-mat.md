@@ -1,11 +1,11 @@
 ---
 # khaiyran-tn7d
 title: Fix status badge CSS — data-status attribute not matched
-status: todo
+status: in-progress
 type: bug
 priority: critical
 created_at: 2026-04-26T07:42:20Z
-updated_at: 2026-04-26T07:42:20Z
+updated_at: 2026-04-26T10:44:03Z
 ---
 
 All tables (products, tags) set `data-status="published"` or `data-status="draft"` on badge spans. The CSS in `dashboard.html` defines `.status-published` and `.status-draft` class selectors — these never match. All status badges are completely unstyled in production.
@@ -34,3 +34,15 @@ All tables (products, tags) set `data-status="published"` or `data-status="draft
 ## Agent Pre-Start Checkpoint
 
 (Written by the pre-start reviewing agent — do not fill manually)
+
+## Agent Pre-Start Checkpoint
+
+- Agent: Claude Sonnet 4.6
+- Date: 2026-04-26
+- Verdict: APPROVED
+- Checkpoints:
+  - [x] `packages/dashboard/dashboard.html:191-192` exists — uses `.status-published`/`.status-draft` class selectors (wrong)
+  - [x] `packages/dashboard/src/components/productList.ts:73-74` confirmed — sets `data-status` attribute
+  - [x] `packages/dashboard/src/components/tagList.ts` confirmed — same pattern
+  - [x] Existing tests at productList.test.ts:44,51 assert correct attribute selectors (DOM is right, CSS is wrong)
+  - [x] Missing test: badge updates data-status on toggle — needs to be written

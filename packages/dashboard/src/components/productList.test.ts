@@ -51,6 +51,23 @@ describe('renderProductList', () => {
     expect(row?.querySelector('[data-status="draft"]')).toBeTruthy()
   })
 
+  it('status badge updates data-status on toggle', async () => {
+    const { renderProductList } = await import('./productList')
+    const toggleFn = vi.fn().mockResolvedValue(undefined)
+
+    renderProductList(container, products, tags, productTags, { toggleFn })
+
+    const row = container.querySelector('[data-product-id="p1"]')!
+    const badge = row.querySelector<HTMLElement>('[data-status]')!
+    expect(badge.getAttribute('data-status')).toBe('published')
+
+    const toggleBtn = row.querySelector<HTMLButtonElement>('[data-action="unpublish"]')!
+    toggleBtn.click()
+
+    await vi.waitFor(() => expect(toggleFn).toHaveBeenCalledWith('p1', false))
+    expect(badge.getAttribute('data-status')).toBe('draft')
+  })
+
   it('search filters rows by name', async () => {
     const { renderProductList } = await import('./productList')
     const searchInput = document.createElement('input')

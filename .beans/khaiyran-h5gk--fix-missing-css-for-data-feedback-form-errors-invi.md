@@ -1,11 +1,11 @@
 ---
 # khaiyran-h5gk
 title: Fix missing CSS for data-feedback — form errors invisible
-status: todo
+status: in-progress
 type: bug
 priority: critical
 created_at: 2026-04-26T07:42:25Z
-updated_at: 2026-04-26T07:42:25Z
+updated_at: 2026-04-26T10:44:06Z
 ---
 
 Every form (`addProductForm`, `editProductForm`, `tagForm`, `priceEditor`) creates a `div[data-feedback]` for error/success messages. There is no CSS for `[data-feedback]` or its values. When a save fails, users see nothing — the message renders as invisible unstyled text.
@@ -37,3 +37,14 @@ Every form (`addProductForm`, `editProductForm`, `tagForm`, `priceEditor`) creat
 ## Agent Pre-Start Checkpoint
 
 (Written by the pre-start reviewing agent — do not fill manually)
+
+## Agent Pre-Start Checkpoint
+
+- Agent: Claude Sonnet 4.6
+- Date: 2026-04-26
+- Verdict: APPROVED
+- Checkpoints:
+  - [x] `packages/dashboard/dashboard.html` — no CSS for `[data-feedback]` states confirmed
+  - [x] All four form components set `data-feedback` attribute correctly (addProductForm, editProductForm, tagForm, priceEditor)
+  - [x] `addProductForm.test.ts:134-137` already asserts `[data-feedback="error"]` element exists — not just text
+  - [x] CSS-only fix; existing test covers the attribute requirement; Playwright needed for visual verification

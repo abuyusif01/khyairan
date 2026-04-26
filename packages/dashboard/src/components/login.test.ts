@@ -1,11 +1,13 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 
 const mockSignInWithPassword = vi.fn()
+const mockGetSession = vi.fn()
 
 vi.mock('../lib/supabase', () => ({
   supabase: {
     auth: {
       signInWithPassword: mockSignInWithPassword,
+      getSession: mockGetSession,
     },
   },
 }))
@@ -13,6 +15,7 @@ vi.mock('../lib/supabase', () => ({
 describe('login component', () => {
   beforeEach(() => {
     mockSignInWithPassword.mockReset()
+    mockGetSession.mockReset()
     document.body.innerHTML = ''
   })
 
@@ -47,6 +50,36 @@ describe('login component', () => {
     expect(component.error).toBeTruthy()
     expect(typeof component.error).toBe('string')
     expect(component.error).toContain('Invalid login credentials')
+  })
+
+  it('init sets mode to set-password when type=invite in hash and session exists', async () => {
+    mockGetSession.mockResolvedValue({
+      data: { session: { user: { id: 'user-1' } } },
+      error: null,
+    })
+    Object.defineProperty(window, 'location', {
+      value: { hash: '#type=invite', search: '' },
+      writable: true,
+    })
+
+    const { loginComponent } = await import('./login')
+    const component = loginComponent()
+    await component.init()
+
+    expect(component.mode).toBe('set-password')
+  })
+
+  it('init stays in login mode when no invite param', async () => {
+    Object.defineProperty(window, 'location', {
+      value: { hash: '', search: '' },
+      writable: true,
+    })
+
+    const { loginComponent } = await import('./login')
+    const component = loginComponent()
+    await component.init()
+
+    expect(component.mode).toBe('login')
   })
 
   it('calls signInWithPassword with form values', async () => {
