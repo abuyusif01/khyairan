@@ -20,6 +20,9 @@ export async function checkSession(): Promise<Session | null> {
     .eq('id', session.user.id)
     .single()
 
-  if (!data?.role) return null
+  if (!data?.role) {
+    window.location.href = '/?error=session'
+    return null
+  }
   return { role: data.role as Role, userId: session.user.id }
 }
