@@ -31,6 +31,46 @@ describe('checkSession', () => {
     expect(window.location.href).toBe('/')
   })
 
+  it('checkSession returns null when profile has no role', async () => {
+    mockGetSession.mockResolvedValue({
+      data: { session: { user: { id: 'user-456' } } },
+      error: null,
+    })
+
+    const mockSelect = vi.fn().mockReturnThis()
+    const mockEq = vi.fn().mockReturnThis()
+    const mockSingle = vi.fn().mockResolvedValue({ data: { role: null }, error: null })
+    mockFrom.mockReturnValue({ select: mockSelect, eq: mockEq, single: mockSingle })
+    mockSelect.mockReturnValue({ eq: mockEq })
+    mockEq.mockReturnValue({ single: mockSingle })
+
+    const { checkSession } = await import('./session')
+    const result = await checkSession()
+
+    expect(result).toBeNull()
+    expect(window.location.href).toContain('error=session')
+  })
+
+  it('checkSession returns null when profile row missing', async () => {
+    mockGetSession.mockResolvedValue({
+      data: { session: { user: { id: 'user-789' } } },
+      error: null,
+    })
+
+    const mockSelect = vi.fn().mockReturnThis()
+    const mockEq = vi.fn().mockReturnThis()
+    const mockSingle = vi.fn().mockResolvedValue({ data: null, error: { message: 'not found' } })
+    mockFrom.mockReturnValue({ select: mockSelect, eq: mockEq, single: mockSingle })
+    mockSelect.mockReturnValue({ eq: mockEq })
+    mockEq.mockReturnValue({ single: mockSingle })
+
+    const { checkSession } = await import('./session')
+    const result = await checkSession()
+
+    expect(result).toBeNull()
+    expect(window.location.href).toContain('error=session')
+  })
+
   it('fetches profile and returns role when session exists', async () => {
     mockGetSession.mockResolvedValue({
       data: { session: { user: { id: 'user-123' } } },
