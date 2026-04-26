@@ -1,5 +1,6 @@
 import type { Tag } from '../types'
 import type { NewTag } from '../lib/supabase'
+import { field, checkField, backButton } from './formHelpers'
 
 type SaveFn = (fields: NewTag) => Promise<void>
 
@@ -16,33 +17,30 @@ export function renderTagForm(
 ): void {
   container.innerHTML = ''
 
+  container.appendChild(backButton('Tags', onSuccess))
+
+  const card = document.createElement('div')
+  card.className = 'form-card'
+
   const feedback = document.createElement('div')
   feedback.setAttribute('data-feedback', '')
-  container.appendChild(feedback)
+  card.appendChild(feedback)
 
   const form = document.createElement('form')
 
-  // Name
-  const nameLabel = document.createElement('label')
-  nameLabel.textContent = 'Name'
   const nameInput = document.createElement('input')
   nameInput.type = 'text'
   nameInput.name = 'name'
   nameInput.required = true
   nameInput.value = existingTag?.name ?? ''
-  nameLabel.appendChild(nameInput)
-  form.appendChild(nameLabel)
+  form.appendChild(field('Name', nameInput))
 
-  // Slug
-  const slugLabel = document.createElement('label')
-  slugLabel.textContent = 'Slug'
   const slugInput = document.createElement('input')
   slugInput.type = 'text'
   slugInput.name = 'slug'
   slugInput.required = true
   slugInput.value = existingTag?.slug ?? ''
-  slugLabel.appendChild(slugInput)
-  form.appendChild(slugLabel)
+  form.appendChild(field('Slug', slugInput))
 
   // Auto-fill slug from name, unless slug was manually edited
   let slugManuallyEdited = !!existingTag
@@ -55,9 +53,6 @@ export function renderTagForm(
     }
   })
 
-  // Type (input + datalist)
-  const typeLabel = document.createElement('label')
-  typeLabel.textContent = 'Type'
   const typeInput = document.createElement('input')
   typeInput.type = 'text'
   typeInput.name = 'type'
@@ -72,37 +67,30 @@ export function renderTagForm(
     opt.value = t
     datalist.appendChild(opt)
   })
-  typeLabel.appendChild(typeInput)
-  typeLabel.appendChild(datalist)
-  form.appendChild(typeLabel)
+  form.appendChild(field('Type', typeInput))
+  form.appendChild(datalist)
 
-  // Sort order
-  const sortLabel = document.createElement('label')
-  sortLabel.textContent = 'Sort order'
   const sortInput = document.createElement('input')
   sortInput.type = 'number'
   sortInput.name = 'sort_order'
   sortInput.required = true
   sortInput.min = '0'
   sortInput.value = String(existingTag?.sort_order ?? 0)
-  sortLabel.appendChild(sortInput)
-  form.appendChild(sortLabel)
+  form.appendChild(field('Sort order', sortInput))
 
-  // Published
-  const publishedLabel = document.createElement('label')
-  publishedLabel.textContent = 'Published'
   const publishedInput = document.createElement('input')
   publishedInput.type = 'checkbox'
   publishedInput.name = 'published'
   publishedInput.checked = existingTag?.published ?? false
-  publishedLabel.appendChild(publishedInput)
-  form.appendChild(publishedLabel)
+  form.appendChild(checkField('Published', publishedInput))
 
-  // Submit
   const submitBtn = document.createElement('button')
   submitBtn.type = 'submit'
   submitBtn.textContent = existingTag ? 'Save Changes' : 'Add Tag'
-  form.appendChild(submitBtn)
+  const actions = document.createElement('div')
+  actions.className = 'form-actions'
+  actions.appendChild(submitBtn)
+  form.appendChild(actions)
 
   form.addEventListener('submit', (e) => {
     e.preventDefault()
@@ -130,5 +118,6 @@ export function renderTagForm(
       })
   })
 
-  container.appendChild(form)
+  card.appendChild(form)
+  container.appendChild(card)
 }

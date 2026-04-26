@@ -1,5 +1,6 @@
 import type { Tag } from '../types'
 import type { NewProduct } from '../lib/supabase'
+import { field, backButton } from './formHelpers'
 
 type CreateProductFn = (fields: NewProduct) => Promise<{ id: string }>
 type SetProductTagsFn = (productId: string, tagIds: string[]) => Promise<void>
@@ -15,35 +16,29 @@ export function renderAddProductForm(
 ): void {
   container.innerHTML = ''
 
+  container.appendChild(backButton('Products', onSuccess))
+
+  const card = document.createElement('div')
+  card.className = 'form-card'
+
   const feedback = document.createElement('div')
   feedback.setAttribute('data-feedback', '')
-  container.appendChild(feedback)
+  card.appendChild(feedback)
 
   const form = document.createElement('form')
 
-  // Name
-  const nameLabel = document.createElement('label')
-  nameLabel.textContent = 'Name'
   const nameInput = document.createElement('input')
   nameInput.type = 'text'
   nameInput.name = 'name'
   nameInput.required = true
-  nameLabel.appendChild(nameInput)
-  form.appendChild(nameLabel)
+  form.appendChild(field('Name', nameInput))
 
-  // Size
-  const sizeLabel = document.createElement('label')
-  sizeLabel.textContent = 'Size'
   const sizeInput = document.createElement('input')
   sizeInput.type = 'text'
   sizeInput.name = 'size'
   sizeInput.required = true
-  sizeLabel.appendChild(sizeInput)
-  form.appendChild(sizeLabel)
+  form.appendChild(field('Size', sizeInput))
 
-  // Unit type
-  const unitTypeLabel = document.createElement('label')
-  unitTypeLabel.textContent = 'Unit type'
   const unitTypeSelect = document.createElement('select')
   unitTypeSelect.name = 'unit_type'
   unitTypeSelect.required = true
@@ -53,32 +48,22 @@ export function renderAddProductForm(
     opt.textContent = ut
     unitTypeSelect.appendChild(opt)
   })
-  unitTypeLabel.appendChild(unitTypeSelect)
-  form.appendChild(unitTypeLabel)
+  form.appendChild(field('Unit type', unitTypeSelect))
 
-  // Units per carton
-  const unitsLabel = document.createElement('label')
-  unitsLabel.textContent = 'Units per carton'
   const unitsInput = document.createElement('input')
   unitsInput.type = 'number'
   unitsInput.name = 'units_per_carton'
   unitsInput.required = true
   unitsInput.min = '1'
-  unitsLabel.appendChild(unitsInput)
-  form.appendChild(unitsLabel)
+  form.appendChild(field('Units per carton', unitsInput))
 
-  // Price
-  const priceLabel = document.createElement('label')
-  priceLabel.textContent = 'Price (₦)'
   const priceInput = document.createElement('input')
   priceInput.type = 'number'
   priceInput.name = 'price_ngn'
   priceInput.required = true
   priceInput.min = '0'
-  priceLabel.appendChild(priceInput)
-  form.appendChild(priceLabel)
+  form.appendChild(field('Price (₦)', priceInput))
 
-  // Tags
   const tagsFieldset = document.createElement('fieldset')
   const tagsLegend = document.createElement('legend')
   tagsLegend.textContent = 'Tags'
@@ -94,11 +79,13 @@ export function renderAddProductForm(
   })
   form.appendChild(tagsFieldset)
 
-  // Submit
   const submitBtn = document.createElement('button')
   submitBtn.type = 'submit'
   submitBtn.textContent = 'Add Product'
-  form.appendChild(submitBtn)
+  const actions = document.createElement('div')
+  actions.className = 'form-actions'
+  actions.appendChild(submitBtn)
+  form.appendChild(actions)
 
   form.addEventListener('submit', (e) => {
     e.preventDefault()
@@ -132,5 +119,6 @@ export function renderAddProductForm(
       })
   })
 
-  container.appendChild(form)
+  card.appendChild(form)
+  container.appendChild(card)
 }

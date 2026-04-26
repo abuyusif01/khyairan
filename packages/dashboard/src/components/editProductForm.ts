@@ -1,6 +1,7 @@
 import type { Product, Tag } from '../types'
 import type { UpdateProductFields } from '../lib/supabase'
 import { renderImageUpload } from './imageUpload'
+import { field, checkField, backButton } from './formHelpers'
 
 type UpdateFn = (id: string, fields: UpdateProductFields) => Promise<void>
 type SetProductTagsFn = (productId: string, tagIds: string[]) => Promise<void>
@@ -22,37 +23,31 @@ export function renderEditProductForm(
 ): void {
   container.innerHTML = ''
 
+  container.appendChild(backButton('Products', onSuccess))
+
+  const card = document.createElement('div')
+  card.className = 'form-card'
+
   const feedback = document.createElement('div')
   feedback.setAttribute('data-feedback', '')
-  container.appendChild(feedback)
+  card.appendChild(feedback)
 
   const form = document.createElement('form')
 
-  // Name
-  const nameLabel = document.createElement('label')
-  nameLabel.textContent = 'Name'
   const nameInput = document.createElement('input')
   nameInput.type = 'text'
   nameInput.name = 'name'
   nameInput.required = true
   nameInput.value = product.name
-  nameLabel.appendChild(nameInput)
-  form.appendChild(nameLabel)
+  form.appendChild(field('Name', nameInput))
 
-  // Size
-  const sizeLabel = document.createElement('label')
-  sizeLabel.textContent = 'Size'
   const sizeInput = document.createElement('input')
   sizeInput.type = 'text'
   sizeInput.name = 'size'
   sizeInput.required = true
   sizeInput.value = product.size
-  sizeLabel.appendChild(sizeInput)
-  form.appendChild(sizeLabel)
+  form.appendChild(field('Size', sizeInput))
 
-  // Unit type
-  const unitTypeLabel = document.createElement('label')
-  unitTypeLabel.textContent = 'Unit type'
   const unitTypeSelect = document.createElement('select')
   unitTypeSelect.name = 'unit_type'
   unitTypeSelect.required = true
@@ -63,76 +58,62 @@ export function renderEditProductForm(
     if (ut === product.unit_type) opt.selected = true
     unitTypeSelect.appendChild(opt)
   })
-  unitTypeLabel.appendChild(unitTypeSelect)
-  form.appendChild(unitTypeLabel)
+  form.appendChild(field('Unit type', unitTypeSelect))
 
-  // Units per carton
-  const unitsLabel = document.createElement('label')
-  unitsLabel.textContent = 'Units per carton'
   const unitsInput = document.createElement('input')
   unitsInput.type = 'number'
   unitsInput.name = 'units_per_carton'
   unitsInput.required = true
   unitsInput.min = '1'
   unitsInput.value = String(product.units_per_carton)
-  unitsLabel.appendChild(unitsInput)
-  form.appendChild(unitsLabel)
+  form.appendChild(field('Units per carton', unitsInput))
 
-  // Price
-  const priceLabel = document.createElement('label')
-  priceLabel.textContent = 'Price (₦)'
   const priceInput = document.createElement('input')
   priceInput.type = 'number'
   priceInput.name = 'price_ngn'
   priceInput.required = true
   priceInput.min = '0'
   priceInput.value = String(product.price_ngn)
-  priceLabel.appendChild(priceInput)
-  form.appendChild(priceLabel)
+  form.appendChild(field('Price (₦)', priceInput))
 
-  // Published toggle
-  const publishedLabel = document.createElement('label')
-  publishedLabel.textContent = 'Published'
   const publishedToggle = document.createElement('input')
   publishedToggle.type = 'checkbox'
   publishedToggle.name = 'published'
   publishedToggle.checked = product.published
   publishedToggle.disabled = product.image_path === null
-  if (product.image_path === null) {
-    const hint = document.createElement('span')
-    hint.textContent = ' (requires image)'
-    publishedLabel.appendChild(hint)
-  }
-  publishedLabel.appendChild(publishedToggle)
-  form.appendChild(publishedLabel)
+  const publishedHint = product.image_path === null ? '(requires image)' : undefined
+  form.appendChild(checkField('Published', publishedToggle, publishedHint))
 
   // Image upload
   if (uploadFn) {
     const imageSection = document.createElement('div')
-    if (product.image_path) {
+    if (product.image_path && getUrlFn) {
+      const preview = document.createElement('div')
+      preview.className = 'image-preview'
+      const img = document.createElement('img')
+      img.src = getUrlFn(product.image_path)
+      img.alt = product.name
+      preview.appendChild(img)
+      imageSection.appendChild(preview)
+    } else if (product.image_path) {
       const imgNote = document.createElement('p')
       imgNote.textContent = `Current image: ${product.image_path}`
       imageSection.appendChild(imgNote)
     }
     renderImageUpload(imageSection, product.id, () => {
-      // Re-enable published toggle if it was disabled (image now uploaded)
       publishedToggle.disabled = false
     }, uploadFn, updateFn, getUrlFn)
-    form.appendChild(imageSection)
+    form.appendChild(field('Image', imageSection))
   } else if (product.image_path) {
     const imgNote = document.createElement('p')
     imgNote.textContent = `Image: ${product.image_path}`
-    form.appendChild(imgNote)
+    form.appendChild(field('Image', imgNote))
   }
 
-  // Internal notes
-  const notesLabel = document.createElement('label')
-  notesLabel.textContent = 'Internal notes'
   const notesTextarea = document.createElement('textarea')
   notesTextarea.name = 'internal_notes'
   notesTextarea.value = product.internal_notes ?? ''
-  notesLabel.appendChild(notesTextarea)
-  form.appendChild(notesLabel)
+  form.appendChild(field('Internal notes', notesTextarea))
 
   // Metadata editor
   const metadataSection = document.createElement('div')
@@ -179,7 +160,7 @@ export function renderEditProductForm(
   addMetaBtn.addEventListener('click', () => addMetaRow())
   metadataSection.appendChild(addMetaBtn)
 
-  form.appendChild(metadataSection)
+  form.appendChild(field('Metadata', metadataSection))
 
   // Tags
   const tagsFieldset = document.createElement('fieldset')
@@ -198,11 +179,13 @@ export function renderEditProductForm(
   })
   form.appendChild(tagsFieldset)
 
-  // Submit
   const submitBtn = document.createElement('button')
   submitBtn.type = 'submit'
   submitBtn.textContent = 'Save Changes'
-  form.appendChild(submitBtn)
+  const actions = document.createElement('div')
+  actions.className = 'form-actions'
+  actions.appendChild(submitBtn)
+  form.appendChild(actions)
 
   form.addEventListener('submit', (e) => {
     e.preventDefault()
@@ -245,5 +228,6 @@ export function renderEditProductForm(
       })
   })
 
-  container.appendChild(form)
+  card.appendChild(form)
+  container.appendChild(card)
 }
