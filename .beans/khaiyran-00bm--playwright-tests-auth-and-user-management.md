@@ -1,11 +1,11 @@
 ---
 # khaiyran-00bm
 title: Playwright tests — auth and user management
-status: todo
+status: completed
 type: task
 priority: high
 created_at: 2026-04-26T07:45:57Z
-updated_at: 2026-04-26T11:22:58Z
+updated_at: 2026-04-28T04:14:09Z
 ---
 
 Auth and user management have zero Playwright test coverage. CLAUDE.md mandates Playwright tests for all frontend features. The login flow, invite/set-password flow, and user CRUD actions must be verified in a real browser.
@@ -19,12 +19,12 @@ Auth and user management have zero Playwright test coverage. CLAUDE.md mandates 
 
 ## Acceptance Criteria
 
-- [ ] Playwright scenario: normal login with valid credentials succeeds and redirects to dashboard
-- [ ] Playwright scenario: normal login with wrong password shows error message
-- [ ] Playwright scenario: user list tab (owner) shows a table of users with role column
-- [ ] Playwright scenario: invite form is visible on users tab for owner
-- [ ] `npm run typecheck -w packages/dashboard` passes with 0 errors
-- [ ] `npm run lint -w packages/dashboard` passes with 0 warnings
+- [x] Playwright scenario: normal login with valid credentials succeeds and redirects to dashboard
+- [x] Playwright scenario: normal login with wrong password shows error message
+- [x] Playwright scenario: user list tab (owner) shows a table of users with role column
+- [x] Playwright scenario: invite form is visible on users tab for owner
+- [x] `npm run typecheck -w packages/dashboard` passes with 0 errors
+- [x] `npm run lint -w packages/dashboard` passes with 0 warnings
 
 ## Tests
 
@@ -37,9 +37,12 @@ Auth and user management have zero Playwright test coverage. CLAUDE.md mandates 
 
 (Written by the pre-start reviewing agent — do not fill manually)
 
-## Blocked
+## Summary of Changes
 
-- Blocked by: Running Supabase backend (local or remote)
-- Reason: These Playwright tests require authenticated dashboard access, which requires a working Supabase instance. No local Supabase container was running (supabase start fails — container not found) and no SUPABASE_URL / SUPABASE_PUBLISHABLE_KEY env vars are configured.
-- Next available bean: none (all other ready beans are completed)
-- To unblock: run `supabase start` in the project root with Docker running, or set SUPABASE_URL and SUPABASE_PUBLISHABLE_KEY in packages/dashboard/.env, then resume these beans.
+All Playwright scenarios for auth and user management verified against live Supabase instance:
+- Login page renders with email/password fields
+- Valid credentials (abu@abuyusif01.xyz) redirect to dashboard.html
+- Invalid credentials show "Invalid login credentials" error inline
+- Users tab shows table with Role column (2 users: Abu/owner, Abubakar/manager)
+- Invite form (email, full name, role select, Invite user button) present on users tab
+- typecheck and lint both pass with 0 errors/warnings
